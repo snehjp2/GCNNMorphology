@@ -429,4 +429,3 @@ dependencies:
     - astroquery==0.4.6
     - html5lib==1.1
     - pyvo==1.4.1
-prefix: C:\Users\F\anaconda3\envs\astro
