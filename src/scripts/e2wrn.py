@@ -5,9 +5,9 @@ import torch.nn.functional as F
 
 import math
 
-import escnn.nn as enn
-from escnn.nn import init
-from escnn import gspaces
+import e2cnn.nn as enn
+from e2cnn.nn import init
+from e2cnn import gspaces
 
 from argparse import ArgumentParser
 
@@ -129,8 +129,12 @@ class WideBasic(enn.EquivariantModule):
         inner_type = inner_type
         self.out_type = out_type
         
-        assert isinstance(in_type.gspace, gspaces.GSpace2D)
-        rotations = in_type.gspace.rotations_order
+        if isinstance(in_type.gspace, gspaces.FlipRot2dOnR2):
+            rotations = in_type.gspace.fibergroup.rotation_order
+        elif isinstance(in_type.gspace, gspaces.Rot2dOnR2):
+            rotations = in_type.gspace.fibergroup.order()
+        else:
+            rotations = 0
         
         if rotations in [0, 2, 4]:
             conv = conv3x3
@@ -233,14 +237,14 @@ class Wide_ResNet(torch.nn.Module):
         self._f = f
         if self._f:
             if N != 1:
-                self.gspace = gspaces.flipRot2dOnR2(N)
+                self.gspace = gspaces.FlipRot2dOnR2(N)
             else:
-                self.gspace = gspaces.flip2dOnR2()
+                self.gspace = gspaces.Flip2dOnR2()
         else:
             if N != 1:
-                self.gspace = gspaces.rot2dOnR2(N)
+                self.gspace = gspaces.Rot2dOnR2(N)
             else:
-                self.gspace = gspaces.trivialOnR2()
+                self.gspace = gspaces.TrivialOnR2()
 
         # level of [R]estriction:
         #   r = 0: never do restriction, i.e. initial group (either DN or CN) preserved for the whole network
@@ -454,8 +458,8 @@ def wrn28_10_d1d1d1(**kwargs):
     """
     return Wide_ResNet(28, 10, 0.3, initial_stride=1, N=1, f=True, r=0, **kwargs)
 
-wrnc8c4c1 = wrn28_10_c8c4c1()
-wrn16_8_stl_d8d4d1 = wrn28_7_d8d4d1()
+WRNc8c4c1 = wrn28_10_c8c4c1()
+WRNd8d4d1 = wrn28_10_d8d4d1()
 
 
 if __name__ == "__main__":

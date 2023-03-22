@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 from e2cnn import gspaces
 from e2cnn import nn as e2cnn_nn
-from torchsummary import summary
+from e2wrn import WRNc8c4c1, WRNd8d4d1
 
 
 num_classes = 10
@@ -15,7 +15,7 @@ else:
 
 class GeneralSteerableCNN(torch.nn.Module):
     
-    def __init__(self, N, n_classes=10, reflections = False):
+    def __init__(self, N, n_classes=num_classes, reflections = False):
         
         super(GeneralSteerableCNN, self).__init__()
         
@@ -120,7 +120,7 @@ class GeneralSteerableCNN(torch.nn.Module):
             torch.nn.Linear(c, 64),
             torch.nn.BatchNorm1d(64),
             torch.nn.ELU(inplace=True),
-            torch.nn.Linear(64, num_classes),
+            torch.nn.Linear(64, n_classes),
         )
     
     def forward(self, input: torch.Tensor):
@@ -173,6 +173,8 @@ C2_model = GeneralSteerableCNN(N=2).to(device)
 C4_model = GeneralSteerableCNN(N=4).to(device)
 C8_model = GeneralSteerableCNN(N=8).to(device)
 C16_model = GeneralSteerableCNN(N=16).to(device)
+WRNd8d4d1 = WRNd8d4d1.to(device)
+WRNc8c4c1 = WRNc8c4c1.to(device)
 
 # load WRN-50-2:
 WRN_50_2 = torch.hub.load('pytorch/vision:v0.10.0', 'wide_resnet50_2', pretrained=True)
@@ -191,7 +193,7 @@ if __name__ == "__main__":
     ### input size = (batch_size, 3, 256, 256)
     input_size = (3, 256, 256)
     
-    models = [D2_model, D4_model, D8_model, D16_model, C2_model, C4_model, C8_model, C16_model, WRN_50_2, RN_18]
+    models = [D2_model, D4_model, D8_model, D16_model, C2_model, C4_model, C8_model, C16_model, WRN_50_2, RN_18, WRNc8c4c1, WRNd8d4d1]
     
     for model in models:
         print(model)
