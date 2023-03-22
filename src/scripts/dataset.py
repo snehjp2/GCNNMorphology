@@ -58,7 +58,7 @@ class Galaxy10DECalsTest(Dataset):
         angle = torch.tensor(self.dataset['angles'][idx],dtype=torch.long)
         if self.transform:
             img = self.transform(img)
-        return img, label
+        return img, label , angle
 
     def __len__(self):
         return self.length
