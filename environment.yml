@@ -445,7 +445,9 @@ dependencies:
   - zope.interface=5.4.0=py38h7f8727e_0
   - zstd=1.5.2=ha4553b6_0
   - pip:
-      - astronn==1.0.1
-      - astroquery==0.4.6
-      - html5lib==1.1
-      - pyvo==1.4.1
+    - astronn==1.0.1
+    - astroquery==0.4.6
+    - cmake==3.26.0
+    - e2cnn==0.2.3
+    - html5lib==1.1
+    - pyvo==1.4.1
