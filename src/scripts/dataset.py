@@ -15,18 +15,17 @@ class Galaxy10DECals(Dataset):
     """
     def __init__(self,dataset_path : str, transform = None) :
         self.dataset_path = dataset_path
-        self.dataset = None
+        #self.dataset = None
         self.transform = transform
         with h5py.File(self.dataset_path,"r") as f:
+            self.img = f['images'][()]
+            self.label = f['ans'][()]
             self.length = len(f['ans'][()])
 
     def __getitem__(self, idx):
 
-        if self.dataset is None:
-            self.dataset = h5py.File(self.dataset_path,"r")
-
-        img = self.dataset['images'][idx]
-        label = torch.tensor(self.dataset['ans'][idx],dtype=torch.long)
+        img = self.img[idx]
+        label = torch.tensor(self.label[idx],dtype=torch.long)
         if self.transform:
             img = self.transform(img)
         return img, label
@@ -66,8 +65,8 @@ class Galaxy10DECalsTest(Dataset):
 if __name__ == '__main__':
     print(sys.argv[1])
     transform = T.ToTensor()
-    #dataset = Galaxy10DECals(sys.argv[1],transform=transform)
-    dataset = Galaxy10DECalsTest(sys.argv[1],transform=transform)
+    dataset = Galaxy10DECals(sys.argv[1],transform=transform)
+    #dataset = Galaxy10DECalsTest(sys.argv[1],transform=transform)
     print(len(dataset))
     img , label = dataset[1232]
     print(img.shape)

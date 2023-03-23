@@ -1,7 +1,8 @@
 import torch
 from time import time
 import multiprocessing as mp
-
+from torch.utils.data import DataLoader
+from dataset import Galaxy10DECals
 
 dataset = Galaxy10DECals("../../../Galaxy10_DECals.h5")
 
