@@ -7,12 +7,12 @@ from e2cnn import nn as e2cnn_nn
 import e2wrn
 
 num_classes = 10
-
+'''
 if torch.cuda.is_available():
     device = torch.device('gpu')
 else:
     device = torch.device('cpu')
-
+'''
 class GeneralSteerableCNN(torch.nn.Module):
     
     def __init__(self, N, n_classes=num_classes, reflections = False):
