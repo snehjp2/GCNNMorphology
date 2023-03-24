@@ -36,6 +36,7 @@ def train_model(model, train_dataloader, test_dataloader, optimizer, scheduler =
     print("Training Started!")
     for epoch in range(epochs):
         model.train()
+        train_loss = 0.0
         for i, batch in tqdm(enumerate(train_dataloader, 0), unit="batch", total=len(train_dataloader)):
             inputs, targets = batch
             inputs, targets = inputs.to(device), targets.to(device)
@@ -49,6 +50,9 @@ def train_model(model, train_dataloader, test_dataloader, optimizer, scheduler =
             losses.append(loss.item())
             steps.append(epoch * len(train_dataloader) + i + 1)
 
+        train_loss /= len(train_dataloader)
+        print(f"Epoch: {epoch + 1}, Train Loss: {train_loss:.4f}")
+
         if scheduler is not None:
             scheduler.step()
 
@@ -56,19 +60,23 @@ def train_model(model, train_dataloader, test_dataloader, optimizer, scheduler =
             model.eval()
             correct = 0
             total = 0
+            test_loss = 0.0
 
             with torch.no_grad():
                 for batch in test_dataloader:
                     inputs, targets = batch
                     inputs, targets = inputs.to(device), targets.to(device)
                     outputs = model(inputs)
+                    loss = F.cross_entropy(outputs, targets)
+                    test_loss += loss.item()
                     _, predicted = torch.max(outputs.data, 1)
                     total += targets.size(0)
                     correct += (predicted == targets).sum().item()
 
             test_acc = 100 * correct / total
+            test_loss /= len(test_dataloader)
             lr = scheduler.get_last_lr()[0] if scheduler is not None else optimizer.param_groups[0]['lr']
-            print(f"Epoch: {epoch + 1}, Accuracy: {test_acc:.2f}%, Learning rate: {lr}")
+            print(f"Epoch: {epoch + 1}, Test Loss: {test_loss:.4f}, Accuracy: {test_acc:.2f}%, Learning rate: {lr}")
 
             if test_acc > best_test_acc:
                 best_test_acc = test_acc
