@@ -161,8 +161,6 @@ class GeneralSteerableCNN(torch.nn.Module):
         # classify with the final fully connected layers)
         # use NLL loss
         x = self.fully_net(x.reshape(x.shape[0], -1))
-        x = F.log_softmax(x, dim=-1)
-        
         return x
 
 

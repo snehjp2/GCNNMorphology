@@ -11,6 +11,8 @@ parameters :
   early_stopping : 5
   report_interval : 5
   lr_decay : 0.1
+  step_size : 50
+  milestones : [ 50, 75 ]
 
 
 save_dir : ../../../save_dir/
