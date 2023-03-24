@@ -160,9 +160,15 @@ def main(config):
     train_dataloader = DataLoader(train_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
     test_dataloader = DataLoader(test_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
 
-    save_dir = config['save_dir'] + config['model']
+    timestr = time.strftime("%Y%m%d-%H%M%S")
+    save_dir = config['save_dir'] + config['model'] + '_' + timestr
     train_model(model, train_dataloader, test_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
 
+    file = open(f'{save_dir}/config.yaml',"w")
+    yaml.dump(config, file)
+    file.close()
+    
+    
 if __name__ == '__main__':
 
     if torch.cuda.is_available():
