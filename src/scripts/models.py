@@ -8,12 +8,7 @@ import e2wrn
 from torchsummary import summary
 
 num_classes = 10
-'''
-if torch.cuda.is_available():
-    device = torch.device('gpu')
-else:
-    device = torch.device('cpu')
-'''
+
 class GeneralSteerableCNN(torch.nn.Module):
     
     def __init__(self, N, n_classes=num_classes, reflections = False):
@@ -161,6 +156,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         # classify with the final fully connected layers)
         # use NLL loss
         x = self.fully_net(x.reshape(x.shape[0], -1))
+
         return x
 
 
@@ -259,9 +255,11 @@ if __name__ == "__main__":
     ### input size = (batch_size, 3, 256, 256)
     input_size = (3, 256, 256)
     
+
     #models = [D2_model, D4_model, D8_model, D16_model, C2_model, C4_model, C8_model, C16_model, WRN_50_2, RN_18, WRNc8c4c1, WRNd8d4d1]
     
     #for model in models:
     #    print(model)
     model = model_dict['ResNet50']()
     summary(model, input_size=input_size)
+
