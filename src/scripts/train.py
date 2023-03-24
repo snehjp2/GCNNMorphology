@@ -47,11 +47,12 @@ def train_model(model, train_dataloader, test_dataloader, optimizer, scheduler =
             loss.backward()
             optimizer.step()
 
+            train_loss += loss.item()
             losses.append(loss.item())
             steps.append(epoch * len(train_dataloader) + i + 1)
 
         train_loss /= len(train_dataloader)
-        print(f"Epoch: {epoch + 1}, Train Loss: {train_loss:.4f}")
+        print(f"Epoch: {epoch + 1}, Train Loss: {train_loss:.4e}")
 
         if scheduler is not None:
             scheduler.step()
@@ -90,6 +91,8 @@ def train_model(model, train_dataloader, test_dataloader, optimizer, scheduler =
                 break
 
     torch.save(model.state_dict(), os.path.join(save_dir, "final_model.pt"))
+    
+    return best_test_acc, losses[-1]
 
     # Plot loss vs. training step graph
     plt.figure(figsize=(10, 5))
@@ -162,8 +165,9 @@ def main(config):
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
     save_dir = config['save_dir'] + config['model'] + '_' + timestr
-    train_model(model, train_dataloader, test_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
-
+    best_acc, final_loss = train_model(model, train_dataloader, test_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
+    config['best_acc'] = best_acc
+    config['final_loss'] = final_loss
     file = open(f'{save_dir}/config.yaml',"w")
     yaml.dump(config, file)
     file.close()
