@@ -135,7 +135,7 @@ def main(config):
     optimizer = optim.AdamW(params_to_optimize, lr=config['parameters']['lr'], 
                             weight_decay=config['parameters']['weight_decay'])
 
-    scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=config['parameters']['lr_decay'])
+    scheduler = optim.lr_scheduler.StepLR(optimizer, step_size= config['parameter']['step_size'],gamma=config['parameters']['lr_decay'])
     transform = transforms.Compose([
         transforms.ToTensor(),
     ])
