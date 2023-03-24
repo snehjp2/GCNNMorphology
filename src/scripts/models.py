@@ -3,15 +3,11 @@ import torch.nn as nn
 from torch.nn import functional as F
 from e2cnn import gspaces
 from e2cnn import nn as e2cnn_nn
-from e2wrn import WRNc8c4c1, WRNd8d4d1
-
+#from e2wrn import WRNc8c4c1, WRNd8d4d1
+import e2wrn
+from torchsummary import summary
 
 num_classes = 10
-
-if torch.cuda.is_available():
-    device = torch.device('gpu')
-else:
-    device = torch.device('cpu')
 
 class GeneralSteerableCNN(torch.nn.Module):
     
@@ -160,41 +156,110 @@ class GeneralSteerableCNN(torch.nn.Module):
         # classify with the final fully connected layers)
         # use NLL loss
         x = self.fully_net(x.reshape(x.shape[0], -1))
-        x = F.log_softmax(x, dim=-1)
-        
-        return x
-    
 
-D2_model = GeneralSteerableCNN(N=2,reflections=True).to(device)
-D4_model = GeneralSteerableCNN(N=4,reflections=True).to(device)
-D8_model = GeneralSteerableCNN(N=8,reflections=True).to(device)
-D16_model = GeneralSteerableCNN(N=16,reflections=True).to(device)
-C2_model = GeneralSteerableCNN(N=2).to(device)
-C4_model = GeneralSteerableCNN(N=4).to(device)
-C8_model = GeneralSteerableCNN(N=8).to(device)
-C16_model = GeneralSteerableCNN(N=16).to(device)
-WRNd8d4d1 = WRNd8d4d1.to(device)
-WRNc8c4c1 = WRNc8c4c1.to(device)
+        return x
+
+
+'''
+D2_model = GeneralSteerableCNN(N=2,reflections=True)
+D4_model = GeneralSteerableCNN(N=4,reflections=True)
+D8_model = GeneralSteerableCNN(N=8,reflections=True)
+D16_model = GeneralSteerableCNN(N=16,reflections=True)
+C2_model = GeneralSteerableCNN(N=2)
+C4_model = GeneralSteerableCNN(N=4)
+C8_model = GeneralSteerableCNN(N=8)
+C16_model = GeneralSteerableCNN(N=16)
+WRNd8d4d1 = WRNd8d4d1
+WRNc8c4c1 = WRNc8c4c1
+'''
+
+def load_d2():
+    D2_model = GeneralSteerableCNN(N=2,reflections=True)
+    return D2_model
+
+def load_d4():
+    D4_model = GeneralSteerableCNN(N=4,reflections=True)
+    return D4_model
+
+def load_d8():
+    D8_model = GeneralSteerableCNN(N=8,reflections=True)
+    return D8_model
+
+def load_d16():
+    D16_model = GeneralSteerableCNN(N=16,reflections=True)
+    return D16_model
+
+def load_c2():
+    C2_model = GeneralSteerableCNN(N=2)
+    return C2_model
+
+def load_c4():
+    C4_model = GeneralSteerableCNN(N=4)
+    return C4_model
+
+def load_c8():
+    C8_model = GeneralSteerableCNN(N=8)
+    return C8_model 
+
+def load_c16():
+    C16_model = GeneralSteerableCNN(N=16)
+    return C16_model
+
 
 # load WRN-50-2:
-WRN_50_2 = torch.hub.load('pytorch/vision:v0.10.0', 'wide_resnet50_2', pretrained=True)
-for param in WRN_50_2.parameters():
-    param.requires_grad = False
-WRN_50_2.fc = nn.Linear(WRN_50_2.fc.in_features, num_classes)
+def load_wrn50_2():
+    WRN_50_2 = torch.hub.load('pytorch/vision:v0.10.0', 'wide_resnet50_2', pretrained=True)
+    for param in WRN_50_2.parameters():
+        param.requires_grad = False
+    WRN_50_2.fc = nn.Linear(WRN_50_2.fc.in_features, num_classes)
+    return WRN_50_2
 
 # load Resnet18:
-RN_18 = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=True)
-for param in RN_18.parameters():
-    param.requires_grad = False
-RN_18.fc = nn.Linear(RN_18.fc.in_features, num_classes)
+def load_resnet18():
+    RN_18 = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=True)
+    for param in RN_18.parameters():
+        param.requires_grad = False
+    RN_18.fc = nn.Linear(RN_18.fc.in_features, num_classes)
+    return RN_18
+
+def load_resnet50():
+    RN_50 = torch.hub.load('pytorch/vision:v0.10.0', 'resnet50', pretrained=True)
+    for param in RN_50.parameters():
+        param.requires_grad = False
+    RN_50.fc = nn.Linear(RN_50.fc.in_features, num_classes)
+    return RN_50
+
+model_dict = {
+    'ResNet18' : load_resnet18,
+    'ResNet50' : load_resnet50,
+    'WRN50_2' : load_wrn50_2,
+    'D2' : load_d2,
+    'D4' : load_d4,
+    'D8' : load_d8,
+    'D16' : load_d16,
+    'C2' : load_c2,
+    'C4' : load_c4,
+    'C8' : load_c8,
+    'C16' : load_c16,
+    'WRN16d8d4d1': e2wrn.wrn16_8_stl_d8d4d1,
+    'WRN16d8d4d4' : e2wrn.wrn16_8_stl_d8d4d4,
+    'WRN16d1d1d1' : e2wrn.wrn16_8_stl_d1d1d1,
+    'WRN28_10_d8d4d1' : e2wrn.wrn28_10_d8d4d1,
+    'WRN28_7_d8d4d1' : e2wrn.wrn28_7_d8d4d1,
+    'WRN28_10_c8c4c1' : e2wrn.wrn28_10_c8c4c1,
+    'WRN28_10_d1d1d1' : e2wrn.wrn28_10_d1d1d1,
+}
 
 if __name__ == "__main__":
     
     ### input size = (batch_size, 3, 256, 256)
     input_size = (3, 256, 256)
     
-    models = [D2_model, D4_model, D8_model, D16_model, C2_model, C4_model, C8_model, C16_model, WRN_50_2, RN_18, WRNc8c4c1, WRNd8d4d1]
+
+    #models = [D2_model, D4_model, D8_model, D16_model, C2_model, C4_model, C8_model, C16_model, WRN_50_2, RN_18, WRNc8c4c1, WRNd8d4d1]
     
-    for model in models:
-        print(model)
+    #for model in models:
+    #    print(model)
+    model = model_dict['ResNet50']()
+    summary(model, input_size=input_size)
 
