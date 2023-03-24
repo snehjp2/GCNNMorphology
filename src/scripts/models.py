@@ -5,6 +5,7 @@ from e2cnn import gspaces
 from e2cnn import nn as e2cnn_nn
 #from e2wrn import WRNc8c4c1, WRNd8d4d1
 import e2wrn
+from torchsummary import summary
 
 num_classes = 10
 '''
@@ -227,8 +228,16 @@ def load_resnet18():
     RN_18.fc = nn.Linear(RN_18.fc.in_features, num_classes)
     return RN_18
 
+def load_resnet50():
+    RN_50 = torch.hub.load('pytorch/vision:v0.10.0', 'resnet50', pretrained=True)
+    for param in RN_50.parameters():
+        param.requires_grad = False
+    RN_50.fc = nn.Linear(RN_50.fc.in_features, num_classes)
+    return RN_50
+
 model_dict = {
     'ResNet18' : load_resnet18,
+    'ResNet50' : load_resnet50,
     'WRN50_2' : load_wrn50_2,
     'D2' : load_d2,
     'D4' : load_d4,
@@ -256,5 +265,5 @@ if __name__ == "__main__":
     
     #for model in models:
     #    print(model)
-    model = model_dict['WRN16d1d1d1']()
-    print(type(model))
+    model = model_dict['ResNet50']()
+    summary(model, input_size=input_size)
