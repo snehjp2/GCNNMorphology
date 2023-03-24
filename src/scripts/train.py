@@ -23,7 +23,7 @@ from tqdm import tqdm
 
 
 
-def train_model(model, train_dataloader, test_dataloader, optimizer, epochs=100, device='cuda', save_dir='checkpoints', early_stopping_patience=10, report_interval=5):
+def train_model(model, train_dataloader, test_dataloader, optimizer, scheduler = None, epochs=100, device='cuda', save_dir='checkpoints', early_stopping_patience=10, report_interval=5):
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -49,6 +49,9 @@ def train_model(model, train_dataloader, test_dataloader, optimizer, epochs=100,
             losses.append(loss.item())
             steps.append(epoch * len(train_dataloader) + i + 1)
 
+        if scheduler is not None:
+            scheduler.step()
+
         if (epoch + 1) % report_interval == 0:
             model.eval()
             correct = 0
@@ -64,7 +67,8 @@ def train_model(model, train_dataloader, test_dataloader, optimizer, epochs=100,
                     correct += (predicted == targets).sum().item()
 
             test_acc = 100 * correct / total
-            print(f"Epoch: {epoch + 1}, Accuracy: {test_acc:.2f}%")
+            lr = scheduler.get_last_lr()[0] if scheduler is not None else optimizer.param_groups[0]['lr']
+            print(f"Epoch: {epoch + 1}, Accuracy: {test_acc:.2f}%, Learning rate: {lr}")
 
             if test_acc > best_test_acc:
                 best_test_acc = test_acc
@@ -131,6 +135,7 @@ def main(config):
     optimizer = optim.AdamW(params_to_optimize, lr=config['parameters']['lr'], 
                             weight_decay=config['parameters']['weight_decay'])
 
+    scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=config['parameters']['lr_decay'])
     transform = transforms.Compose([
         transforms.ToTensor(),
     ])
@@ -148,7 +153,7 @@ def main(config):
     test_dataloader = DataLoader(test_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
 
     save_dir = config['save_dir'] + config['model']
-    train_model(model, train_dataloader, test_dataloader, optimizer, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
+    train_model(model, train_dataloader, test_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
 
 if __name__ == '__main__':
 

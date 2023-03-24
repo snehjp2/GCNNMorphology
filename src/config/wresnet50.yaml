@@ -1,4 +1,4 @@
-model : ResNet18
+model : WRN50_2
 dataset : ../../../data/Galaxy10_DECals.h5
 
 parameters :
