@@ -147,8 +147,8 @@ def main(config):
     train_dataloader = DataLoader(train_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
     test_dataloader = DataLoader(test_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
 
-    save_dir = config['save_dir'] + '/' + config['model']
-    train_model(model, train_dataloader, test_dataloader, optimizer, epochs=config['parameters']['epochs'], device=device, save_dir=config['save_dir'],early_stopping_patience=config['parameters']['early_stopping'], report_interval=2)
+    save_dir = config['save_dir'] + config['model']
+    train_model(model, train_dataloader, test_dataloader, optimizer, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
 
 if __name__ == '__main__':
 
