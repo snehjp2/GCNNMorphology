@@ -125,11 +125,11 @@ def evaluate(eval_loader: DataLoader, model: nn.Module):
     print("Correct answer in {:.1f}% of cases.".format(accuracy * 100))
     
 @torch.no_grad()
-def plot_confusion_matrix(test_loader: DataLoader, save_dir: str, model: nn.Module):
+def plot_confusion_matrix(test_loader: DataLoader, save_dir: str, model: nn.Module, device = 'cuda'):
     best_model = model
     best_model_path = f'{save_dir}/best_model.pt'
     
-    best_model.load_state_dict(torch.load(best_model_path, map_location=device))
+    best_model.load_state_dict(torch.load(best_model_path, map_location = device))
     y_pred = []
     y_true = []
 
@@ -153,7 +153,7 @@ def plot_confusion_matrix(test_loader: DataLoader, save_dir: str, model: nn.Modu
     plt.figure(figsize = (12,7))
     sn.heatmap(df_cm, annot=True)
     plt.title(f'Confusion Matrix')
-    plt.savefig(os.path.join(save_dir, "confusion_matrix.png"), bbox_inches='tight'))
+    plt.savefig(os.path.join(save_dir, "confusion_matrix.png"), bbox_inches='tight')
 
 
 
@@ -176,8 +176,8 @@ def plot_predictions(eval_loader: DataLoader, model: nn.Module):
 def main(config):
     model = model_dict[config['model']]()
     params_to_optimize = [p for p in model.parameters() if p.requires_grad]
-    optimizer = optim.AdamW(params_to_optimize, lr=config['parameters']['lr'], 
-                            weight_decay=config['parameters']['weight_decay'])
+    optimizer = optim.AdamW(params_to_optimize, lr = config['parameters']['lr'], 
+                            weight_decay = config['parameters']['weight_decay'])
 
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones = config['parameters']['milestones'],gamma=config['parameters']['lr_decay'])
     transform = transforms.Compose([
@@ -193,8 +193,8 @@ def main(config):
     val_length = len(train_dataset)-train_length
 
     train_dataset, val_dataset = torch.utils.data.random_split(train_dataset,(train_length, val_length))
-    train_dataloader = DataLoader(train_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
-    val_dataloader = DataLoader(val_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
+    train_dataloader = DataLoader(train_dataset, batch_size = config['parameters']['batch_size'], shuffle=True)
+    val_dataloader = DataLoader(val_dataset, batch_size = config['parameters']['batch_size'], shuffle=True)
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
     save_dir = config['save_dir'] + config['model'] + '_' + timestr
@@ -211,8 +211,8 @@ def main(config):
     end = time.time()
     print(f"Test dataset loaded in {end - start} s")
     
-    test_dataloader = DataLoader(test_dataset, batch_size=config['parameters']['batch_size'], shuffle=False)
-    plot_confusion_matrix(test_loader=test_dataloader, model=model_dict[config['model']]())
+    test_dataloader = DataLoader(test_dataset, batch_size = config['parameters']['batch_size'], shuffle=False)
+    plot_confusion_matrix(test_loader = test_dataloader, save_dir = save_dir, model = model)
     
     
 if __name__ == '__main__':
