@@ -458,8 +458,9 @@ def wrn28_10_d1d1d1(**kwargs):
     """
     return Wide_ResNet(28, 10, 0.3, initial_stride=1, N=1, f=True, r=0, **kwargs)
 
-WRNc8c4c1 = wrn28_10_c8c4c1()
-WRNd8d4d1 = wrn28_10_d8d4d1()
+#WRNc8c4c1 = wrn28_10_c8c4c1()
+#WRNd8d4d1 = wrn28_10_d8d4d1()
+
 
 
 if __name__ == "__main__":
