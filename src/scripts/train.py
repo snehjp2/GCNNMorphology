@@ -136,7 +136,7 @@ def plot_confusion_matrix(test_loader: DataLoader, save_dir: str, model: nn.Modu
     device = 'cpu'
     for batch in test_loader:
             inputs, labels = batch[0].to(device), batch[1].to(device)
-            output = model(inputs) # Feed Network
+            output = best_model(inputs) # Feed Network
             pred_labels = torch.argmax(output, dim=-1).cpu().numpy()
             y_pred.extend(pred_labels) # Save Prediction
             y_true.extend(labels)
