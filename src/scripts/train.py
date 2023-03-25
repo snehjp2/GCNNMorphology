@@ -7,6 +7,9 @@ import numpy as np
 from numpy.typing import NDArray
 import matplotlib.pyplot as plt
 import time
+from sklearn.metrics import confusion_matrix
+import seaborn as sn
+import pandas as pd
 
 import torch
 from torch.utils.data import DataLoader
@@ -18,7 +21,7 @@ from torchvision import datasets, transforms
 from e2cnn import gspaces
 from e2cnn import nn as e2cnn_nn
 from models import model_dict
-from dataset import Galaxy10DECals
+from dataset import Galaxy10DECals, Galaxy10DECalsTest
 from tqdm import tqdm
 
 
@@ -82,7 +85,7 @@ def train_model(model, train_dataloader, test_dataloader, optimizer, scheduler =
             if test_acc > best_test_acc:
                 best_test_acc = test_acc
                 no_improvement_count = 0
-                torch.save(model.state_dict(), os.path.join(save_dir, f"best_model_epoch_{epoch + 1}.pt"))
+                torch.save(model.state_dict(), os.path.join(save_dir, f"best_model.pt"))
             else:
                 no_improvement_count += 1
 
@@ -100,7 +103,7 @@ def train_model(model, train_dataloader, test_dataloader, optimizer, scheduler =
     plt.xlabel('Training Steps')
     plt.ylabel('Loss')
     plt.title('Loss vs. Training Steps')
-    plt.savefig(os.path.join(save_dir, "loss_vs_training_steps.png"))
+    plt.savefig(os.path.join(save_dir, "loss_vs_training_steps.png"), bbox_inches='tight')
 
 # We don't need gradients during evaluation.
 @torch.no_grad()
@@ -120,7 +123,37 @@ def evaluate(eval_loader: DataLoader, model: nn.Module):
     # Does not matter too much here.
     accuracy = np.mean(accuracy)
     print("Correct answer in {:.1f}% of cases.".format(accuracy * 100))
+    
+@torch.no_grad()
+def plot_confusion_matrix(test_loader: DataLoader, save_dir: str, model: nn.Module):
+    best_model = model
+    best_model_path = f'{save_dir}/best_model.pt'
+    
+    best_model.load_state_dict(torch.load(best_model_path, map_location=device))
+    y_pred = []
+    y_true = []
 
+    device = 'cpu'
+    for batch in test_loader:
+            inputs, labels = batch[0].to(device), batch[1].to(device)
+            output = model(inputs) # Feed Network
+            pred_labels = torch.argmax(output, dim=-1).cpu().numpy()
+            y_pred.extend(pred_labels) # Save Prediction
+            y_true.extend(labels)
+    
+    classes = ('Disturbed Galaxies', 'Merging Galaxies', 
+               'Round Smooth Galaxies', 'In-between Round Smooth Galaxies', 
+               'Cigar Shaped Smooth Galaxies', 'Barred Spiral Galaxies', 
+               'Unbarred Tight Spiral Galaxies', 'Unbarred Loose Spiral Galaxies', 
+               'Edge-on Galaxies without Bulge', 'Edge-on Galaxies with Bulge')
+    
+    cf_matrix = confusion_matrix(y_true, y_pred)
+    df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix, axis=1)[:, None], index = [i for i in classes],
+                     columns = [i for i in classes])
+    plt.figure(figsize = (12,7))
+    sn.heatmap(df_cm, annot=True)
+    plt.title(f'Confusion Matrix')
+    plt.savefig(os.path.join(save_dir, "confusion_matrix.png"), bbox_inches='tight'))
 
 
 
@@ -150,27 +183,36 @@ def main(config):
     transform = transforms.Compose([
         transforms.ToTensor(),
     ])
-    print("Loading Dataset!")
+    print("Loading train dataset!")
     start = time.time()
-    dataset = Galaxy10DECals(config['dataset'],transform)
+    train_dataset = Galaxy10DECals(config['dataset']['train'],transform)
     end = time.time()
-    print(f"Dataset Loaded! in {end- start}")
-    train_length=int(0.8* len(dataset))
+    print(f"dataset loaded in {end - start} s")
+    train_length = int(0.8* len(train_dataset))
 
-    test_length=len(dataset)-train_length
+    val_length = len(train_dataset)-train_length
 
-    train_dataset,test_dataset=torch.utils.data.random_split(dataset,(train_length,test_length))
+    train_dataset, val_dataset = torch.utils.data.random_split(train_dataset,(train_length, val_length))
     train_dataloader = DataLoader(train_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
-    test_dataloader = DataLoader(test_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
     save_dir = config['save_dir'] + config['model'] + '_' + timestr
-    best_acc, final_loss = train_model(model, train_dataloader, test_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
+    best_acc, final_loss = train_model(model, train_dataloader, val_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
     config['best_acc'] = best_acc
     config['final_loss'] = final_loss
     file = open(f'{save_dir}/config.yaml',"w")
     yaml.dump(config, file)
     file.close()
+    
+    print("Loading test dataset!")
+    start = time.time()
+    test_dataset = Galaxy10DECalsTest(config['dataset']['test'], transform)
+    end = time.time()
+    print(f"Test dataset loaded in {end - start} s")
+    
+    test_dataloader = DataLoader(test_dataset, batch_size=config['parameters']['batch_size'], shuffle=False)
+    plot_confusion_matrix(test_loader=test_dataloader, model=model_dict[config['model']]())
     
     
 if __name__ == '__main__':
@@ -180,8 +222,8 @@ if __name__ == '__main__':
     else:
         device = torch.device('cpu') 
 
-    parser = argparse.ArgumentParser(description='Train the models')
-    parser.add_argument('--config', metavar='config', required=True,
+    parser = argparse.ArgumentParser(description = 'Train the models')
+    parser.add_argument('--config', metavar = 'config', required=True,
                     help='Location of the config file')
 
     args = parser.parse_args()
