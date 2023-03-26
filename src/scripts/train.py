@@ -147,7 +147,7 @@ def plot_confusion_matrix(data_loader: DataLoader, save_dir: str, model: nn.Modu
             output = best_model(inputs) # Feed Network
             pred_labels = torch.argmax(output, dim=-1).cpu().numpy()
             y_pred.extend(pred_labels) # Save Prediction
-            y_true.extend(labels)
+            y_true.extend(labels.cpu().numpy())
     
     classes = ('Disturbed Galaxies', 'Merging Galaxies', 
                'Round Smooth Galaxies', 'In-between Round Smooth Galaxies', 
@@ -155,6 +155,7 @@ def plot_confusion_matrix(data_loader: DataLoader, save_dir: str, model: nn.Modu
                'Unbarred Tight Spiral Galaxies', 'Unbarred Loose Spiral Galaxies', 
                'Edge-on Galaxies without Bulge', 'Edge-on Galaxies with Bulge')
     
+    y_true, y_pred = np.asarray(y_true), np.asarray(y_pred)
     cf_matrix = confusion_matrix(y_true, y_pred)
     df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix, axis=1)[:, None], index = [i for i in classes],
                      columns = [i for i in classes])
@@ -206,7 +207,7 @@ def main(config):
     timestr = time.strftime("%Y%m%d-%H%M%S")
     save_dir = config['save_dir'] + config['model'] + '_' + timestr
     best_acc, final_loss = train_model(model, train_dataloader, val_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
-
+    print('Training Done')
     # print("Loading test dataset!")
     # start = time.time()
     # test_dataset = Galaxy10DECalsTest(config['dataset']['test'], transform)
