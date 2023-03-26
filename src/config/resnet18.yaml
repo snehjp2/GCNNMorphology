@@ -1,7 +1,5 @@
 model : ResNet18
-dataset : 
-  train: /home/pandya.sne/Galaxy10_DECals.h5
-  test: /home/pandya.sne/random_rotations.hdf5
+dataset : /home/pandya.sne/Galaxy10_DECals.h5
 
 parameters :
   lr : 1.0e-2

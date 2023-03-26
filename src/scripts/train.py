@@ -35,13 +35,13 @@ def set_all_seeds(num):
         torch.cuda.manual_seed_all(num)
 
 
-def train_model(model, train_dataloader, test_dataloader, optimizer, scheduler = None, epochs=100, device='cuda', save_dir='checkpoints', early_stopping_patience=10, report_interval=5):
+def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = None, epochs=100, device='cuda', save_dir='checkpoints', early_stopping_patience=10, report_interval=5):
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
     model.to(device)
     print("Model Loaded to Device!")
-    best_test_acc = 0
+    best_val_acc = 0
     no_improvement_count = 0
     losses = []
     steps = []
@@ -73,27 +73,28 @@ def train_model(model, train_dataloader, test_dataloader, optimizer, scheduler =
             model.eval()
             correct = 0
             total = 0
-            test_loss = 0.0
+            val_loss = 0.0
 
             with torch.no_grad():
-                for batch in test_dataloader:
+                for batch in val_dataloader:
                     inputs, targets = batch
                     inputs, targets = inputs.to(device), targets.to(device)
                     outputs = model(inputs)
                     loss = F.cross_entropy(outputs, targets)
-                    test_loss += loss.item()
+                    val_loss += loss.item()
                     _, predicted = torch.max(outputs.data, 1)
                     total += targets.size(0)
                     correct += (predicted == targets).sum().item()
 
-            test_acc = 100 * correct / total
-            test_loss /= len(test_dataloader)
+            val_acc = 100 * correct / total
+            val_loss /= len(val_dataloader)
             lr = scheduler.get_last_lr()[0] if scheduler is not None else optimizer.param_groups[0]['lr']
-            print(f"Epoch: {epoch + 1}, Test Loss: {test_loss:.4f}, Accuracy: {test_acc:.2f}%, Learning rate: {lr}")
+            print(f"Epoch: {epoch + 1}, Validation Loss: {val_loss:.4f}, Accuracy: {val_acc:.2f}%, Learning rate: {lr}")
 
-            if test_acc > best_test_acc:
-                best_test_acc = test_acc
+            if val_acc > best_val_acc:
+                best_val_acc = val_acc
                 no_improvement_count = 0
+                best_val_epoch = epoch + 1
                 torch.save(model.state_dict(), os.path.join(save_dir, f"best_model.pt"))
             else:
                 no_improvement_count += 1
@@ -112,7 +113,7 @@ def train_model(model, train_dataloader, test_dataloader, optimizer, scheduler =
     plt.title('Loss vs. Training Steps')
     plt.savefig(os.path.join(save_dir, "loss_vs_training_steps.png"), bbox_inches='tight')
     
-    return best_test_acc, losses[-1]
+    return best_val_epoch, best_val_acc, losses[-1]
 
 # We don't need gradients during evaluation.
 @torch.no_grad()
@@ -193,7 +194,7 @@ def main(config):
     ])
     print("Loading train dataset!")
     start = time.time()
-    train_dataset = Galaxy10DECals(config['dataset']['train'],transform)
+    train_dataset = Galaxy10DECals(config['dataset'],transform)
     end = time.time()
     print(f"dataset loaded in {end - start} s")
     train_length = int(0.8* len(train_dataset))
@@ -206,19 +207,15 @@ def main(config):
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
     save_dir = config['save_dir'] + config['model'] + '_' + timestr
-    best_acc, final_loss = train_model(model, train_dataloader, val_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
+    best_val_epoch, best_val_acc, final_loss = train_model(model, train_dataloader, val_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
     print('Training Done')
-    # print("Loading test dataset!")
-    # start = time.time()
-    # test_dataset = Galaxy10DECalsTest(config['dataset']['test'], transform)
-    # end = time.time()
-    # print(f"Test dataset loaded in {end - start} s")
-    # test_dataloader = DataLoader(test_dataset, batch_size = config['parameters']['batch_size'], shuffle=False)
     
     plot_confusion_matrix(data_loader = val_dataloader, save_dir = save_dir, model = model)
     
-    config['best_acc'] = best_acc
+    config['best_val_acc'] = best_val_acc
+    config['best_val_epoch'] = best_val_epoch
     config['final_loss'] = final_loss
+
     file = open(f'{save_dir}/config.yaml',"w")
     yaml.dump(config, file)
     file.close()
