@@ -154,8 +154,8 @@ def main():
         model_f1_score[model_names] = compute_f1_score(eval_loader=test_dataloader, model=model)
         print(f'F1-Score Computed for {model_names}!')
         
-        all_metrics = {'model_accuracy': model_accs, 'model_precision': model_precision, 
-                       'model_recall': model_recall, 'model_f1_score': model_f1_score}
+    all_metrics = {'model_accuracy': model_accs, 'model_precision': model_precision, 
+                    'model_recall': model_recall, 'model_f1_score': model_f1_score}
         
     plot_confusion_matrix(data_loader=test_dataloader, save_dir=args.path, model=model)
         
