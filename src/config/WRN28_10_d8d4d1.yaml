@@ -1,5 +1,5 @@
-model : WRN28_10_d8d4d1
-dataset : /home/pandya.sne/Galaxy10_DECals.h5
+model : WRN28_10_d1d1d1
+dataset : /home/pandya.sne/data/Galaxy10_DECals.h5
 
 parameters :
   lr : 1.0e-2
@@ -14,4 +14,4 @@ parameters :
   step_size : 50
   milestones : [ 50, 75 ]
 
-save_dir : ../../../save_dir/
+save_dir : /home/pandya.sne/save_dir/
