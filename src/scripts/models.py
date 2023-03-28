@@ -28,7 +28,7 @@ class GeneralSteerableCNN(torch.nn.Module):
           self.r2_act = gspaces.Rot2dOnR2(N=self.N)
         
         # the input image is a scalar field, corresponding to the trivial representation
-        in_type = e2cnn_nn.FieldType(self.r2_act, [self.r2_act.trivial_repr])
+        in_type = e2cnn_nn.FieldType(self.r2_act, 3*[self.r2_act.trivial_repr])
         
         # we store the input type for wrapping the images into a geometric tensor during the forward pass
         self.input_type = in_type
@@ -36,10 +36,10 @@ class GeneralSteerableCNN(torch.nn.Module):
         # convolution 1
         # first specify the output type of the convolutional layer
         # we choose 24 feature fields, each transforming under the regular representation of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 24*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, 8*[self.r2_act.regular_repr])
         self.block1 = e2cnn_nn.SequentialModule(
             e2cnn_nn.MaskModule(in_type, 256, margin=1),
-            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=1, bias=False),
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=1, bias=False, stride=2),
             e2cnn_nn.InnerBatchNorm(out_type),
             e2cnn_nn.ReLU(out_type, inplace=True)
         )
@@ -109,11 +109,12 @@ class GeneralSteerableCNN(torch.nn.Module):
         self.gpool = e2cnn_nn.GroupPooling(out_type)
         
         # number of output channels
+        # b, c, h, w = self.gpool.evaluate_output_shape(self.pool3.out_type)
+        # d = c*h*w
         c = self.gpool.out_type.size
-        
         # Fully Connected
         self.fully_net = torch.nn.Sequential(
-            torch.nn.Linear(c, 64),
+            torch.nn.Linear(c*58*58, 64),
             torch.nn.BatchNorm1d(64),
             torch.nn.ELU(inplace=True),
             torch.nn.Linear(64, n_classes),
@@ -133,21 +134,31 @@ class GeneralSteerableCNN(torch.nn.Module):
         # The Layer outputs a new GeometricTensor, associated with the layer's output type.
         # As a result, consecutive layers need to have matching input/output types
         x = self.block1(x)
+        print("block1", x.tensor.shape)
         x = self.block2(x)
+        print("block2", x.tensor.shape)
         x = self.pool1(x)
+        print("pool1", x.tensor.shape)
         
         x = self.block3(x)
+        print("block3", x.tensor.shape)
         x = self.block4(x)
+        print("block4", x.tensor.shape)
         x = self.pool2(x)
+        print("pool2", x.tensor.shape)
         
         x = self.block5(x)
+        print("block5", x.tensor.shape)
         x = self.block6(x)
+        print("block6", x.tensor.shape)
         
         # pool over the spatial dimensions
         x = self.pool3(x)
+        print("pool3", x.tensor.shape)
         
         # pool over the group
         x = self.gpool(x)
+        print("gpool", x.tensor.shape)
 
         # unwrap the output GeometricTensor
         # (take the Pytorch tensor and discard the associated representation)
@@ -155,7 +166,9 @@ class GeneralSteerableCNN(torch.nn.Module):
         
         # classify with the final fully connected layers)
         # use NLL loss
+        print("fully_net input", x.reshape(x.shape[0], -1).shape)
         x = self.fully_net(x.reshape(x.shape[0], -1))
+        print("output", x.shape)
 
         return x
 
@@ -250,6 +263,8 @@ model_dict = {
     'WRN28_10_d1d1d1' : e2wrn.wrn28_10_d1d1d1,
 }
 
+# model_dict = {torch.compile(model_dict[k]()) for k in model_dict}
+
 if __name__ == "__main__":
     
     ### input size = (batch_size, 3, 256, 256)
@@ -260,6 +275,6 @@ if __name__ == "__main__":
     
     #for model in models:
     #    print(model)
-    model = model_dict['ResNet50']()
+    model = model_dict['D4']()
     summary(model, input_size=input_size)
 
