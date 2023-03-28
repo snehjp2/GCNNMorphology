@@ -1,4 +1,4 @@
-model : WRN28_10_d1d1d1
+model : WRN28_10_d8d4d1
 dataset : /home/pandya.sne/Galaxy10_DECals.h5
 
 parameters :
