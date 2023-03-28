@@ -37,74 +37,108 @@ class GeneralSteerableCNN(torch.nn.Module):
         # first specify the output type of the convolutional layer
         # we choose 24 feature fields, each transforming under the regular representation of C8
         out_type = e2cnn_nn.FieldType(self.r2_act, 8*[self.r2_act.regular_repr])
+        
+        
         self.block1 = e2cnn_nn.SequentialModule(
             e2cnn_nn.MaskModule(in_type, 256, margin=1),
-            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=1, bias=False, stride=2),
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False, stride=2),
             e2cnn_nn.InnerBatchNorm(out_type),
             e2cnn_nn.ReLU(out_type, inplace=True)
         )
         
+        self.pool1 = e2cnn_nn.SequentialModule(
+            e2cnn_nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=2)
+        )
         # convolution 2
         # the old output type is the input type to the next layer
         in_type = self.block1.out_type
         # the output type of the second convolution layer are 48 regular feature fields of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 48*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, 8*[self.r2_act.regular_repr])
         self.block2 = e2cnn_nn.SequentialModule(
-            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
             e2cnn_nn.ReLU(out_type, inplace=True)
         )
-        self.pool1 = e2cnn_nn.SequentialModule(
-            e2cnn_nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=2)
-        )
+
         
         # convolution 3
         # the old output type is the input type to the next layer
         in_type = self.block2.out_type
         # the output type of the third convolution layer are 48 regular feature fields of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 48*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, 16*[self.r2_act.regular_repr])
         self.block3 = e2cnn_nn.SequentialModule(
-            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False, stride=2),
             e2cnn_nn.InnerBatchNorm(out_type),
             e2cnn_nn.ReLU(out_type, inplace=True)
+        )
+        
+        self.pool2 = e2cnn_nn.SequentialModule(
+            e2cnn_nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=2)
         )
         
         # convolution 4
         # the old output type is the input type to the next layer
         in_type = self.block3.out_type
         # the output type of the fourth convolution layer are 96 regular feature fields of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 96*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, 16*[self.r2_act.regular_repr])
         self.block4 = e2cnn_nn.SequentialModule(
-            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
             e2cnn_nn.ReLU(out_type, inplace=True)
         )
-        self.pool2 = e2cnn_nn.SequentialModule(
+        
+        in_type = self.block4.out_type
+        # the output type of the fourth convolution layer are 96 regular feature fields of C8
+        out_type = e2cnn_nn.FieldType(self.r2_act, 16*[self.r2_act.regular_repr])
+        self.block5 = e2cnn_nn.SequentialModule(
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
+            e2cnn_nn.InnerBatchNorm(out_type),
+            e2cnn_nn.ReLU(out_type, inplace=True)
+        )
+        
+        in_type = self.block5.out_type
+        # the output type of the fourth convolution layer are 96 regular feature fields of C8
+        out_type = e2cnn_nn.FieldType(self.r2_act, 16*[self.r2_act.regular_repr])
+        self.block6 = e2cnn_nn.SequentialModule(
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
+            e2cnn_nn.InnerBatchNorm(out_type),
+            e2cnn_nn.ReLU(out_type, inplace=True)
+        )
+        
+        in_type = self.block6.out_type
+        # the output type of the fourth convolution layer are 96 regular feature fields of C8
+        out_type = e2cnn_nn.FieldType(self.r2_act, 32*[self.r2_act.regular_repr])
+        self.block7 = e2cnn_nn.SequentialModule(
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=1, bias=False, stride=1),
+            e2cnn_nn.InnerBatchNorm(out_type),
+            e2cnn_nn.ReLU(out_type, inplace=True)
+        )
+        self.pool3 = e2cnn_nn.SequentialModule(
             e2cnn_nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=2)
         )
         
         # convolution 5
         # the old output type is the input type to the next layer
-        in_type = self.block4.out_type
+        in_type = self.block7.out_type
         # the output type of the fifth convolution layer are 96 regular feature fields
-        out_type = e2cnn_nn.FieldType(self.r2_act, 96*[self.r2_act.regular_repr])
-        self.block5 = e2cnn_nn.SequentialModule(
-            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
+        out_type = e2cnn_nn.FieldType(self.r2_act, 32*[self.r2_act.regular_repr])
+        self.block8 = e2cnn_nn.SequentialModule(
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
             e2cnn_nn.ReLU(out_type, inplace=True)
         )
         
         # convolution 6
         # the old output type is the input type to the next layer
-        in_type = self.block5.out_type
+        in_type = self.block8.out_type
         # the output type of the sixth convolution layer are 64 regular feature fields of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 64*[self.r2_act.regular_repr])
-        self.block6 = e2cnn_nn.SequentialModule(
-            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=1, bias=False),
+        out_type = e2cnn_nn.FieldType(self.r2_act, 32*[self.r2_act.regular_repr])
+        self.block9 = e2cnn_nn.SequentialModule(
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
             e2cnn_nn.ReLU(out_type, inplace=True)
         )
-        self.pool3 = e2cnn_nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=1, padding=0)
+        self.pool4 = e2cnn_nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=1, padding=0)
         
         self.gpool = e2cnn_nn.GroupPooling(out_type)
         
@@ -114,7 +148,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         c = self.gpool.out_type.size
         # Fully Connected
         self.fully_net = torch.nn.Sequential(
-            torch.nn.Linear(c*58*58, 64),
+            torch.nn.Linear(9*c, 64),
             torch.nn.BatchNorm1d(64),
             torch.nn.ELU(inplace=True),
             torch.nn.Linear(64, n_classes),
@@ -134,31 +168,26 @@ class GeneralSteerableCNN(torch.nn.Module):
         # The Layer outputs a new GeometricTensor, associated with the layer's output type.
         # As a result, consecutive layers need to have matching input/output types
         x = self.block1(x)
-        print("block1", x.tensor.shape)
-        x = self.block2(x)
-        print("block2", x.tensor.shape)
         x = self.pool1(x)
-        print("pool1", x.tensor.shape)
         
+        x = self.block2(x)
         x = self.block3(x)
-        print("block3", x.tensor.shape)
-        x = self.block4(x)
-        print("block4", x.tensor.shape)
         x = self.pool2(x)
-        print("pool2", x.tensor.shape)
         
+        x = self.block4(x)
         x = self.block5(x)
-        print("block5", x.tensor.shape)
         x = self.block6(x)
-        print("block6", x.tensor.shape)
+        x = self.block7(x)
+        x = self.pool3(x)
+        
+        x = self.block8(x)
+        x = self.block9(x)
         
         # pool over the spatial dimensions
-        x = self.pool3(x)
-        print("pool3", x.tensor.shape)
+        x = self.pool4(x)
         
         # pool over the group
         x = self.gpool(x)
-        print("gpool", x.tensor.shape)
 
         # unwrap the output GeometricTensor
         # (take the Pytorch tensor and discard the associated representation)
@@ -166,9 +195,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         
         # classify with the final fully connected layers)
         # use NLL loss
-        print("fully_net input", x.reshape(x.shape[0], -1).shape)
         x = self.fully_net(x.reshape(x.shape[0], -1))
-        print("output", x.shape)
 
         return x
 
