@@ -20,7 +20,7 @@ import torchvision
 from torchvision import datasets, transforms
 from e2cnn import gspaces
 from e2cnn import nn as e2cnn_nn
-from models import model_dict
+from models import model_dict, feature_fields
 from dataset import Galaxy10DECals, Galaxy10DECalsTest
 from tqdm import tqdm
 import random
@@ -215,6 +215,7 @@ def main(config):
     config['best_val_acc'] = best_val_acc
     config['best_val_epoch'] = best_val_epoch
     config['final_loss'] = final_loss
+    config['feature_fields'] = feature_fields
 
     file = open(f'{save_dir}/config.yaml',"w")
     yaml.dump(config, file)
