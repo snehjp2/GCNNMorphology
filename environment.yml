@@ -325,7 +325,6 @@ dependencies:
   - python-snappy=0.6.1=py38h6a678d5_0
   - python_abi=3.8=2_cp38
   - pytoolconfig=1.2.5=py38h06a4308_1
-  - pytorch=1.12.1=cpu_py38hb1f1ab4_1
   - pytz=2022.7=py38h06a4308_0
   - pyu2f=0.1.5=pyhd8ed1ab_0
   - pyviz_comms=2.0.2=pyhd3eb1b0_0
@@ -445,9 +444,26 @@ dependencies:
   - zope.interface=5.4.0=py38h7f8727e_0
   - zstd=1.5.2=ha4553b6_0
   - pip:
-    - astronn==1.0.1
-    - astroquery==0.4.6
-    - cmake==3.26.0
-    - e2cnn==0.2.3
-    - html5lib==1.1
-    - pyvo==1.4.1
+      - astronn==1.0.1
+      - astroquery==0.4.6
+      - cmake==3.26.1
+      - e2cnn==0.2.3
+      - html5lib==1.1
+      - lit==16.0.0
+      - nvidia-cublas-cu11==11.10.3.66
+      - nvidia-cuda-cupti-cu11==11.7.101
+      - nvidia-cuda-nvrtc-cu11==11.7.99
+      - nvidia-cuda-runtime-cu11==11.7.99
+      - nvidia-cudnn-cu11==8.5.0.96
+      - nvidia-cufft-cu11==10.9.0.58
+      - nvidia-curand-cu11==10.2.10.91
+      - nvidia-cusolver-cu11==11.4.0.1
+      - nvidia-cusparse-cu11==11.7.4.91
+      - nvidia-nccl-cu11==2.14.3
+      - nvidia-nvtx-cu11==11.7.91
+      - pyvo==1.4.1
+      - torch==2.0.0
+      - torch-summary==1.4.5
+      - torchvision==0.15.1
+      - triton==2.0.0
+prefix: /home/pandya.sne/miniconda3/envs/astro
