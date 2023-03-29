@@ -144,15 +144,15 @@ def main():
     model_recall = dict.fromkeys(trained_models.keys())
     model_f1_score = dict.fromkeys(trained_models.keys())
     
-    for model_names, model in tqdm(trained_models.items()):
-        model_accs[model_names] = compute_accuracy(eval_loader=test_dataloader, model=model)
-        print(f'Accuracy Computed for {model_names}!')
-        model_precision[model_names] = compute_precision(eval_loader=test_dataloader, model=model)
-        print(f'Precision Computed for {model_names}!')
-        model_recall[model_names] = compute_recall(eval_loader=test_dataloader, model=model)
-        print(f'Recall Computed for {model_names}!')
-        model_f1_score[model_names] = compute_f1_score(eval_loader=test_dataloader, model=model)
-        print(f'F1-Score Computed for {model_names}!')
+    for model_name, model in tqdm(trained_models.items()):
+        model_accs[model_name] = compute_accuracy(eval_loader=test_dataloader, model=model)
+        print(f'Accuracy Computed for {model_name}!')
+        model_precision[model_name] = compute_precision(eval_loader=test_dataloader, model=model)
+        print(f'Precision Computed for {model_name}!')
+        model_recall[model_name] = compute_recall(eval_loader=test_dataloader, model=model)
+        print(f'Recall Computed for {model_name}!')
+        model_f1_score[model_name] = compute_f1_score(eval_loader=test_dataloader, model=model)
+        print(f'F1-Score Computed for {model_name}!')
         
     all_metrics = {'model_accuracy': model_accs, 'model_precision': model_precision, 
                     'model_recall': model_recall, 'model_f1_score': model_f1_score}

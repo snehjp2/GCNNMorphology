@@ -8,10 +8,11 @@ import e2wrn
 from torchsummary import summary
 
 num_classes = 10
+feature_fields = [8, 8, 16, 16, 16, 16, 32, 32, 32]    
 
 class GeneralSteerableCNN(torch.nn.Module):
     
-    def __init__(self, N, n_classes=num_classes, reflections = False):
+    def __init__(self, N, n_classes=num_classes, feature_fields = feature_fields, reflections = False):
         
         super(GeneralSteerableCNN, self).__init__()
         
@@ -36,7 +37,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         # convolution 1
         # first specify the output type of the convolutional layer
         # we choose 24 feature fields, each transforming under the regular representation of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 8*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, feature_fields[0]*[self.r2_act.regular_repr])
         
         
         self.block1 = e2cnn_nn.SequentialModule(
@@ -53,7 +54,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         # the old output type is the input type to the next layer
         in_type = self.block1.out_type
         # the output type of the second convolution layer are 48 regular feature fields of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 8*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, feature_fields[1]*[self.r2_act.regular_repr])
         self.block2 = e2cnn_nn.SequentialModule(
             e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
@@ -65,7 +66,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         # the old output type is the input type to the next layer
         in_type = self.block2.out_type
         # the output type of the third convolution layer are 48 regular feature fields of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 16*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, feature_fields[2]*[self.r2_act.regular_repr])
         self.block3 = e2cnn_nn.SequentialModule(
             e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False, stride=2),
             e2cnn_nn.InnerBatchNorm(out_type),
@@ -80,7 +81,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         # the old output type is the input type to the next layer
         in_type = self.block3.out_type
         # the output type of the fourth convolution layer are 96 regular feature fields of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 16*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, feature_fields[3]*[self.r2_act.regular_repr])
         self.block4 = e2cnn_nn.SequentialModule(
             e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
@@ -89,7 +90,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         
         in_type = self.block4.out_type
         # the output type of the fourth convolution layer are 96 regular feature fields of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 16*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, feature_fields[4]*[self.r2_act.regular_repr])
         self.block5 = e2cnn_nn.SequentialModule(
             e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
@@ -98,7 +99,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         
         in_type = self.block5.out_type
         # the output type of the fourth convolution layer are 96 regular feature fields of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 16*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, feature_fields[5]*[self.r2_act.regular_repr])
         self.block6 = e2cnn_nn.SequentialModule(
             e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
@@ -107,7 +108,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         
         in_type = self.block6.out_type
         # the output type of the fourth convolution layer are 96 regular feature fields of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 32*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, feature_fields[6]*[self.r2_act.regular_repr])
         self.block7 = e2cnn_nn.SequentialModule(
             e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=1, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
@@ -121,7 +122,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         # the old output type is the input type to the next layer
         in_type = self.block7.out_type
         # the output type of the fifth convolution layer are 96 regular feature fields
-        out_type = e2cnn_nn.FieldType(self.r2_act, 32*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, feature_fields[7]*[self.r2_act.regular_repr])
         self.block8 = e2cnn_nn.SequentialModule(
             e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
@@ -132,7 +133,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         # the old output type is the input type to the next layer
         in_type = self.block8.out_type
         # the output type of the sixth convolution layer are 64 regular feature fields of C8
-        out_type = e2cnn_nn.FieldType(self.r2_act, 32*[self.r2_act.regular_repr])
+        out_type = e2cnn_nn.FieldType(self.r2_act, feature_fields[8]*[self.r2_act.regular_repr])
         self.block9 = e2cnn_nn.SequentialModule(
             e2cnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
