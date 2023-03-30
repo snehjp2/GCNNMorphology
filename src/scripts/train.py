@@ -20,7 +20,7 @@ import torchvision
 from torchvision import datasets, transforms
 from e2cnn import gspaces
 from e2cnn import nn as e2cnn_nn
-from models import model_dict
+from models import model_dict, feature_fields
 from dataset import Galaxy10DECals, Galaxy10DECalsTest
 from tqdm import tqdm
 import random
@@ -189,9 +189,16 @@ def main(config):
                             weight_decay = config['parameters']['weight_decay'])
 
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones = config['parameters']['milestones'],gamma=config['parameters']['lr_decay'])
+    
+    # transform = transforms.Compose([
+    #     transforms.ToTensor(),
+    # ])
+    
     transform = transforms.Compose([
         transforms.ToTensor(),
+        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
+    
     print("Loading train dataset!")
     start = time.time()
     train_dataset = Galaxy10DECals(config['dataset'],transform)
@@ -215,6 +222,7 @@ def main(config):
     config['best_val_acc'] = best_val_acc
     config['best_val_epoch'] = best_val_epoch
     config['final_loss'] = final_loss
+    config['feature_fields'] = feature_fields
 
     file = open(f'{save_dir}/config.yaml',"w")
     yaml.dump(config, file)
