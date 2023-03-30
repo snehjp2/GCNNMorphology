@@ -189,9 +189,16 @@ def main(config):
                             weight_decay = config['parameters']['weight_decay'])
 
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones = config['parameters']['milestones'],gamma=config['parameters']['lr_decay'])
+    
+    # transform = transforms.Compose([
+    #     transforms.ToTensor(),
+    # ])
+    
     transform = transforms.Compose([
         transforms.ToTensor(),
+        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
+    
     print("Loading train dataset!")
     start = time.time()
     train_dataset = Galaxy10DECals(config['dataset'],transform)
