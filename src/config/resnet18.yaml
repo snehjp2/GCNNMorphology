@@ -1,5 +1,5 @@
 model : ResNet18
-dataset : /home/pandya.sne/Galaxy10_DECals.h5
+dataset : ../../data/Galaxy10_DECals_mo.h5
 
 parameters :
   lr : 1.0e-2
