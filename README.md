@@ -1,4 +1,4 @@
-# E(2)-Equivariant Steerable Convolutional Neural Networks for Robust Galaxy Morphology Classifcation
+# E(2)-Equivariant Steerable Convolutional Neural Networks for Robust Galaxy Morphology Classification
 
 *Contributors: Frank O, [Sneh Pandya](https://snehjp2.github.io), Purvik Patel (all equal contribution)*
 
@@ -18,7 +18,7 @@ This project is developed for Python3.9 interpreter on a linux machine. Using an
 
 To install dependencies, simply run:
 
-`pip install -r requirement.txt`
+`conda env create -f environment.yml`
 
 or consult online documentation for appropriate dependencies.
 
@@ -46,12 +46,12 @@ Defines C2, C4, C8, C16, D2, D4, D8, and D16-equivariant architectures. Pretrain
 `src/scripts/dataset.py`, `src/scripts/train.py`, `src/scripts/test.py`
 Code to train, validate, and test models as defined in .yaml files in `src/config/`
 
-To train a model, simply run:
+To train a model, run:
 
 `python train.py --config [path to model.yaml file]`
 
-To test a model(s), simply run:
+To test a model(s), run:
 
-`python test.py --path [path to directory with trained moels]`
+`python test.py --path [path to directory with trained models]`
 
-Any comments on this work are welcome. Please email [enter email].
+Any comments on this work are welcome. Please email pandya.sne AT northeastern DOT edu.

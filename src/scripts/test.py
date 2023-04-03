@@ -40,67 +40,91 @@ def load_models(directory_path):
     return trained_models
 
 @torch.no_grad()
-def compute_accuracy(eval_loader: DataLoader, model: nn.Module):
-
+def compute_metrics(eval_loader: DataLoader, model: nn.Module):
+    
     accuracy = []
-
-    for batch in tqdm(eval_loader):
+    y_pred, y_true = [], []
+    
+    for batch in eval_loader:
         inputs, labels = batch[0].to(device), batch[1].to(device)
         outputs = model(inputs)
-        pred_labels = torch.argmax(outputs, dim=-1)
+        pred_labels = torch.argmax(outputs, dim=-1).cpu().numpy()
         tmp = (labels == pred_labels).float().mean()
         accuracy.append(tmp.item())
-
+        
+        y_pred.extend(pred_labels)
+        y_true.extend(labels.cpu().numpy())
+        
     accuracy = np.mean(accuracy)
-    return accuracy
-
-@torch.no_grad()
-def compute_precision(eval_loader: DataLoader, model: nn.Module):
-    
-    y_pred, y_true = [], []
-    
-    for batch in eval_loader:
-        inputs, labels = batch[0].to(device), batch[1].to(device)
-        outputs = model(inputs)
-        pred_labels = torch.argmax(outputs, dim=-1).cpu().numpy()
-        
-        y_pred.extend(pred_labels)
-        y_true.extend(labels.cpu().numpy())
-        
     precision = precision_score(y_true, y_pred, average='binary')
-    return precision
-    
-@torch.no_grad()    
-def compute_recall(eval_loader: DataLoader, model: nn.Module):
-    
-    y_pred, y_true = [], []
-    
-    for batch in eval_loader:
-        inputs, labels = batch[0].to(device), batch[1].to(device)
-        outputs = model(inputs)
-        pred_labels = torch.argmax(outputs, dim=-1).cpu().numpy()
-        
-        y_pred.extend(pred_labels)
-        y_true.extend(labels.cpu().numpy())
-        
     recall = recall_score(y_true, y_pred, average='binary')
-    return recall
-
-@torch.no_grad()
-def compute_f1_score(eval_loader: DataLoader, model: nn.Module):
-    
-    y_pred, y_true = [], []
-    
-    for batch in eval_loader:
-        inputs, labels = batch[0].to(device), batch[1].to(device)
-        outputs = model(inputs)
-        pred_labels = torch.argmax(outputs, dim=-1).cpu().numpy()
-        
-        y_pred.extend(pred_labels)
-        y_true.extend(labels.cpu().numpy())
-        
     f1 = f1_score(y_true, y_pred, average='binary')
-    return f1
+
+    
+    return accuracy, precision, recall, f1
+
+# @torch.no_grad()
+# def compute_accuracy(eval_loader: DataLoader, model: nn.Module):
+
+#     accuracy = []
+
+#     for batch in tqdm(eval_loader):
+#         inputs, labels = batch[0].to(device), batch[1].to(device)
+#         outputs = model(inputs)
+#         pred_labels = torch.argmax(outputs, dim=-1)
+#         tmp = (labels == pred_labels).float().mean()
+#         accuracy.append(tmp.item())
+
+#     accuracy = np.mean(accuracy)
+#     return accuracy
+
+# @torch.no_grad()
+# def compute_precision(eval_loader: DataLoader, model: nn.Module):
+    
+#     y_pred, y_true = [], []
+    
+#     for batch in eval_loader:
+#         inputs, labels = batch[0].to(device), batch[1].to(device)
+#         outputs = model(inputs)
+#         pred_labels = torch.argmax(outputs, dim=-1).cpu().numpy()
+        
+#         y_pred.extend(pred_labels)
+#         y_true.extend(labels.cpu().numpy())
+        
+#     precision = precision_score(y_true, y_pred, average='binary')
+#     return precision
+    
+# @torch.no_grad()    
+# def compute_recall(eval_loader: DataLoader, model: nn.Module):
+    
+#     y_pred, y_true = [], []
+    
+#     for batch in eval_loader:
+#         inputs, labels = batch[0].to(device), batch[1].to(device)
+#         outputs = model(inputs)
+#         pred_labels = torch.argmax(outputs, dim=-1).cpu().numpy()
+        
+#         y_pred.extend(pred_labels)
+#         y_true.extend(labels.cpu().numpy())
+        
+#     recall = recall_score(y_true, y_pred, average='binary')
+#     return recall
+
+# @torch.no_grad()
+# def compute_f1_score(eval_loader: DataLoader, model: nn.Module):
+    
+#     y_pred, y_true = [], []
+    
+#     for batch in eval_loader:
+#         inputs, labels = batch[0].to(device), batch[1].to(device)
+#         outputs = model(inputs)
+#         pred_labels = torch.argmax(outputs, dim=-1).cpu().numpy()
+        
+#         y_pred.extend(pred_labels)
+#         y_true.extend(labels.cpu().numpy())
+        
+#     f1 = f1_score(y_true, y_pred, average='binary')
+#     return f1
 
 @torch.no_grad()
 def plot_confusion_matrix(data_loader: DataLoader, save_dir: str, model_dict: dict):
@@ -145,14 +169,12 @@ def main():
     model_f1_score = dict.fromkeys(trained_models.keys())
     
     for model_name, model in tqdm(trained_models.items()):
-        model_accs[model_name] = compute_accuracy(eval_loader=test_dataloader, model=model)
-        print(f'Accuracy Computed for {model_name}!')
-        model_precision[model_name] = compute_precision(eval_loader=test_dataloader, model=model)
-        print(f'Precision Computed for {model_name}!')
-        model_recall[model_name] = compute_recall(eval_loader=test_dataloader, model=model)
-        print(f'Recall Computed for {model_name}!')
-        model_f1_score[model_name] = compute_f1_score(eval_loader=test_dataloader, model=model)
-        print(f'F1-Score Computed for {model_name}!')
+        accuracy, precision, recall, f1 = compute_metrics(eval_loader=test_dataloader, model=model)
+        
+        model_accs[model_name] = accuracy
+        model_precision[model_name] = precision
+        model_recall[model_name] = recall
+        model_f1_score[model_name] = f1
         
     all_metrics = {'model_accuracy': model_accs, 'model_precision': model_precision, 
                     'model_recall': model_recall, 'model_f1_score': model_f1_score}
@@ -178,7 +200,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     transform = transforms.Compose([
-    transforms.ToTensor(),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
     
     test_path = '/Users/snehpandya/Projects/GCNNMorphology/data/random_rotations.hdf5'
