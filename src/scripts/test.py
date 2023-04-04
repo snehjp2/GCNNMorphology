@@ -44,12 +44,13 @@ def compute_metrics(eval_loader: DataLoader, model: nn.Module):
     
     accuracy = []
     y_pred, y_true = [], []
+    model = model.to(device)
     
     for batch in eval_loader:
         inputs, labels = batch[0].to(device), batch[1].to(device)
         outputs = model(inputs)
         pred_labels = torch.argmax(outputs, dim=-1).cpu().numpy()
-        tmp = (labels == pred_labels).float().mean()
+        tmp = torch.Tensor(labels == pred_labels, dtype=torch.float).mean()
         accuracy.append(tmp.item())
         
         y_pred.extend(pred_labels)
