@@ -3,7 +3,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 from e2cnn import gspaces
 from e2cnn import nn as e2cnn_nn
-# import e2resnet 
+import e2resnet 
 import e2wrn
 import torchvision
 from torchsummary import summary
@@ -297,12 +297,16 @@ model_dict = {
     'WRN28_7_d8d4d1' : e2wrn.wrn28_7_d8d4d1,
     'WRN28_10_c8c4c1' : e2wrn.wrn28_10_c8c4c1,
     'WRN28_10_d1d1d1' : e2wrn.wrn28_10_d1d1d1,
-    'densenet121' : load_densenet121
-    # 'c1resnet18' : e2resnet.c1resnet18,
-    # 'd1resnet18' : e2resnet.d1resnet18,
-    # 'c4resnet18' : e2resnet.c4resnet18,
-    # 'd4resnet18' : e2resnet.d4resnet18,
-    # 'small_c4resnet' : e2resnet.small_c4resnet
+    'densenet121' : load_densenet121,
+    'c1resnet18' : e2resnet.c1resnet18,
+    'd1resnet18' : e2resnet.d1resnet18,
+    'c4resnet18' : e2resnet.c4resnet18,
+    'd4resnet18' : e2resnet.d4resnet18,
+    'small_c4resnet' : e2resnet.small_c4resnet,
+    'd1resnet50' : e2resnet.d1resnet50,
+    'c1resnet50' : e2resnet.c1resnet50,
+    'd4resnet50' : e2resnet.d4resnet50,
+    'c4resnet50' : e2resnet.c4resnet50
 }
 
 if __name__ == "__main__":

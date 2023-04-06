@@ -18,8 +18,8 @@ class E2BasicBlock(torch.nn.Module):
         self.conv2 = nn.R2Conv(out_type, out_type, 3, padding=1, stride=1, bias=False)
         self.bn2 = norm_layer(out_type)
         self.downsample = downsample
-
-    def forward(self, x):
+        ## missing self.stride = stride
+    def forward(self, x): ## identical to source code
         identity = x
 
         out = self.conv1(x)
@@ -39,11 +39,11 @@ class E2BasicBlock(torch.nn.Module):
 
 
 class E2BottleNeck(torch.nn.Module):
-    expansion: int = 4
-    def __init__(self, r2_act, inplanes, planes, stride, downsample, norm_layer):
+    expansion = 4
+    def __init__(self, r2_act, inplanes, planes, stride, downsample, norm_layer):  ## missing groups, basewidth, dilation
         in_type = nn.FieldType(r2_act, inplanes * [r2_act.regular_repr])
         out_type = nn.FieldType(r2_act, planes * [r2_act.regular_repr])
-        exp_type = nn.FieldType(r2_act, expansion * planes * [r2_act.regular_repr])
+        exp_type = nn.FieldType(r2_act, self.expansion * planes * [r2_act.regular_repr])  ## changed to self.expansion
 
         self.conv1 = nn.R2Conv(in_type, out_type, kernel_size=1, bias=False)
         self.bn1 = norm_layer(out_type)
@@ -60,6 +60,7 @@ class E2BottleNeck(torch.nn.Module):
         self.relu3 = nn.ReLU(exp_type, True)
 
         self.downsample = downsample
+        ## missing self.stride = stride
 
     def forward(self, x):
         identity = x
@@ -97,10 +98,10 @@ class E2ResNet(torch.nn.Module):
         self.r2_act = r2_act
         self.in_type = nn.FieldType(r2_act, 3 * [r2_act.trivial_repr])
 
-        self.norm_layer = nn.InnerBatchNorm
+        self.norm_layer = nn.InnerBatchNorm ##innerbatchnorm instead of batchnorm2d
         self.dilation = 1
-        self.base_width = base_width
-        self.inplanes = self.base_width
+        self.base_width = base_width  ## instead of width_per_group
+        self.inplanes = self.base_width  ## 64 in originl resnet
 
         out_type = nn.FieldType(r2_act, self.base_width * [r2_act.regular_repr])
         self.conv1 = nn.R2Conv(
@@ -114,7 +115,7 @@ class E2ResNet(torch.nn.Module):
         self.bn1 = self.norm_layer(out_type)
         self.maxpool = nn.PointwiseMaxPool(
             out_type, kernel_size=3, stride=2, padding=1
-        )
+        )  ## instead of maxpool2d
 
         self.relu1 = nn.ReLU(out_type, True)
         self.layer1 = self._make_layer(r2_act, block, base_width, layers[0])
@@ -225,4 +226,44 @@ def small_c4resnet(num_classes: int=10):
         layers=[1, 1, 1, 1],
         num_classes=num_classes,
         base_width=5,
+    )
+    
+def c1resnet50(num_classes: int=10, base_width: int=80):
+    r2_act = gspaces.trivialOnR2()
+    return E2ResNet(
+        r2_act,
+        block=E2BottleNeck,
+        layers=[3, 4, 6, 3],
+        num_classes=num_classes,
+        base_width=base_width,
+    )
+    
+def d1resnet50(num_classes: int=10, base_width: int=54):
+    r2_act = gspaces.flip2dOnR2()
+    return E2ResNet(
+        r2_act,
+        block=E2BottleNeck,
+        layers=[3, 4, 6, 3],
+        num_classes=num_classes,
+        base_width=base_width,
+    )
+    
+def c4resnet50(num_classes: int=10, base_width: int=40):
+    r2_act = gspaces.rot2dOnR2(N=4)
+    return E2ResNet(
+        r2_act,
+        block=E2BasicBlock,
+        layers=[3, 4, 6, 3],
+        num_classes=num_classes,
+        base_width=54,
+    )
+
+def d4resnet50(num_classes: int=10, base_width: int=28):
+    r2_act = gspaces.flipRot2dOnR2(N=4)
+    return E2ResNet(
+        r2_act,
+        block=E2BasicBlock,
+        layers=[3, 4, 6, 3],
+        num_classes=num_classes,
+        base_width=54,
     )
