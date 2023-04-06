@@ -428,7 +428,7 @@ def wrn28_10_d8d4d1(**kwargs):
     The model's block are respectively D8, D4 and D1 equivariant.
 
     """
-    return Wide_ResNet(28, 10, 0.3, initial_stride=1, N=8, f=True, r=3, **kwargs)
+    return Wide_ResNet(28, 10, 0.3, initial_stride=2, N=8, f=True, r=3, **kwargs)
 
 
 def wrn28_7_d8d4d1(**kwargs):
@@ -437,7 +437,7 @@ def wrn28_7_d8d4d1(**kwargs):
     The model's block are respectively D8, D4 and D1 equivariant.
     
     """
-    return Wide_ResNet(28, 7, 0.3, initial_stride=1, N=8, f=True, r=3, **kwargs)
+    return Wide_ResNet(28, 7, 0.3, initial_stride=2, N=8, f=True, r=3, **kwargs)
 
 
 def wrn28_10_c8c4c1(**kwargs):
@@ -447,7 +447,7 @@ def wrn28_10_c8c4c1(**kwargs):
     The model's block are respectively C8, C4 and C1 equivariant.
     
     """
-    return Wide_ResNet(28, 10, 0.3, initial_stride=1, N=8, f=False, r=3, **kwargs)
+    return Wide_ResNet(28, 10, 0.3, initial_stride=2, N=8, f=False, r=3, **kwargs)
 
 
 def wrn28_10_d1d1d1(**kwargs):
@@ -456,7 +456,7 @@ def wrn28_10_d1d1d1(**kwargs):
     The model's block are respectively D1, D1 and D1 equivariant.
 
     """
-    return Wide_ResNet(28, 10, 0.3, initial_stride=1, N=1, f=True, r=0, **kwargs)
+    return Wide_ResNet(28, 10, 0.3, initial_stride=2, N=1, f=True, r=0, **kwargs)
 
 #WRNc8c4c1 = wrn28_10_c8c4c1()
 #WRNd8d4d1 = wrn28_10_d8d4d1()

@@ -59,3 +59,9 @@ To test a model(s), run:
 `python test.py --path [path to directory with trained models]`
 
 Any comments on this work are welcome. Please email pandya.sne AT northeastern DOT edu.
+
+
+## Statement on Broader Impact
+
+*The algorithms presented here can classify galaxy images of arbitrary orientation and suboptimal image quality. The authors condemn any maladaptations of this work and emphasize the importance of using this technology ethically and responsibly.*
+

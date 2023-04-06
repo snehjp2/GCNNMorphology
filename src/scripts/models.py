@@ -41,7 +41,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         
         
         self.block1 = e2cnn_nn.SequentialModule(
-            e2cnn_nn.MaskModule(in_type, 256, margin=1),
+            e2cnn_nn.MaskModule(in_type, 224, margin=1),
             e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False, stride=2),
             e2cnn_nn.InnerBatchNorm(out_type),
             e2cnn_nn.ReLU(out_type, inplace=True)
@@ -68,7 +68,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         # the output type of the third convolution layer are 48 regular feature fields of C8
         out_type = e2cnn_nn.FieldType(self.r2_act, feature_fields[2]*[self.r2_act.regular_repr])
         self.block3 = e2cnn_nn.SequentialModule(
-            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False, stride=2),
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False, stride=1),
             e2cnn_nn.InnerBatchNorm(out_type),
             e2cnn_nn.ReLU(out_type, inplace=True)
         )
@@ -298,10 +298,7 @@ if __name__ == "__main__":
     
     ### input size = (batch_size, 3, 256, 256)
     input_size = (3, 256, 256)
-    
 
-    #models = [D2_model, D4_model, D8_model, D16_model, C2_model, C4_model, C8_model, C16_model, WRN_50_2, RN_18, WRNc8c4c1, WRNd8d4d1]
-    
     #for model in models:
     #    print(model)
     model = model_dict['D4']()
