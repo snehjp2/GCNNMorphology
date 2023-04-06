@@ -217,7 +217,11 @@ def main(config):
     end = time.time()
     print(f"dataset loaded in {end - start} s")
     
+<<<<<<< HEAD
     train_dataloader, val_dataloader = subsample(train_dataset, 0.2)
+=======
+    train_dataloader, val_dataloader = subsample(train_dataset)
+>>>>>>> 06192f30905878fb3d719a1b855f278ee0d0ad85
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
     save_dir = config['save_dir'] + config['model'] + '_' + timestr
