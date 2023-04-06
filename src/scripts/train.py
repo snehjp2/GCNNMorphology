@@ -1,28 +1,20 @@
-import os, sys
-# I like to use typing, but you don't have to!
-# from typing import Any, Dict, Tuple, Union
+import os
 import argparse
 import yaml
 import numpy as np
-from numpy.typing import NDArray
 import matplotlib.pyplot as plt
 import time
 from sklearn.metrics import confusion_matrix
 import seaborn as sn
 import pandas as pd
-
 import torch
 from torch.utils.data import DataLoader
 from torch import nn
 from torch.nn import functional as F
 from torch import optim
-import torchvision
-from torchvision import datasets, transforms
-from e2cnn import gspaces
-import torch.utils.data as data
-from e2cnn import nn as e2cnn_nn
+from torchvision import transforms
 from models import model_dict, feature_fields
-from dataset import Galaxy10DECals, Galaxy10DECalsTest
+from dataset import Galaxy10DECals
 from tqdm import tqdm
 import random
 
@@ -34,7 +26,6 @@ def set_all_seeds(num):
     
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(num)
-
 
 def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = None, epochs=100, device='cuda', save_dir='checkpoints', early_stopping_patience=10, report_interval=5):
     if not os.path.exists(save_dir):
@@ -136,11 +127,12 @@ def evaluate(eval_loader: DataLoader, model: nn.Module):
     print("Correct answer in {:.1f}% of cases.".format(accuracy * 100))
     
 @torch.no_grad()
-def plot_confusion_matrix(data_loader: DataLoader, save_dir: str, model: nn.Module, device = 'cuda'):
+def plot_confusion_matrix(data_loader: DataLoader, save_dir: str, model: nn.Module):
     best_model = model
     best_model_path = f'{save_dir}/best_model.pt'
     
     best_model.load_state_dict(torch.load(best_model_path, map_location = device))
+    best_model.to(device)
     y_pred = []
     y_true = []
 
@@ -182,37 +174,26 @@ def plot_predictions(eval_loader: DataLoader, model: nn.Module):
         plt.axis("off")
         plt.savefig('../../plots/eval_saved.png')
         
-def subsample(original_dataset):
+def subsample(original_dataset, test_size):
     
-    original_indices = [x for x in range(17736)]
-    augmented_indices = [x for x in range(17736, len(original_dataset))]
-
-    # Calculate the number of original and augmented samples needed for the training and validation sets
-    num_orig_train = int(0.7 * 0.8 * len(original_indices))
-    num_aug_train = int(0.3 * 0.8 * len(augmented_indices))
-    num_orig_val = int(0.7 * 0.2 * len(original_indices))
-    num_aug_val = int(0.3 * 0.2 * len(augmented_indices))
+    original_indices = np.asarray([x for x in range(17736)])
+    augmented_indices = np.asarray([x for x in range(17736, len(original_dataset))])
     
-    assert num_orig_train + num_aug_train + num_orig_val + num_aug_val == original_indices + augmented_indices, "The number of samples in the training and validation sets does not match the total number of samples."
+    num_orig_train = int((1- test_size) * len(original_indices))
+    num_orig_val = len(original_indices) - num_orig_train
 
-    # Generate the indices for the training and validation sets separately
-    orig_train_indices = original_indices[:num_orig_train] + augmented_indices[:num_aug_train]
-    aug_train_indices = original_indices[num_orig_train:num_orig_train+num_aug_train] + augmented_indices[num_aug_train:]
-    orig_val_indices = original_indices[-num_orig_val:] + augmented_indices[-num_aug_val:]
-    aug_val_indices = original_indices[-num_orig_val-num_aug_val:-num_orig_val] + augmented_indices[-num_aug_val:]
-
-    # Randomly shuffle the indices for both the original and augmented samples in each set
-    np.random.shuffle(orig_train_indices)
-    np.random.shuffle(aug_train_indices)
-    np.random.shuffle(orig_val_indices)
-    np.random.shuffle(aug_val_indices)
+    orig_train_indices = np.random.choice(original_indices, num_orig_train, replace=False)
+    ind = np.zeros(len(original_indices), dtype=bool)
+    ind[orig_train_indices] = True
+    orig_val_indices = original_indices[~ind]
     
-    train_sampler = data.SubsetRandomSampler(orig_train_indices + aug_train_indices)
-    val_sampler = data.SubsetRandomSampler(orig_val_indices + aug_val_indices)
+    train_inices = np.concatenate((orig_train_indices, augmented_indices))
+    train_sampler = torch.utils.data.SubsetRandomSampler(train_inices)
+    val_sampler = torch.utils.data.SubsetRandomSampler(orig_val_indices)
 
-# Create data loaders for both the training and validation sets
-    train_dataloader = data.DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=train_sampler)
-    val_dataloader = data.DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=val_sampler)
+    # Create data loaders for both the training and validation sets
+    train_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=train_sampler)
+    val_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=val_sampler)
     
     return train_dataloader, val_dataloader
 
@@ -235,13 +216,6 @@ def main(config):
     train_dataset = Galaxy10DECals(config['dataset'],transform)
     end = time.time()
     print(f"dataset loaded in {end - start} s")
-    
-    # train_length = int(0.8* len(train_dataset))
-    # val_length = len(train_dataset)-train_length
-
-    # train_dataset, val_dataset = torch.utils.data.random_split(train_dataset,(train_length, val_length))
-    # train_dataloader = DataLoader(train_dataset, batch_size = config['parameters']['batch_size'], shuffle=True)
-    # val_dataloader = DataLoader(val_dataset, batch_size = config['parameters']['batch_size'], shuffle=True)
     
     train_dataloader, val_dataloader = subsample(train_dataset)
 
