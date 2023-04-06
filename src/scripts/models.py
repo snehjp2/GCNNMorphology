@@ -5,6 +5,7 @@ from e2cnn import gspaces
 from e2cnn import nn as e2cnn_nn
 # import e2resnet 
 import e2wrn
+import torchvision
 from torchsummary import summary
 
 num_classes = 10
@@ -61,7 +62,6 @@ class GeneralSteerableCNN(torch.nn.Module):
             e2cnn_nn.ReLU(out_type, inplace=True)
         )
 
-        
         # convolution 3
         # the old output type is the input type to the next layer
         in_type = self.block2.out_type
@@ -149,10 +149,13 @@ class GeneralSteerableCNN(torch.nn.Module):
         c = self.gpool.out_type.size
         # Fully Connected
         self.fully_net = torch.nn.Sequential(
-            torch.nn.Linear(9*c, 64),
+            torch.nn.Linear(4*c, 64),
             torch.nn.BatchNorm1d(64),
             torch.nn.ELU(inplace=True),
-            torch.nn.Linear(64, n_classes),
+            torch.nn.Linear(64, 32),
+            torch.nn.BatchNorm1d(64),
+            torch.nn.ELU(inplace=True),
+            torch.nn.Linear(32, n_classes),
         )
     
     def forward(self, input: torch.Tensor):
@@ -267,6 +270,13 @@ def load_resnet50():
     RN_50.fc = nn.Linear(RN_50.fc.in_features, num_classes)
     return RN_50
 
+def load_densenet121():
+    densenet121 = torchvision.models.densenet121(pretrained=True)
+    for param in densenet121.parameters():
+        param.requires_grad = False
+    densenet121.classifier = nn.Linear(densenet121.classifier.in_features, num_classes)
+    return densenet121
+
 
 model_dict = {
     'ResNet18' : load_resnet18,
@@ -287,6 +297,7 @@ model_dict = {
     'WRN28_7_d8d4d1' : e2wrn.wrn28_7_d8d4d1,
     'WRN28_10_c8c4c1' : e2wrn.wrn28_10_c8c4c1,
     'WRN28_10_d1d1d1' : e2wrn.wrn28_10_d1d1d1,
+    'densenet121' : load_densenet121
     # 'c1resnet18' : e2resnet.c1resnet18,
     # 'd1resnet18' : e2resnet.d1resnet18,
     # 'c4resnet18' : e2resnet.c4resnet18,
