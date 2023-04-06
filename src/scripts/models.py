@@ -251,29 +251,29 @@ def load_c16():
 
 def load_wrn50_2():
     WRN_50_2 = torch.hub.load('pytorch/vision:v0.10.0', 'wide_resnet50_2', pretrained=True)
-    for param in WRN_50_2.parameters():
-        param.requires_grad = False
+    # for param in WRN_50_2.parameters():
+    #     param.requires_grad = False
     WRN_50_2.fc = nn.Linear(WRN_50_2.fc.in_features, num_classes)
     return WRN_50_2
 
 def load_resnet18():
     RN_18 = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=True)
-    for param in RN_18.parameters():
-        param.requires_grad = False
+    # for param in RN_18.parameters():
+    #     param.requires_grad = False
     RN_18.fc = nn.Linear(RN_18.fc.in_features, num_classes)
     return RN_18
 
 def load_resnet50():
     RN_50 = torch.hub.load('pytorch/vision:v0.10.0', 'resnet50', pretrained=True)
-    for param in RN_50.parameters():
-        param.requires_grad = False
+    # for param in RN_50.parameters():
+    #     param.requires_grad = False
     RN_50.fc = nn.Linear(RN_50.fc.in_features, num_classes)
     return RN_50
 
 def load_densenet121():
     densenet121 = torchvision.models.densenet121(pretrained=True)
-    for param in densenet121.parameters():
-        param.requires_grad = False
+    # for param in densenet121.parameters():
+    #     param.requires_grad = False
     densenet121.classifier = nn.Linear(densenet121.classifier.in_features, num_classes)
     return densenet121
 

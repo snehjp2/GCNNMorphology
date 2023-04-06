@@ -6,7 +6,7 @@
 
 *Contributors: Frank O, [Sneh Pandya](https://snehjp2.github.io), Purvik Patel (all equal contribution)*
 
-# Abstract
+## Abstract
 
 The increased use of supervised learning techniques in astronomical data analysis requires
 architectures that can generalize well despite a potential data bottleneck, and which
@@ -26,12 +26,12 @@ To install dependencies, simply run:
 
 or consult online documentation for appropriate dependencies.
 
-# Data
+## Data
 
 We train and validate our models on the open source [Galaxy10 DECals Dataset](https://github.com/henrysky/Galaxy10). The dataset features $17,736$ Galaxy images of 10 separate classes from observations from the [Sloan Digital Sky Survey](https://classic.sdss.org) and [DESI Legacy Imaging Surveys](https://www.legacysurvey.org). The galaxies were classified through multiple rounds of volunteer voting with rigourous filtering through the [Galaxy Zoo](https://www.zooniverse.org/projects/zookeeper/galaxy-zoo/) citizen science initiative. Instructions on downloading the data can be found in the Galaxy10 DECals repository.
 
 The classification of galaxy morphologies should be independent of the galaxy orientation in an image. To test the classifcation accuracy of our baseline and equivariant models, we generate a rotated dataset by applying a random rotation parameterized by an angle $\theta \in (0, 2\pi]$ to images from the original dataset.
-# Code
+## Code
 
 Our codebase utilizes the [e2cnn](https://github.com/QUVA-Lab/e2cnn) library, which is a [PyTorch](https://pytorch.org) extension for equivariant deep learning.
 
@@ -63,5 +63,4 @@ Any comments on this work are welcome. Please email pandya.sne AT northeastern D
 
 ## Statement on Broader Impact
 
-*The algorithms presented here can classify galaxy images of arbitrary orientation and suboptimal image quality. The authors condemn any maladaptations of this work and emphasize the importance of using this technology ethically and responsibly.*
-
+*The algorithms presented here can classify images of arbitrary orientation and suboptimal image quality. The authors condemn any maladaptations of this work and emphasize the importance of using this technology ethically and responsibly.*
