@@ -22,7 +22,9 @@ This project is developed for Python3.9 interpreter on a linux machine. Using an
 
 To install dependencies, simply run:
 
-`conda env create -f environment.yml`
+```console
+conda env create -f environment.yml
+```
 
 or consult online documentation for appropriate dependencies.
 
@@ -33,7 +35,7 @@ We train and validate our models on the open source [Galaxy10 DECals Dataset](ht
 The classification of galaxy morphologies should be independent of the galaxy orientation in an image. To test the classifcation accuracy of our baseline and equivariant models, we generate a rotated dataset by applying a random rotation parameterized by an angle $\theta \in (0, 2\pi]$ to images from the original dataset.
 ## Code
 
-Our codebase utilizes the [e2cnn](https://github.com/QUVA-Lab/e2cnn) library, which is a [PyTorch](https://pytorch.org) extension for equivariant deep learning.
+Our codebase utilizes the [e2cnn](https://github.com/QUVA-Lab/e2cnn) and [escnn](https://github.com/QUVA-Lab/escnn) libraries, which are [PyTorch](https://pytorch.org) extensions for equivariant deep learning.
 
 `src/notebooks/loading_data.ipynb`
 Exploratory data analysis, morphological opening, and noise generation.
@@ -63,4 +65,4 @@ Any comments on this work are welcome. Please email pandya.sne AT northeastern D
 
 ## Statement on Broader Impact
 
-*The algorithms presented here can classify and extract features from images of arbitrary orientation and suboptimal image quality. The authors condemn any maladaptations of this work and emphasize the importance of using AI technologies ethically and responsibly.*
+*The algorithms presented here can extract features from and classify images of arbitrary orientation and suboptimal image quality. The authors condemn any maladaptations of this work and emphasize the importance of using AI technologies ethically and responsibly.*
