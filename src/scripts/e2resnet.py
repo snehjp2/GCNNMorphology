@@ -39,7 +39,7 @@ class E2BasicBlock(torch.nn.Module):
 
 
 class E2BottleNeck(torch.nn.Module):
-    expansion = 4
+    expansion: int = 4
     def __init__(self, r2_act, inplanes, planes, stride, downsample, norm_layer):  ## missing groups, basewidth, dilation
         super().__init__()
         in_type = nn.FieldType(r2_act, inplanes * [r2_act.regular_repr])
@@ -63,7 +63,7 @@ class E2BottleNeck(torch.nn.Module):
         self.downsample = downsample
         ## missing self.stride = stride
 
-    def forward(self, x):
+    def forward(self, x: nn.GeometricTensor):
         identity = x
         out = self.conv1(x)
         out = self.bn1(out)
@@ -105,6 +105,7 @@ class E2ResNet(torch.nn.Module):
         self.inplanes = self.base_width  ## 64 in originl resnet
 
         out_type = nn.FieldType(r2_act, self.base_width * [r2_act.regular_repr])
+        
         self.conv1 = nn.R2Conv(
             self.in_type,
             out_type,
@@ -253,7 +254,7 @@ def c4resnet50(num_classes: int=10, base_width: int=40):
     r2_act = gspaces.rot2dOnR2(N=4)
     return E2ResNet(
         r2_act,
-        block=E2BasicBlock,
+        block=E2BottleNeck,
         layers=[3, 4, 6, 3],
         num_classes=num_classes,
         base_width=54,
@@ -263,7 +264,7 @@ def d4resnet50(num_classes: int=10, base_width: int=28):
     r2_act = gspaces.flipRot2dOnR2(N=4)
     return E2ResNet(
         r2_act,
-        block=E2BasicBlock,
+        block=E2BottleNeck,
         layers=[3, 4, 6, 3],
         num_classes=num_classes,
         base_width=54,
