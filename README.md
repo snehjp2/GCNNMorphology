@@ -63,4 +63,4 @@ Any comments on this work are welcome. Please email pandya.sne AT northeastern D
 
 ## Statement on Broader Impact
 
-*The algorithms presented here can classify images of arbitrary orientation and suboptimal image quality. The authors condemn any maladaptations of this work and emphasize the importance of using this technology ethically and responsibly.*
+*The algorithms presented here can classify and extract features from images of arbitrary orientation and suboptimal image quality. The authors condemn any maladaptations of this work and emphasize the importance of using AI technologies ethically and responsibly.*

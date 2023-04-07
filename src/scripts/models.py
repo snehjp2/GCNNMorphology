@@ -312,7 +312,7 @@ model_dict = {
 if __name__ == "__main__":
     
     ### input size = (batch_size, 3, 256, 256)
-    input_size = (3, 256, 256)
+    input_size = (3, 224, 224)
 
     #for model in models:
     #    print(model)

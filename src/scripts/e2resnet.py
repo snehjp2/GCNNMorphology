@@ -41,6 +41,7 @@ class E2BasicBlock(torch.nn.Module):
 class E2BottleNeck(torch.nn.Module):
     expansion = 4
     def __init__(self, r2_act, inplanes, planes, stride, downsample, norm_layer):  ## missing groups, basewidth, dilation
+        super().__init__()
         in_type = nn.FieldType(r2_act, inplanes * [r2_act.regular_repr])
         out_type = nn.FieldType(r2_act, planes * [r2_act.regular_repr])
         exp_type = nn.FieldType(r2_act, self.expansion * planes * [r2_act.regular_repr])  ## changed to self.expansion
@@ -267,3 +268,8 @@ def d4resnet50(num_classes: int=10, base_width: int=28):
         num_classes=num_classes,
         base_width=54,
     )
+    
+    
+if __name__ == "__main__":
+    model = c1resnet18()
+    print(model)
