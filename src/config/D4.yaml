@@ -1,5 +1,5 @@
 model : D4
-dataset : /home/pandya.sne/data/Galaxy10_DECals.h5
+dataset : /Users/snehpandya/Projects/GCNNMorphology/data/Galaxy10_DECals_mo.h5
 
 parameters :
   lr : 1.0e-2
@@ -14,4 +14,4 @@ parameters :
   step_size : 50
   milestones : [ 50, 75 ]
 
-save_dir : /home/pandya.sne/save_dir/
+save_dir : ../save_dir/

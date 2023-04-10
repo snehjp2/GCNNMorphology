@@ -19,7 +19,7 @@ class E2BasicBlock(torch.nn.Module):
         self.bn2 = norm_layer(out_type)
         self.downsample = downsample
         ## missing self.stride = stride
-    def forward(self, x): ## identical to source code
+    def forward(self, x: nn.GeometricTensor): ## identical to source code
         identity = x
 
         out = self.conv1(x)

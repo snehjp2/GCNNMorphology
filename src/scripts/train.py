@@ -31,7 +31,9 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
+    model = nn.DataParallel(model)
     model.to(device)
+    
     print("Model Loaded to Device!")
     best_val_acc = 0
     no_improvement_count = 0
@@ -192,8 +194,8 @@ def subsample(original_dataset, test_size):
     val_sampler = torch.utils.data.SubsetRandomSampler(orig_val_indices)
 
     # Create data loaders for both the training and validation sets
-    train_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=train_sampler)
-    val_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=val_sampler)
+    train_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=train_sampler, pin_memory=True)
+    val_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=val_sampler, pin_memory=True)
     
     return train_dataloader, val_dataloader
 
