@@ -43,7 +43,8 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
     for epoch in range(epochs):
         model.train()
         train_loss = 0.0
-        for i, batch in tqdm(enumerate(train_dataloader, 0), unit="batch", total=len(train_dataloader)):
+        # for i, batch in tqdm(enumerate(train_dataloader, 0), unit="batch", total=len(train_dataloader)):
+        for i, batch in tqdm(enumerate(train_dataloader)):
             inputs, targets = batch
             inputs, targets = inputs.to(device), targets.to(device)
 
