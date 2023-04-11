@@ -90,7 +90,7 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
                 best_val_acc = val_acc
                 no_improvement_count = 0
                 best_val_epoch = epoch + 1
-                torch.save(model.state_dict(), os.path.join(save_dir, f"best_model.pt"))
+                torch.save(model.module.state_dict(), os.path.join(save_dir, f"best_model.pt"))
             else:
                 no_improvement_count += 1
 
@@ -98,7 +98,7 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
                 print(f"Early stopping after {early_stopping_patience} epochs without improvement.")
                 break
 
-    torch.save(model.state_dict(), os.path.join(save_dir, "final_model.pt"))
+    torch.save(model.module.state_dict(), os.path.join(save_dir, "final_model.pt"))
     
     # Plot loss vs. training step graph
     plt.figure(figsize=(10, 5))
@@ -227,8 +227,6 @@ def main(config):
     best_val_epoch, best_val_acc, final_loss = train_model(model, train_dataloader, val_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
     print('Training Done')
     
-    plot_confusion_matrix(data_loader = val_dataloader, save_dir = save_dir, model = model)
-    
     config['best_val_acc'] = best_val_acc
     config['best_val_epoch'] = best_val_epoch
     config['final_loss'] = final_loss
@@ -237,6 +235,9 @@ def main(config):
     file = open(f'{save_dir}/config.yaml',"w")
     yaml.dump(config, file)
     file.close()
+    
+    plot_confusion_matrix(data_loader = val_dataloader, save_dir = save_dir, model = model)
+
     
 if __name__ == '__main__':
 
