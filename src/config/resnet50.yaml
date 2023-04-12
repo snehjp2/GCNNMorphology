@@ -1,5 +1,5 @@
 model : ResNet50
-dataset : /home/pandya.sne/Galaxy10_DECals.h5
+dataset : /n/holystore01/LABS/iaifi_lab/Users/spandya/data/Galaxy10_DECals.h5
 
 parameters :
   lr : 1.0e-2
@@ -12,7 +12,7 @@ parameters :
   report_interval : 5
   lr_decay : 0.1
   step_size : 50
-  milestones : [ 50, 75 ]
+  milestones : [ 25, 50, 75 ]
 
 
-save_dir : ../../../save_dir/
+save_dir : /n/home04/spandya/final_models/

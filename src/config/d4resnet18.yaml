@@ -1,4 +1,4 @@
-model : D16
+model : d4resnet18
 dataset : /n/holystore01/LABS/iaifi_lab/Users/spandya/data/Galaxy10_DECals.h5
 
 parameters :

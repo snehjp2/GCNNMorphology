@@ -44,7 +44,7 @@ Exploratory data analysis, morphological opening, and noise generation.
 Equivariant Wide ResNet models as defined in the e2cnn library. We thank the author's of the repository for open-sourcing this code.
 
 `src/scripts/e2resnet.py`
-Equivariant ResNet model generously provided by David Klee. We thank David for sharing this model.
+Equivariant ResNet models. We thank David Klee for sharing the ResNet18 model code.
 
 `src/scripts/models.py`
 Defines C2, C4, C8, C16, D2, D4, D8, and D16-equivariant architectures. Pretrained ResNet18, ResNet50, and Wide ResNet from PyTorch.
@@ -54,13 +54,17 @@ Code to train, validate, and test models as defined in .yaml files in `src/confi
 
 To train a model, run:
 
-`python train.py --config [path to model.yaml file]`
+```console
+python train.py --config <path to model.yaml file>`
+```
 
 To test a model(s), run:
 
-`python test.py --path [path to directory with trained models]`
+```console
+`python test.py --path <path to directory with trained models>`
+```
 
-Any comments on this work are welcome. Please email pandya.sne AT northeastern DOT edu.
+Any comments on this work are welcome.
 
 
 ## Statement on Broader Impact
