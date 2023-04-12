@@ -42,7 +42,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         
         
         self.block1 = e2cnn_nn.SequentialModule(
-            e2cnn_nn.MaskModule(in_type, 224, margin=1),
+            e2cnn_nn.MaskModule(in_type, 256, margin=1),
             e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False, stride=2),
             e2cnn_nn.InnerBatchNorm(out_type),
             e2cnn_nn.ReLU(out_type, inplace=True)
