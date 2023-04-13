@@ -32,6 +32,7 @@ def load_models(directory_path):
             model_name = os.path.splitext(file_name)[0]
             model = model_dict[str(model_name)]()
             model.load_state_dict(torch.load(file_path, map_location=device))
+            model = nn.DataParallel(model)
             model = model.to(device)
 
             trained_models[model_name] = model
@@ -50,7 +51,6 @@ def compute_metrics(eval_loader: DataLoader, model: nn.Module, model_name: str, 
         'Edge-on Galaxies without Bulge', 'Edge-on Galaxies with Bulge')
     
     y_pred, y_true = [], []
-    model = model.to(device)
     
     for batch in tqdm(eval_loader, unit="batch", total=len(eval_loader)):
         inputs, labels = batch[0].to(device), batch[1].to(device)
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     
     test_path = '/Users/snehpandya/Projects/GCNNMorphology/data/random_rotations.hdf5'
     test_dataset = Galaxy10DECalsTest(test_path, transform)
-    test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=False)
     
     main()
     

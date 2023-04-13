@@ -200,7 +200,7 @@ class E2ResNet50(torch.nn.Module):
         self.in_type = nn.FieldType(r2_act, 3 * [r2_act.trivial_repr])
         out_type = nn.FieldType(r2_act, self.inplanes * [r2_act.regular_repr])
 
-        self.mask_module = nn.MaskModule(self.in_type, 224, margin=1)
+        self.mask_module = nn.MaskModule(self.in_type, 256, margin=1)
         self.conv1 = nn.R2Conv(self.in_type, out_type,kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = self.norm_layer(out_type)
         self.relu1 = nn.ReLU(out_type, True)
