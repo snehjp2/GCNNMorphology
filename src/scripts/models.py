@@ -149,7 +149,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         c = self.gpool.out_type.size
         # Fully Connected
         self.fully_net = torch.nn.Sequential(
-            torch.nn.Linear(4*c, 64),
+            torch.nn.Linear(16*c, 64),
             torch.nn.BatchNorm1d(64),
             torch.nn.ELU(inplace=True),
             torch.nn.Linear(64, 32),
