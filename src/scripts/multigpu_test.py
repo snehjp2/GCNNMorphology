@@ -92,12 +92,18 @@ def validate(rank, world_size, model_path, model_name, dataset, batch_size):
     # Validation loop
     all_preds, all_targets = [], []
     with torch.no_grad():
-        for data, target in val_loader:
+        count = 0
+        if rank == 0:
+            print('Data Fully loaded. Starting validation...')
+        for data, target, angles in val_loader:
             data, target = data.to(rank), target.to(rank)
             output = ddp_model(data)
             preds = output.argmax(dim=1)
             all_preds.append(preds)
             all_targets.append(target)
+            if rank == 0:
+                count +=1
+                print(f'Batch {count} of {len(val_loader)}')
 
     # Gather predictions from all processes to the main GPU
     all_preds = torch.cat(all_preds, dim=0)
