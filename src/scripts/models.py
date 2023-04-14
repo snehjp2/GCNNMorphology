@@ -279,10 +279,10 @@ def load_densenet121():
 
 
 model_dict = {
-    'ResNet18' : load_resnet18,
-    'ResNet50' : load_resnet50,
-    'WRN50_2' : load_wrn50_2,
-    'densenet121' : load_densenet121,
+    'ResNet18' : load_resnet18, ## done
+    'ResNet50' : load_resnet50, ## done
+    'WRN50_2' : load_wrn50_2, ## done
+    'densenet121' : load_densenet121, ## done
     'D2' : load_d2,
     'D4' : load_d4,
     'D8' : load_d8,
@@ -291,17 +291,17 @@ model_dict = {
     'C4' : load_c4,
     'C8' : load_c8,
     'C16' : load_c16,
-    'WRN16d8d4d1': e2wrn.wrn16_8_stl_d8d4d1,
-    'WRN16d8d4d4' : e2wrn.wrn16_8_stl_d8d4d4,
-    'WRN16d1d1d1' : e2wrn.wrn16_8_stl_d1d1d1,
-    'WRN28_10_d8d4d1' : e2wrn.wrn28_10_d8d4d1,
-    'WRN28_7_d8d4d1' : e2wrn.wrn28_7_d8d4d1,
-    'WRN28_10_c8c4c1' : e2wrn.wrn28_10_c8c4c1,
-    'WRN28_10_d1d1d1' : e2wrn.wrn28_10_d1d1d1,
-    'c1resnet18' : e2resnet.c1resnet18,
-    'd1resnet18' : e2resnet.d1resnet18,
-    'c4resnet18' : e2resnet.c4resnet18,
-    'd4resnet18' : e2resnet.d4resnet18,
+    'WRN16d8d4d1': e2wrn.wrn16_8_stl_d8d4d1,  ## done
+    'WRN16d8d4d4' : e2wrn.wrn16_8_stl_d8d4d4, ## done
+    'WRN16d1d1d1' : e2wrn.wrn16_8_stl_d1d1d1, ## done
+    'WRN28_10_d8d4d1' : e2wrn.wrn28_10_d8d4d1, ## done
+    'WRN28_7_d8d4d1' : e2wrn.wrn28_7_d8d4d1, ## done
+    'WRN28_10_c8c4c1' : e2wrn.wrn28_10_c8c4c1, ## done
+    'WRN28_10_d1d1d1' : e2wrn.wrn28_10_d1d1d1, ## done
+    'c1resnet18' : e2resnet.c1resnet18, ## done
+    'd1resnet18' : e2resnet.d1resnet18, ## done
+    'c4resnet18' : e2resnet.c4resnet18, ## done
+    'd4resnet18' : e2resnet.d4resnet18, ## done
     'small_c4resnet18' : e2resnet.small_c4resnet,
     'c4resnet50' : e2resnet.c4resnet50,
     'c2resnet50' : e2resnet.c2resnet50,
