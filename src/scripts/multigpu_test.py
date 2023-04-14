@@ -60,7 +60,7 @@ def load_models(directory_path):
     return trained_models
 
 
-def validate(rank, world_size, model_path, dataset, batch_size):
+def validate(rank, world_size, model_path, model_name, dataset, batch_size):
     dist.init_process_group(
         backend='gloo',
         init_method='env://',
@@ -69,7 +69,10 @@ def validate(rank, world_size, model_path, dataset, batch_size):
     )
     
     # Load the saved model
-    model = torch.load(model_path, map_location=f'cuda:{rank}')
+    # model = torch.load(model_path, map_location=f'cuda:{rank}')
+    
+    model = model_dict[str(model_name)]()
+    model.load_state_dict(torch.load(model_path, map_location=f'cuda:{rank}'))
     model.to(rank)
     ddp_model = DDP(model, device_ids=[rank])
     ddp_model.eval()
@@ -177,6 +180,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = 'Path to Model')
     parser.add_argument('--model_path', metavar = 'model_path', required=True,
                     help='Location of the model')
+    parser.add_argument('--model_name', metavar = 'model_name', required=True,
+                    help='Name of the model')
 
     args = parser.parse_args()
     
@@ -201,7 +206,7 @@ if __name__ == '__main__':
 
     mp.spawn(
         validate,
-        args=(world_size, args.model_path, test_dataset, 128) ,
+        args=(world_size, args.model_path, args.model_name, test_dataset, 128) ,
         nprocs=world_size,
         join=True
         )
