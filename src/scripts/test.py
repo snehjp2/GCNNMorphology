@@ -54,6 +54,7 @@ def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, 
     y_pred, y_true = [], []
     
     model = nn.DataParallel(model)
+    model.to(f'cuda:{model.device_ids[0]}')
     model.eval()
     
     for batch in tqdm(test_loader, unit="batch", total=len(test_loader)):
@@ -65,8 +66,8 @@ def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, 
         y_pred.extend(pred_labels)
         y_true.extend(label.cpu().numpy())
     
-    y_pred, y_true = np.asarray(y_pred), np.asarray(y_true)    
-    sklearn_report = classification_report(y_true, y_pred, output_dict=True, labels=classes)
+    y_pred, y_true = np.asarray(y_pred), np.asarray(y_true)  
+    sklearn_report = classification_report(y_true, y_pred, output_dict=True, target_names=classes)
 
     cf_matrix = confusion_matrix(y_true, y_pred)
     df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix, axis=1)[:, None], index = [i for i in classes],
@@ -114,7 +115,7 @@ if __name__ == '__main__':
     
     test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
     print("Test Dataset Loaded!")
-    test_dataloader = DataLoader(test_dataset, batch_size = 256, shuffle=True, pin_memory=True, num_workers=4)
+    test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=True, pin_memory=True)
     
     main(str(args.model_path))
     
