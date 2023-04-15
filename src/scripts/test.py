@@ -114,7 +114,7 @@ if __name__ == '__main__':
     
     test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
     print("Test Dataset Loaded!")
-    test_dataloader = DataLoader(test_dataset, batch_size = 256, shuffle=True)
+    test_dataloader = DataLoader(test_dataset, batch_size = 256, shuffle=True, pin_memory=True, num_workers=4)
     
     main(str(args.model_path))
     
