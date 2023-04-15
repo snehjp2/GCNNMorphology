@@ -28,6 +28,7 @@ def load_models(directory_path):
     
     for file_name in os.listdir(directory_path):
         file_path = os.path.join(directory_path, file_name)
+        print(file_path)
         if file_name.endswith('.pt') and os.path.isfile(file_path):
             print(f'Loading {file_name}...')
             model_name = os.path.splitext(file_name)[0]
@@ -111,8 +112,9 @@ if __name__ == '__main__':
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
     
-    test_dataset = Galaxy10DECalsTest(args.data_path, transform)
+    test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
+    print("Test Dataset Loaded!")
     test_dataloader = DataLoader(test_dataset, batch_size = 256, shuffle=True)
     
-    main(args.model_path)
+    main(str(args.model_path))
     
