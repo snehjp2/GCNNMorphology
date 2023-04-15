@@ -42,7 +42,7 @@ def load_models(directory_path):
     return trained_models
 
 @torch.no_grad()
-def compute_metrics(eval_loader: DataLoader, model: nn.Module, model_name: str, save_dir: str):
+def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, save_dir: str):
     
     classes = ('Disturbed Galaxies', 'Merging Galaxies', 
         'Round Smooth Galaxies', 'In-between Round Smooth Galaxies', 
@@ -52,14 +52,14 @@ def compute_metrics(eval_loader: DataLoader, model: nn.Module, model_name: str, 
     
     y_pred, y_true = [], []
     
-    for batch in tqdm(eval_loader, unit="batch", total=len(eval_loader)):
-        inputs, labels = batch[0].to(device), batch[1].to(device)
-        outputs = model(inputs)
+    for batch in tqdm(test_loader, unit="batch", total=len(test_loader)):
+        input, label, angle, redshift = batch
+        input, label = input.to(device), label.to(device)
+        outputs = model(input)
         pred_labels = torch.argmax(outputs, dim=-1).cpu().numpy()
-        tmp = torch.tensor(labels == pred_labels, dtype=torch.float).mean()
         
         y_pred.extend(pred_labels)
-        y_true.extend(labels.cpu().numpy())
+        y_true.extend(label.cpu().numpy())
     
     y_pred, y_true = np.asarray(y_pred), np.asarray(y_true)    
     sklearn_report = classification_report(y_true, y_pred, output_dict=True, labels=classes)
