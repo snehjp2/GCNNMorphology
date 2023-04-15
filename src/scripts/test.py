@@ -75,20 +75,20 @@ def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, 
     return sklearn_report
     
 @torch.no_grad()
-def main():
+def main(model_dir):
     
-    trained_models = load_models(args.path)
+    trained_models = load_models(model_dir)
     print('Models Loaded!')
     
     model_metrics = dict.fromkeys(trained_models.keys())
     
     for model_name, model in tqdm(trained_models.items()):
-        full_report = compute_metrics(eval_loader=test_dataloader, model=model, model_name=model_name, save_dir=args.path)
+        full_report = compute_metrics(eval_loader=test_dataloader, model=model, model_name=model_name, save_dir=model_dir)
         
         model_metrics[model_name] = full_report
 
     print('Compiling All Metrics')
-    with open(f'{args.path}/test_metrics.yaml', 'w') as file:
+    with open(f'{model_dir}/test_metrics.yaml', 'w') as file:
         yaml.dump(model_metrics, file)
     
 if __name__ == '__main__':
@@ -99,8 +99,10 @@ if __name__ == '__main__':
         device = torch.device('cpu') 
     
     parser = argparse.ArgumentParser(description = 'Path to Models')
-    parser.add_argument('--path', metavar = 'path', required=True,
+    parser.add_argument('--model_path', metavar = 'model_path', required=True,
                     help='Location of the model directory')
+    
+    parser.add_argument('--data_path', metavar = 'data_path', required=True,help='Location of the test data file')
 
     args = parser.parse_args()
     
@@ -109,9 +111,8 @@ if __name__ == '__main__':
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
     
-    test_path = args.path
-    test_dataset = Galaxy10DECalsTest(test_path, transform)
+    test_dataset = Galaxy10DECalsTest(args.data_path, transform)
     test_dataloader = DataLoader(test_dataset, batch_size = 256, shuffle=True)
     
-    main()
+    main(args.model_path)
     
