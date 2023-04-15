@@ -32,9 +32,7 @@ def load_models(directory_path):
             model_name = os.path.splitext(file_name)[0]
             model = model_dict[str(model_name)]()
             model.load_state_dict(torch.load(file_path, map_location=device))
-            model = nn.DataParallel(model)
             print(f'Loaded {model_name}')
-            model.eval()
 
             trained_models[model_name] = model
             
@@ -52,6 +50,9 @@ def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, 
         'Edge-on Galaxies without Bulge', 'Edge-on Galaxies with Bulge')
     
     y_pred, y_true = [], []
+    
+    model = nn.DataParallel(model)
+    model.eval()
     
     for batch in tqdm(test_loader, unit="batch", total=len(test_loader)):
         input, label, angle, redshift = batch
