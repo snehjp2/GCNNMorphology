@@ -33,6 +33,7 @@ def load_models(directory_path):
             model = model_dict[str(model_name)]()
             model.load_state_dict(torch.load(file_path, map_location=device))
             model = nn.DataParallel(model)
+            print(f'Loaded {model_name}')
             model.eval()
 
             trained_models[model_name] = model
