@@ -19,8 +19,8 @@ class Galaxy10DECals(Dataset):
         self.transform = transform
         with h5py.File(self.dataset_path,"r") as f:
             self.img = f['images'][()]
-            self.label = f['ans'][()]
-            self.length = len(f['ans'][()])
+            self.label = f['labels'][()]
+            self.length = len(f['labels'][()])
 
     def __getitem__(self, idx):
 
@@ -55,9 +55,10 @@ class Galaxy10DECalsTest(Dataset):
         img = self.dataset['images'][idx]
         label = torch.tensor(self.dataset['labels'][idx],dtype=torch.long)
         angle = torch.tensor(self.dataset['angles'][idx],dtype=torch.long)
+        redshift = torch.tensor(self.dataset['redshifts'][idx],dtype=torch.float)
         if self.transform:
             img = self.transform(img)
-        return img, label , angle
+        return img, label , angle, redshift
 
     def __len__(self):
         return self.length

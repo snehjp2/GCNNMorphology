@@ -109,7 +109,7 @@ if __name__ == '__main__':
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
     
-    test_path = '/Users/snehpandya/Projects/GCNNMorphology/data/random_rotations.hdf5'
+    test_path = args.path
     test_dataset = Galaxy10DECalsTest(test_path, transform)
     test_dataloader = DataLoader(test_dataset, batch_size = 256, shuffle=True)
     
