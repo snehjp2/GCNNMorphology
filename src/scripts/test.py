@@ -87,7 +87,7 @@ def main(model_dir):
     model_metrics = dict.fromkeys(trained_models.keys())
     
     for model_name, model in tqdm(trained_models.items()):
-        full_report = compute_metrics(eval_loader=test_dataloader, model=model, model_name=model_name, save_dir=model_dir)
+        full_report = compute_metrics(test_loader=test_dataloader, model=model, model_name=model_name, save_dir=model_dir)
         
         model_metrics[model_name] = full_report
 

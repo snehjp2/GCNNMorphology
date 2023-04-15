@@ -56,6 +56,7 @@ class Galaxy10DECalsTest(Dataset):
         label = torch.tensor(self.dataset['labels'][idx],dtype=torch.long)
         angle = torch.tensor(self.dataset['angles'][idx],dtype=torch.long)
         redshift = torch.tensor(self.dataset['redshifts'][idx],dtype=torch.float)
+        
         if self.transform:
             img = self.transform(img)
         return img, label , angle, redshift
