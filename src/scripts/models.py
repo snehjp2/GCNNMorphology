@@ -283,14 +283,14 @@ model_dict = {
     'ResNet50' : load_resnet50, ## done
     'WRN50_2' : load_wrn50_2, ## done
     'densenet121' : load_densenet121, ## done
-    'D2' : load_d2,
-    'D4' : load_d4,
-    'D8' : load_d8,
-    'D16' : load_d16,
-    'C2' : load_c2,
-    'C4' : load_c4,
-    'C8' : load_c8,
-    'C16' : load_c16,
+    'D2' : load_d2, ## done 
+    'D4' : load_d4, ## done
+    'D8' : load_d8, ## done
+    'D16' : load_d16, ## done
+    'C2' : load_c2, ## done
+    'C4' : load_c4, ## done
+    'C8' : load_c8,  ## done
+    'C16' : load_c16, ## done
     'WRN16d8d4d1': e2wrn.wrn16_8_stl_d8d4d1,  ## done
     'WRN16d8d4d4' : e2wrn.wrn16_8_stl_d8d4d4, ## done
     'WRN16d1d1d1' : e2wrn.wrn16_8_stl_d1d1d1, ## done
@@ -303,8 +303,8 @@ model_dict = {
     'c4resnet18' : e2resnet.c4resnet18, ## done
     'd4resnet18' : e2resnet.d4resnet18, ## done
     'small_c4resnet18' : e2resnet.small_c4resnet,
-    'c4resnet50' : e2resnet.c4resnet50,
-    'c2resnet50' : e2resnet.c2resnet50,
+    'c4resnet50' : e2resnet.c4resnet50, ## done 
+    'c2resnet50' : e2resnet.c2resnet50, ## done
     'small_c4resnet50' : e2resnet.small_c4resnet50
 }
 

@@ -84,7 +84,7 @@ def validate(rank, world_size, model_path, model_name, dataset, batch_size):
     val_loader = DataLoader(
         dataset,
         batch_size=batch_size,
-        num_workers=4,
+        num_workers=2,
         pin_memory=True,
         sampler=val_sampler
     )
@@ -202,6 +202,7 @@ if __name__ == '__main__':
     
     test_path = '/n/holystore01/LABS/iaifi_lab/Users/spandya/data/random_rotations.hdf5'
     test_dataset = Galaxy10DECalsTest(test_path, transform)
+    print(len(test_dataset))
     # test_sampler = torch.utils.data.distributed.DistributedSampler(test_dataset, shuffle=True)
     # test_loader = torch.utils.data.DataLoader(
     #         test_dataset, batch_size=128, shuffle=(test_sampler is None),
