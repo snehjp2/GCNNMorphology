@@ -29,10 +29,11 @@ def load_models(directory_path):
     for file_name in os.listdir(directory_path):
         file_path = os.path.join(directory_path, file_name)
         if file_name.endswith('.pt') and os.path.isfile(file_path):
+            print(f'Loading {file_name}...')
             model_name = os.path.splitext(file_name)[0]
             model = model_dict[str(model_name)]()
             model.load_state_dict(torch.load(file_path, map_location=device))
-            print(f'Loaded {model_name}')
+            print(f'Finishing Loading {model_name}')
 
             trained_models[model_name] = model
             
@@ -80,7 +81,7 @@ def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, 
 def main(model_dir):
     
     trained_models = load_models(model_dir)
-    print('Models Loaded!')
+    print('All Models Loaded!')
     
     model_metrics = dict.fromkeys(trained_models.keys())
     
@@ -95,10 +96,7 @@ def main(model_dir):
     
 if __name__ == '__main__':
     
-    if torch.cuda.is_available():
-        device = torch.device('cuda')
-    else:
-        device = torch.device('cpu') 
+    device = ('cuda' if torch.cuda.is_available() else 'cpu')
     
     parser = argparse.ArgumentParser(description = 'Path to Models and Data')
     parser.add_argument('--model_path', metavar = 'model_path', required=True,

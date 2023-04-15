@@ -247,10 +247,7 @@ def main(config):
     
 if __name__ == '__main__':
 
-    if torch.cuda.is_available():
-        device = torch.device('cuda')
-    else:
-        device = torch.device('cpu') 
+    device = ('cuda' if torch.cuda.is_available() else 'cpu')
         
     set_all_seeds(42)
 
