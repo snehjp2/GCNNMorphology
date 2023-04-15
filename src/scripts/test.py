@@ -33,7 +33,7 @@ def load_models(directory_path):
             model = model_dict[str(model_name)]()
             model.load_state_dict(torch.load(file_path, map_location=device))
             model = nn.DataParallel(model)
-            model = model.to(device)
+            model.eval()
 
             trained_models[model_name] = model
             
@@ -98,11 +98,11 @@ if __name__ == '__main__':
     else:
         device = torch.device('cpu') 
     
-    parser = argparse.ArgumentParser(description = 'Path to Models')
+    parser = argparse.ArgumentParser(description = 'Path to Models and Data')
     parser.add_argument('--model_path', metavar = 'model_path', required=True,
                     help='Location of the model directory')
     
-    parser.add_argument('--data_path', metavar = 'data_path', required=True,help='Location of the test data file')
+    parser.add_argument('--data_path', metavar = 'data_path', required=True, help='Location of the test data file')
 
     args = parser.parse_args()
     
