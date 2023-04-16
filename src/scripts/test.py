@@ -76,6 +76,7 @@ def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, 
     sn.heatmap(df_cm, annot=True)
     plt.title(f'{model_name} Confusion Matrix')
     plt.savefig(os.path.join(save_dir, f"confusion_matrix_{model_name}.png"), bbox_inches='tight')
+    plt.close()
     
     return sklearn_report
     
@@ -93,7 +94,7 @@ def main(model_dir):
         model_metrics[model_name] = full_report
 
     print('Compiling All Metrics')
-    with open(f'{model_dir}/test_metrics.yaml', 'w') as file:
+    with open(f'{model_dir}/test_metrics_2.yaml', 'w') as file:
         yaml.dump(model_metrics, file)
     
 if __name__ == '__main__':
