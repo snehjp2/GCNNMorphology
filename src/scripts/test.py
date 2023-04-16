@@ -53,8 +53,8 @@ def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, 
     
     y_pred, y_true = [], []
     
-    model = nn.DataParallel(model)
-    model.to(f'cuda:{model.device_ids[0]}')
+    # model = nn.DataParallel(model)
+    model.to(device)
     model.eval()
     
     for batch in tqdm(test_loader, unit="batch", total=len(test_loader)):
@@ -116,7 +116,7 @@ if __name__ == '__main__':
     
     test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
     print("Test Dataset Loaded!")
-    test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=True, pin_memory=True)
+    test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=True)
     
     main(str(args.model_path))
     
