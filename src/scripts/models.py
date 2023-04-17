@@ -9,7 +9,7 @@ import torchvision
 from torchsummary import summary
 
 num_classes = 10
-feature_fields = [8, 8, 16, 16, 16, 16, 32, 32, 32]    
+feature_fields = [24, 24, 48, 48, 48, 48, 96, 96, 96]    
 
 class GeneralSteerableCNN(torch.nn.Module):
     
@@ -68,7 +68,7 @@ class GeneralSteerableCNN(torch.nn.Module):
         # the output type of the third convolution layer are 48 regular feature fields of C8
         out_type = e2cnn_nn.FieldType(self.r2_act, feature_fields[2]*[self.r2_act.regular_repr])
         self.block3 = e2cnn_nn.SequentialModule(
-            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False, stride=1),
+            e2cnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False, stride=2),
             e2cnn_nn.InnerBatchNorm(out_type),
             e2cnn_nn.ReLU(out_type, inplace=True)
         )
@@ -149,11 +149,11 @@ class GeneralSteerableCNN(torch.nn.Module):
         c = self.gpool.out_type.size
         # Fully Connected
         self.fully_net = torch.nn.Sequential(
-            torch.nn.Linear(16*c, 64),
+            torch.nn.Linear(9*c, 64),
             torch.nn.BatchNorm1d(64),
             torch.nn.ELU(inplace=True),
             torch.nn.Linear(64, 32),
-            torch.nn.BatchNorm1d(64),
+            torch.nn.BatchNorm1d(32),
             torch.nn.ELU(inplace=True),
             torch.nn.Linear(32, n_classes),
         )
