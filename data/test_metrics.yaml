@@ -1,0 +1,1550 @@
+C16:
+  Barred Spiral Galaxies:
+    f1-score: 0.8839779005524863
+    precision: 0.8648648648648649
+    recall: 0.903954802259887
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8676923076923077
+    precision: 0.9527027027027027
+    recall: 0.7966101694915254
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.5424954792043398
+    precision: 0.7537688442211056
+    recall: 0.423728813559322
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.9239280774550483
+    precision: 0.9051490514905149
+    recall: 0.943502824858757
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9306930693069306
+    precision: 0.9320113314447592
+    recall: 0.9293785310734464
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8574999999999999
+    precision: 0.7690582959641256
+    recall: 0.9689265536723164
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.9215406562054208
+    precision: 0.930835734870317
+    recall: 0.9124293785310734
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.9078590785907859
+    precision: 0.8723958333333334
+    recall: 0.9463276836158192
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6623544631306598
+    precision: 0.6109785202863962
+    recall: 0.7231638418079096
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7848101265822784
+    precision: 0.7815126050420168
+    recall: 0.788135593220339
+    support: 354
+  accuracy: 0.8336158192090396
+  macro avg:
+    f1-score: 0.8282851158720257
+    precision: 0.8373277784220136
+    recall: 0.8336158192090396
+    support: 3540
+  weighted avg:
+    f1-score: 0.8282851158720258
+    precision: 0.8373277784220136
+    recall: 0.8336158192090396
+    support: 3540
+C2:
+  Barred Spiral Galaxies:
+    f1-score: 0.7994505494505494
+    precision: 0.7780748663101604
+    recall: 0.8220338983050848
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.7712418300653594
+    precision: 0.9147286821705426
+    recall: 0.6666666666666666
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.4352331606217617
+    precision: 0.56
+    recall: 0.3559322033898305
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8437917222963952
+    precision: 0.8
+    recall: 0.8926553672316384
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.882857142857143
+    precision: 0.8930635838150289
+    recall: 0.8728813559322034
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.842384105960265
+    precision: 0.7930174563591023
+    recall: 0.8983050847457628
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.8064046579330422
+    precision: 0.8318318318318318
+    recall: 0.7824858757062146
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.8859060402684564
+    precision: 0.8439897698209718
+    recall: 0.9322033898305084
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6064209274673009
+    precision: 0.5236139630390144
+    recall: 0.7203389830508474
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7573099415204678
+    precision: 0.7848484848484848
+    recall: 0.731638418079096
+    support: 354
+  accuracy: 0.7675141242937853
+  macro avg:
+    f1-score: 0.7631000078440742
+    precision: 0.7723168638195137
+    recall: 0.7675141242937853
+    support: 3540
+  weighted avg:
+    f1-score: 0.7631000078440741
+    precision: 0.7723168638195136
+    recall: 0.7675141242937853
+    support: 3540
+C4:
+  Barred Spiral Galaxies:
+    f1-score: 0.8635724331926863
+    precision: 0.8599439775910365
+    recall: 0.867231638418079
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8432601880877743
+    precision: 0.9471830985915493
+    recall: 0.7598870056497176
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.5212947189097105
+    precision: 0.6566523605150214
+    recall: 0.4322033898305085
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8971193415637859
+    precision: 0.872
+    recall: 0.923728813559322
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9119318181818182
+    precision: 0.9171428571428571
+    recall: 0.9067796610169492
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8733850129198967
+    precision: 0.8047619047619048
+    recall: 0.9548022598870056
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.8857545839210156
+    precision: 0.8845070422535212
+    recall: 0.8870056497175142
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.900537634408602
+    precision: 0.8589743589743589
+    recall: 0.9463276836158192
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.661596958174905
+    precision: 0.6
+    recall: 0.7372881355932204
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7856115107913669
+    precision: 0.8005865102639296
+    recall: 0.7711864406779662
+    support: 354
+  accuracy: 0.8186440677966101
+  macro avg:
+    f1-score: 0.8144064200151562
+    precision: 0.820175211009418
+    recall: 0.8186440677966103
+    support: 3540
+  weighted avg:
+    f1-score: 0.8144064200151561
+    precision: 0.8201752110094178
+    recall: 0.8186440677966101
+    support: 3540
+C8:
+  Barred Spiral Galaxies:
+    f1-score: 0.8861454046639232
+    precision: 0.8613333333333333
+    recall: 0.9124293785310734
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8878787878787879
+    precision: 0.9575163398692811
+    recall: 0.827683615819209
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.49097472924187724
+    precision: 0.68
+    recall: 0.384180790960452
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.929655172413793
+    precision: 0.9083557951482479
+    recall: 0.9519774011299436
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9289772727272726
+    precision: 0.9342857142857143
+    recall: 0.923728813559322
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8705882352941176
+    precision: 0.8102189781021898
+    recall: 0.940677966101695
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.9090909090909091
+    precision: 0.9002770083102493
+    recall: 0.9180790960451978
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.905349794238683
+    precision: 0.88
+    recall: 0.9322033898305084
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6568265682656828
+    precision: 0.5816993464052288
+    recall: 0.7542372881355932
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.772594752186589
+    precision: 0.7981927710843374
+    recall: 0.748587570621469
+    support: 354
+  accuracy: 0.8293785310734463
+  macro avg:
+    f1-score: 0.8238081626001635
+    precision: 0.831187928653858
+    recall: 0.8293785310734462
+    support: 3540
+  weighted avg:
+    f1-score: 0.8238081626001637
+    precision: 0.8311879286538584
+    recall: 0.8293785310734463
+    support: 3540
+D16:
+  Barred Spiral Galaxies:
+    f1-score: 0.896457765667575
+    precision: 0.8657894736842106
+    recall: 0.9293785310734464
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8763358778625955
+    precision: 0.9534883720930233
+    recall: 0.8107344632768362
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.5589836660617059
+    precision: 0.7817258883248731
+    recall: 0.4350282485875706
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.9338959212376934
+    precision: 0.9299719887955182
+    recall: 0.9378531073446328
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9385474860335196
+    precision: 0.9281767955801105
+    recall: 0.9491525423728814
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8812260536398467
+    precision: 0.8041958041958042
+    recall: 0.9745762711864406
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.915014164305949
+    precision: 0.9176136363636364
+    recall: 0.9124293785310734
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.8882978723404255
+    precision: 0.8391959798994975
+    recall: 0.943502824858757
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.7107652399481194
+    precision: 0.657074340527578
+    recall: 0.7740112994350282
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7646219686162624
+    precision: 0.7723342939481268
+    recall: 0.7570621468926554
+    support: 354
+  accuracy: 0.8423728813559322
+  macro avg:
+    f1-score: 0.8364146015713692
+    precision: 0.8449566573412379
+    recall: 0.8423728813559321
+    support: 3540
+  weighted avg:
+    f1-score: 0.8364146015713694
+    precision: 0.8449566573412379
+    recall: 0.8423728813559322
+    support: 3540
+D2:
+  Barred Spiral Galaxies:
+    f1-score: 0.8571428571428571
+    precision: 0.8419618528610354
+    recall: 0.8728813559322034
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8246445497630333
+    precision: 0.9354838709677419
+    recall: 0.7372881355932204
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.49825783972125437
+    precision: 0.65
+    recall: 0.403954802259887
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8999999999999999
+    precision: 0.8626943005181347
+    recall: 0.940677966101695
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.8920454545454545
+    precision: 0.8971428571428571
+    recall: 0.8870056497175142
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8697916666666667
+    precision: 0.8067632850241546
+    recall: 0.943502824858757
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.8917748917748918
+    precision: 0.911504424778761
+    recall: 0.8728813559322034
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.8990578734858681
+    precision: 0.8586118251928021
+    recall: 0.943502824858757
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6423357664233577
+    precision: 0.5641025641025641
+    recall: 0.7457627118644068
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7536656891495601
+    precision: 0.7835365853658537
+    recall: 0.7259887005649718
+    support: 354
+  accuracy: 0.8073446327683615
+  macro avg:
+    f1-score: 0.8028716588672943
+    precision: 0.8111801565953904
+    recall: 0.8073446327683615
+    support: 3540
+  weighted avg:
+    f1-score: 0.8028716588672944
+    precision: 0.8111801565953906
+    recall: 0.8073446327683615
+    support: 3540
+D4:
+  Barred Spiral Galaxies:
+    f1-score: 0.8640646029609691
+    precision: 0.8251928020565553
+    recall: 0.9067796610169492
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8619631901840491
+    precision: 0.9429530201342282
+    recall: 0.7937853107344632
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.5474452554744524
+    precision: 0.7731958762886598
+    recall: 0.423728813559322
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.914364640883978
+    precision: 0.8945945945945946
+    recall: 0.9350282485875706
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9267605633802817
+    precision: 0.9241573033707865
+    recall: 0.9293785310734464
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8701298701298701
+    precision: 0.8052884615384616
+    recall: 0.9463276836158192
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.9189944134078212
+    precision: 0.9088397790055248
+    recall: 0.9293785310734464
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.9131034482758621
+    precision: 0.8921832884097035
+    recall: 0.9350282485875706
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6973180076628352
+    precision: 0.6363636363636364
+    recall: 0.7711864406779662
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7983074753173485
+    precision: 0.7971830985915493
+    recall: 0.7994350282485876
+    support: 354
+  accuracy: 0.8370056497175141
+  macro avg:
+    f1-score: 0.8312451467677467
+    precision: 0.8399951860353699
+    recall: 0.8370056497175142
+    support: 3540
+  weighted avg:
+    f1-score: 0.8312451467677466
+    precision: 0.83999518603537
+    recall: 0.8370056497175141
+    support: 3540
+D8:
+  Barred Spiral Galaxies:
+    f1-score: 0.8867403314917127
+    precision: 0.8675675675675676
+    recall: 0.9067796610169492
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8417721518987342
+    precision: 0.9568345323741008
+    recall: 0.751412429378531
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.5567010309278351
+    precision: 0.7105263157894737
+    recall: 0.4576271186440678
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.9302325581395349
+    precision: 0.9018567639257294
+    recall: 0.96045197740113
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9298998569384835
+    precision: 0.9420289855072463
+    recall: 0.9180790960451978
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8676844783715012
+    precision: 0.7893518518518519
+    recall: 0.963276836158192
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.9247910863509751
+    precision: 0.9120879120879121
+    recall: 0.9378531073446328
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.9103260869565217
+    precision: 0.8769633507853403
+    recall: 0.9463276836158192
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6953125
+    precision: 0.644927536231884
+    recall: 0.7542372881355932
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7869318181818181
+    precision: 0.7914285714285715
+    recall: 0.7824858757062146
+    support: 354
+  accuracy: 0.8378531073446328
+  macro avg:
+    f1-score: 0.8330391899257117
+    precision: 0.8393573387549678
+    recall: 0.8378531073446329
+    support: 3540
+  weighted avg:
+    f1-score: 0.8330391899257117
+    precision: 0.8393573387549677
+    recall: 0.8378531073446328
+    support: 3540
+ResNet18:
+  Barred Spiral Galaxies:
+    f1-score: 0.7835926449787834
+    precision: 0.7847025495750708
+    recall: 0.7824858757062146
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.7845659163987139
+    precision: 0.9104477611940298
+    recall: 0.6892655367231638
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.43918918918918926
+    precision: 0.5462184873949579
+    recall: 0.3672316384180791
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8515950069348128
+    precision: 0.8365122615803815
+    recall: 0.867231638418079
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.8755244755244757
+    precision: 0.8670360110803325
+    recall: 0.884180790960452
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8434670116429496
+    precision: 0.7780429594272077
+    recall: 0.9209039548022598
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.8210227272727272
+    precision: 0.8257142857142857
+    recall: 0.8163841807909604
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.8625336927223719
+    precision: 0.8247422680412371
+    recall: 0.903954802259887
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.5749690210656753
+    precision: 0.5121412803532008
+    recall: 0.655367231638418
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.697274031563845
+    precision: 0.7084548104956269
+    recall: 0.6864406779661016
+    support: 354
+  accuracy: 0.7573446327683616
+  macro avg:
+    f1-score: 0.7533733717293544
+    precision: 0.7594012674856331
+    recall: 0.7573446327683615
+    support: 3540
+  weighted avg:
+    f1-score: 0.7533733717293546
+    precision: 0.759401267485633
+    recall: 0.7573446327683616
+    support: 3540
+ResNet50:
+  Barred Spiral Galaxies:
+    f1-score: 0.7939142461964039
+    precision: 0.7777777777777778
+    recall: 0.8107344632768362
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.7916666666666666
+    precision: 0.9148148148148149
+    recall: 0.6977401129943502
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.463768115942029
+    precision: 0.5393258426966292
+    recall: 0.4067796610169492
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8497109826589595
+    precision: 0.8698224852071006
+    recall: 0.8305084745762712
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.8860759493670887
+    precision: 0.8823529411764706
+    recall: 0.8898305084745762
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8495339547270305
+    precision: 0.8035264483627204
+    recall: 0.9011299435028248
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.825531914893617
+    precision: 0.8290598290598291
+    recall: 0.8220338983050848
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.9004207573632539
+    precision: 0.8941504178272981
+    recall: 0.9067796610169492
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.5787451984635084
+    precision: 0.5292740046838408
+    recall: 0.6384180790960452
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.753623188405797
+    precision: 0.7061728395061728
+    recall: 0.807909604519774
+    support: 354
+  accuracy: 0.7711864406779662
+  macro avg:
+    f1-score: 0.7692990974684355
+    precision: 0.7746277401112653
+    recall: 0.771186440677966
+    support: 3540
+  weighted avg:
+    f1-score: 0.7692990974684356
+    precision: 0.7746277401112653
+    recall: 0.7711864406779662
+    support: 3540
+WRN16d1d1d1:
+  Barred Spiral Galaxies:
+    f1-score: 0.8494318181818181
+    precision: 0.8542857142857143
+    recall: 0.844632768361582
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8392036753445634
+    precision: 0.9163879598662207
+    recall: 0.7740112994350282
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.4751552795031056
+    precision: 0.5275862068965518
+    recall: 0.4322033898305085
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8907103825136612
+    precision: 0.8624338624338624
+    recall: 0.9209039548022598
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.8777173913043479
+    precision: 0.8455497382198953
+    recall: 0.9124293785310734
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8316831683168316
+    precision: 0.8328611898016998
+    recall: 0.8305084745762712
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.8379204892966361
+    precision: 0.9133333333333333
+    recall: 0.7740112994350282
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.8825214899713467
+    precision: 0.8953488372093024
+    recall: 0.8700564971751412
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.5980284775465499
+    precision: 0.4883720930232558
+    recall: 0.7711864406779662
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7323943661971831
+    precision: 0.8210526315789474
+    recall: 0.6610169491525424
+    support: 354
+  accuracy: 0.7790960451977401
+  macro avg:
+    f1-score: 0.7814766538176043
+    precision: 0.7957211566648783
+    recall: 0.77909604519774
+    support: 3540
+  weighted avg:
+    f1-score: 0.7814766538176044
+    precision: 0.7957211566648783
+    recall: 0.7790960451977401
+    support: 3540
+WRN16d8d4d1:
+  Barred Spiral Galaxies:
+    f1-score: 0.8486416558861578
+    precision: 0.7828162291169452
+    recall: 0.9265536723163842
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.7314487632508834
+    precision: 0.9764150943396226
+    recall: 0.5847457627118644
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.3512396694214876
+    precision: 0.6538461538461539
+    recall: 0.2401129943502825
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.9193083573487031
+    precision: 0.9382352941176471
+    recall: 0.9011299435028248
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.8869047619047619
+    precision: 0.9371069182389937
+    recall: 0.8418079096045198
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8314028314028314
+    precision: 0.7635933806146572
+    recall: 0.9124293785310734
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.8593350383631714
+    precision: 0.7850467289719626
+    recall: 0.9491525423728814
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.8862629246676513
+    precision: 0.9287925696594427
+    recall: 0.847457627118644
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6320645905420992
+    precision: 0.5341130604288499
+    recall: 0.7740112994350282
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7588832487309645
+    precision: 0.6889400921658986
+    recall: 0.844632768361582
+    support: 354
+  accuracy: 0.7822033898305085
+  macro avg:
+    f1-score: 0.7705491841518711
+    precision: 0.7988905521500175
+    recall: 0.7822033898305085
+    support: 3540
+  weighted avg:
+    f1-score: 0.7705491841518713
+    precision: 0.7988905521500173
+    recall: 0.7822033898305085
+    support: 3540
+WRN16d8d4d4:
+  Barred Spiral Galaxies:
+    f1-score: 0.8914956011730205
+    precision: 0.926829268292683
+    recall: 0.8587570621468926
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.906158357771261
+    precision: 0.9420731707317073
+    recall: 0.8728813559322034
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.4807881773399015
+    precision: 0.3691376701966717
+    recall: 0.6892655367231638
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8629921259842519
+    precision: 0.9750889679715302
+    recall: 0.7740112994350282
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9267605633802817
+    precision: 0.9241573033707865
+    recall: 0.9293785310734464
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8364197530864199
+    precision: 0.9217687074829932
+    recall: 0.7655367231638418
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.9023668639053254
+    precision: 0.9472049689440993
+    recall: 0.8615819209039548
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.72663139329806
+    precision: 0.9671361502347418
+    recall: 0.5819209039548022
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6702586206896552
+    precision: 0.5418118466898955
+    recall: 0.8785310734463276
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.659217877094972
+    precision: 0.9672131147540983
+    recall: 0.5
+    support: 354
+  accuracy: 0.7711864406779662
+  macro avg:
+    f1-score: 0.7863089333723149
+    precision: 0.8482421168669207
+    recall: 0.7711864406779662
+    support: 3540
+  weighted avg:
+    f1-score: 0.7863089333723149
+    precision: 0.8482421168669207
+    recall: 0.7711864406779662
+    support: 3540
+WRN28_10_c8c4c1:
+  Barred Spiral Galaxies:
+    f1-score: 0.8690958164642375
+    precision: 0.8320413436692506
+    recall: 0.9096045197740112
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8888888888888887
+    precision: 0.9487179487179487
+    recall: 0.8361581920903954
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.46950092421441775
+    precision: 0.679144385026738
+    recall: 0.3587570621468927
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.9007194244604316
+    precision: 0.9178885630498533
+    recall: 0.884180790960452
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.8963585434173669
+    precision: 0.8888888888888888
+    recall: 0.903954802259887
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8717948717948718
+    precision: 0.7981220657276995
+    recall: 0.96045197740113
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.8748241912798875
+    precision: 0.8711484593837535
+    recall: 0.8785310734463276
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.908344733242134
+    precision: 0.8806366047745358
+    recall: 0.9378531073446328
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6698911729141475
+    precision: 0.5856236786469344
+    recall: 0.7824858757062146
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7922848664688428
+    precision: 0.834375
+    recall: 0.7542372881355932
+    support: 354
+  accuracy: 0.8206214689265536
+  macro avg:
+    f1-score: 0.8141703433145226
+    precision: 0.8236586937885603
+    recall: 0.8206214689265536
+    support: 3540
+  weighted avg:
+    f1-score: 0.8141703433145225
+    precision: 0.8236586937885603
+    recall: 0.8206214689265536
+    support: 3540
+WRN28_10_d1d1d1:
+  Barred Spiral Galaxies:
+    f1-score: 0.8575418994413407
+    precision: 0.8480662983425414
+    recall: 0.867231638418079
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8862275449101796
+    precision: 0.9426751592356688
+    recall: 0.8361581920903954
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.42570281124497994
+    precision: 0.7361111111111112
+    recall: 0.2994350282485876
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.9188405797101449
+    precision: 0.9434523809523809
+    recall: 0.8954802259887006
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9024390243902438
+    precision: 0.8671875
+    recall: 0.940677966101695
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8728702490170381
+    precision: 0.8141809290953546
+    recall: 0.940677966101695
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.8755364806866952
+    precision: 0.8869565217391304
+    recall: 0.864406779661017
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.9030470914127424
+    precision: 0.8858695652173914
+    recall: 0.9209039548022598
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.64075382803298
+    precision: 0.5494949494949495
+    recall: 0.768361581920904
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7734056987788333
+    precision: 0.7441253263707572
+    recall: 0.8050847457627118
+    support: 354
+  accuracy: 0.8138418079096045
+  macro avg:
+    f1-score: 0.8056365207625177
+    precision: 0.8218119741559284
+    recall: 0.8138418079096045
+    support: 3540
+  weighted avg:
+    f1-score: 0.8056365207625178
+    precision: 0.8218119741559284
+    recall: 0.8138418079096045
+    support: 3540
+WRN28_10_d8d4d1:
+  Barred Spiral Galaxies:
+    f1-score: 0.9153952843273232
+    precision: 0.8991825613079019
+    recall: 0.9322033898305084
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8813056379821957
+    precision: 0.928125
+    recall: 0.8389830508474576
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.5289514866979655
+    precision: 0.5929824561403508
+    recall: 0.4774011299435028
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.9283667621776504
+    precision: 0.9418604651162791
+    recall: 0.9152542372881356
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9226441631504922
+    precision: 0.9187675070028011
+    recall: 0.9265536723163842
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8756906077348067
+    precision: 0.8567567567567568
+    recall: 0.8954802259887006
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.9232995658465991
+    precision: 0.9465875370919882
+    recall: 0.9011299435028248
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.909344490934449
+    precision: 0.8980716253443526
+    recall: 0.9209039548022598
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6977829638273046
+    precision: 0.5944333996023857
+    recall: 0.844632768361582
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.808641975308642
+    precision: 0.891156462585034
+    recall: 0.7401129943502824
+    support: 354
+  accuracy: 0.8392655367231638
+  macro avg:
+    f1-score: 0.8391422937987428
+    precision: 0.846792377094785
+    recall: 0.8392655367231638
+    support: 3540
+  weighted avg:
+    f1-score: 0.8391422937987427
+    precision: 0.846792377094785
+    recall: 0.8392655367231638
+    support: 3540
+WRN28_7_d8d4d1:
+  Barred Spiral Galaxies:
+    f1-score: 0.9028727770177838
+    precision: 0.8753315649867374
+    recall: 0.9322033898305084
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8844984802431611
+    precision: 0.9572368421052632
+    recall: 0.8220338983050848
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.5993788819875777
+    precision: 0.6655172413793103
+    recall: 0.5451977401129944
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.925
+    precision: 0.9098360655737705
+    recall: 0.940677966101695
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9080622347949081
+    precision: 0.9093484419263456
+    recall: 0.9067796610169492
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8909574468085106
+    precision: 0.8417085427135679
+    recall: 0.9463276836158192
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.9154929577464789
+    precision: 0.9129213483146067
+    recall: 0.9180790960451978
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.9181286549707602
+    precision: 0.9515151515151515
+    recall: 0.8870056497175142
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.7403462050599201
+    precision: 0.7002518891687658
+    recall: 0.7853107344632768
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.8215767634854773
+    precision: 0.8048780487804879
+    recall: 0.8389830508474576
+    support: 354
+  accuracy: 0.8522598870056497
+  macro avg:
+    f1-score: 0.8506314402114578
+    precision: 0.8528545136464005
+    recall: 0.8522598870056497
+    support: 3540
+  weighted avg:
+    f1-score: 0.8506314402114578
+    precision: 0.8528545136464007
+    recall: 0.8522598870056497
+    support: 3540
+WRN50_2:
+  Barred Spiral Galaxies:
+    f1-score: 0.8099173553719008
+    precision: 0.7903225806451613
+    recall: 0.8305084745762712
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8405365126676603
+    precision: 0.889589905362776
+    recall: 0.7966101694915254
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.43738977072310403
+    precision: 0.5821596244131455
+    recall: 0.3502824858757062
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8593040847201211
+    precision: 0.9250814332247557
+    recall: 0.8022598870056498
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.8794326241134752
+    precision: 0.8831908831908832
+    recall: 0.8757062146892656
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8616600790513833
+    precision: 0.8074074074074075
+    recall: 0.923728813559322
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.811715481171548
+    precision: 0.8016528925619835
+    recall: 0.8220338983050848
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.8743169398907104
+    precision: 0.8465608465608465
+    recall: 0.903954802259887
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.5924170616113745
+    precision: 0.5102040816326531
+    recall: 0.7062146892655368
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7191977077363897
+    precision: 0.7296511627906976
+    recall: 0.7090395480225988
+    support: 354
+  accuracy: 0.7720338983050847
+  macro avg:
+    f1-score: 0.7685887617057667
+    precision: 0.776582081779031
+    recall: 0.7720338983050847
+    support: 3540
+  weighted avg:
+    f1-score: 0.7685887617057667
+    precision: 0.776582081779031
+    recall: 0.7720338983050847
+    support: 3540
+c1resnet18:
+  Barred Spiral Galaxies:
+    f1-score: 0.7908232118758435
+    precision: 0.7571059431524548
+    recall: 0.827683615819209
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8075117370892019
+    precision: 0.9052631578947369
+    recall: 0.7288135593220338
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.30472103004291845
+    precision: 0.6339285714285714
+    recall: 0.20056497175141244
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8708791208791209
+    precision: 0.8475935828877005
+    recall: 0.8954802259887006
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.8798882681564247
+    precision: 0.8701657458563536
+    recall: 0.8898305084745762
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8224776500638569
+    precision: 0.7505827505827506
+    recall: 0.9096045197740112
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.7832167832167832
+    precision: 0.775623268698061
+    recall: 0.7909604519774012
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.859504132231405
+    precision: 0.8387096774193549
+    recall: 0.8813559322033898
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.5647607934655776
+    precision: 0.48111332007952284
+    recall: 0.6836158192090396
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.693935119887165
+    precision: 0.6929577464788732
+    recall: 0.6949152542372882
+    support: 354
+  accuracy: 0.7502824858757062
+  macro avg:
+    f1-score: 0.7377717846908297
+    precision: 0.755304376447838
+    recall: 0.7502824858757062
+    support: 3540
+  weighted avg:
+    f1-score: 0.7377717846908297
+    precision: 0.755304376447838
+    recall: 0.7502824858757062
+    support: 3540
+c2resnet50:
+  Barred Spiral Galaxies:
+    f1-score: 0.8388814913448734
+    precision: 0.7934508816120907
+    recall: 0.8898305084745762
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8108108108108109
+    precision: 0.9272727272727272
+    recall: 0.7203389830508474
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.3278688524590164
+    precision: 0.5970149253731343
+    recall: 0.22598870056497175
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8552097428958051
+    precision: 0.8207792207792208
+    recall: 0.8926553672316384
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.8876404494382022
+    precision: 0.88268156424581
+    recall: 0.8926553672316384
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8469656992084432
+    precision: 0.7945544554455446
+    recall: 0.9067796610169492
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.8314285714285714
+    precision: 0.8410404624277457
+    recall: 0.8220338983050848
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.8901098901098901
+    precision: 0.8663101604278075
+    recall: 0.9152542372881356
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.607021517553794
+    precision: 0.5066162570888468
+    recall: 0.7570621468926554
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7572254335260116
+    precision: 0.7751479289940828
+    recall: 0.7401129943502824
+    support: 354
+  accuracy: 0.7762711864406779
+  macro avg:
+    f1-score: 0.7653162458775418
+    precision: 0.780486858366701
+    recall: 0.7762711864406779
+    support: 3540
+  weighted avg:
+    f1-score: 0.7653162458775419
+    precision: 0.7804868583667011
+    recall: 0.7762711864406779
+    support: 3540
+c4resnet18:
+  Barred Spiral Galaxies:
+    f1-score: 0.8901569186875891
+    precision: 0.899135446685879
+    recall: 0.8813559322033898
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8902077151335311
+    precision: 0.9375
+    recall: 0.847457627118644
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.5172413793103448
+    precision: 0.8035714285714286
+    recall: 0.3813559322033898
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.9116022099447514
+    precision: 0.8918918918918919
+    recall: 0.9322033898305084
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9246088193456615
+    precision: 0.9312320916905444
+    recall: 0.9180790960451978
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8618925831202046
+    precision: 0.7873831775700935
+    recall: 0.9519774011299436
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.9230769230769231
+    precision: 0.9141274238227147
+    recall: 0.9322033898305084
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.8936170212765957
+    precision: 0.8442211055276382
+    recall: 0.9491525423728814
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6748768472906405
+    precision: 0.5982532751091703
+    recall: 0.7740112994350282
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7884892086330935
+    precision: 0.8035190615835777
+    recall: 0.7740112994350282
+    support: 354
+  accuracy: 0.834180790960452
+  macro avg:
+    f1-score: 0.8275769625819335
+    precision: 0.8410834902452938
+    recall: 0.834180790960452
+    support: 3540
+  weighted avg:
+    f1-score: 0.8275769625819335
+    precision: 0.8410834902452937
+    recall: 0.834180790960452
+    support: 3540
+c4resnet50:
+  Barred Spiral Galaxies:
+    f1-score: 0.8933143669985775
+    precision: 0.8997134670487106
+    recall: 0.8870056497175142
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8902255639097744
+    precision: 0.9517684887459807
+    recall: 0.8361581920903954
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.5853658536585366
+    precision: 0.7636363636363637
+    recall: 0.4745762711864407
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.9279778393351801
+    precision: 0.9103260869565217
+    recall: 0.9463276836158192
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9235127478753541
+    precision: 0.9261363636363636
+    recall: 0.9209039548022598
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8847682119205298
+    precision: 0.8329177057356608
+    recall: 0.943502824858757
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.9068150208623087
+    precision: 0.8931506849315068
+    recall: 0.9209039548022598
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.9203296703296704
+    precision: 0.8957219251336899
+    recall: 0.9463276836158192
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.676470588235294
+    precision: 0.5974025974025974
+    recall: 0.7796610169491526
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.8005780346820809
+    precision: 0.8195266272189349
+    recall: 0.7824858757062146
+    support: 354
+  accuracy: 0.8437853107344633
+  macro avg:
+    f1-score: 0.8409357897807306
+    precision: 0.8490300310446329
+    recall: 0.8437853107344633
+    support: 3540
+  weighted avg:
+    f1-score: 0.8409357897807307
+    precision: 0.849030031044633
+    recall: 0.8437853107344633
+    support: 3540
+d1resnet18:
+  Barred Spiral Galaxies:
+    f1-score: 0.8456189151599444
+    precision: 0.8328767123287671
+    recall: 0.8587570621468926
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8198757763975155
+    precision: 0.9103448275862069
+    recall: 0.7457627118644068
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.434108527131783
+    precision: 0.691358024691358
+    recall: 0.3163841807909605
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8898186889818688
+    precision: 0.8787878787878788
+    recall: 0.9011299435028248
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.8835227272727273
+    precision: 0.8885714285714286
+    recall: 0.8785310734463276
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8352490421455938
+    precision: 0.7622377622377622
+    recall: 0.923728813559322
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.8351648351648351
+    precision: 0.8128342245989305
+    recall: 0.8587570621468926
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.8837837837837837
+    precision: 0.8471502590673575
+    recall: 0.923728813559322
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6219354838709678
+    precision: 0.5724465558194775
+    recall: 0.6807909604519774
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.740053050397878
+    precision: 0.6975
+    recall: 0.788135593220339
+    support: 354
+  accuracy: 0.7875706214689265
+  macro avg:
+    f1-score: 0.7789130830306898
+    precision: 0.7894107673689168
+    recall: 0.7875706214689266
+    support: 3540
+  weighted avg:
+    f1-score: 0.7789130830306897
+    precision: 0.7894107673689167
+    recall: 0.7875706214689265
+    support: 3540
+d4resnet18:
+  Barred Spiral Galaxies:
+    f1-score: 0.900976290097629
+    precision: 0.8898071625344353
+    recall: 0.9124293785310734
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.9071856287425151
+    precision: 0.964968152866242
+    recall: 0.8559322033898306
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.5709219858156028
+    precision: 0.7666666666666667
+    recall: 0.4548022598870056
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.9312762973352033
+    precision: 0.924791086350975
+    recall: 0.9378531073446328
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.9144460028050491
+    precision: 0.9080779944289693
+    recall: 0.9209039548022598
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8998699609882964
+    precision: 0.8337349397590361
+    recall: 0.9774011299435028
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.9033149171270718
+    precision: 0.8837837837837837
+    recall: 0.923728813559322
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.9218106995884775
+    precision: 0.896
+    recall: 0.9491525423728814
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.7213114754098361
+    precision: 0.6514806378132119
+    recall: 0.807909604519774
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.8260869565217391
+    precision: 0.8482142857142857
+    recall: 0.8050847457627118
+    support: 354
+  accuracy: 0.8545197740112994
+  macro avg:
+    f1-score: 0.8497200214431422
+    precision: 0.8567524709917604
+    recall: 0.8545197740112995
+    support: 3540
+  weighted avg:
+    f1-score: 0.8497200214431421
+    precision: 0.8567524709917606
+    recall: 0.8545197740112994
+    support: 3540
+densenet121:
+  Barred Spiral Galaxies:
+    f1-score: 0.8162692847124825
+    precision: 0.8105849582172702
+    recall: 0.8220338983050848
+    support: 354
+  Cigar Shaped Smooth Galaxies:
+    f1-score: 0.8514548238897396
+    precision: 0.9297658862876255
+    recall: 0.7853107344632768
+    support: 354
+  Disturbed Galaxies:
+    f1-score: 0.4125
+    precision: 0.7857142857142857
+    recall: 0.2796610169491525
+    support: 354
+  Edge-on Galaxies with Bulge:
+    f1-score: 0.8910344827586206
+    precision: 0.8706199460916442
+    recall: 0.9124293785310734
+    support: 354
+  Edge-on Galaxies without Bulge:
+    f1-score: 0.8933717579250722
+    precision: 0.9117647058823529
+    recall: 0.8757062146892656
+    support: 354
+  In-between Round Smooth Galaxies:
+    f1-score: 0.8423707440100883
+    precision: 0.7608200455580866
+    recall: 0.943502824858757
+    support: 354
+  Merging Galaxies:
+    f1-score: 0.8692098092643051
+    precision: 0.8394736842105263
+    recall: 0.9011299435028248
+    support: 354
+  Round Smooth Galaxies:
+    f1-score: 0.899182561307902
+    precision: 0.868421052631579
+    recall: 0.9322033898305084
+    support: 354
+  Unbarred Loose Spiral Galaxies:
+    f1-score: 0.6065573770491803
+    precision: 0.518
+    recall: 0.731638418079096
+    support: 354
+  Unbarred Tight Spiral Galaxies:
+    f1-score: 0.7714285714285715
+    precision: 0.7803468208092486
+    recall: 0.7627118644067796
+    support: 354
+  accuracy: 0.7946327683615819
+  macro avg:
+    f1-score: 0.7853379412345962
+    precision: 0.8075511385402618
+    recall: 0.7946327683615819
+    support: 3540
+  weighted avg:
+    f1-score: 0.7853379412345962
+    precision: 0.807551138540262
+    recall: 0.7946327683615819
+    support: 3540
