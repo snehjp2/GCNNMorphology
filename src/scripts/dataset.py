@@ -19,8 +19,8 @@ class Galaxy10DECals(Dataset):
         self.transform = transform
         with h5py.File(self.dataset_path,"r") as f:
             self.img = f['images'][()]
-            self.label = f['labels'][()]
-            self.length = len(f['labels'][()])
+            self.label = f['ans'][()]
+            self.length = len(f['ans'][()])
 
     def __getitem__(self, idx):
 
