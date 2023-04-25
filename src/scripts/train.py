@@ -211,6 +211,12 @@ def main(config):
     
     transform = transforms.Compose([
         transforms.ToTensor(),
+        transforms.RandomRotation(180),
+        transforms.CenterCrop(180),
+        transforms.Resize(256),
+        transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
+        transforms.RandomHorizontalFlip(p=0.3),
+        transforms.RandomVerticalFlip(p=0.3),
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
     
@@ -220,6 +226,7 @@ def main(config):
     end = time.time()
     print(f"dataset loaded in {end - start} s")
     
+
     # train_dataloader, val_dataloader = subsample(train_dataset, 0.2)
     
     test_len = int(config['parameters']['test_size'] * len(train_dataset))
