@@ -232,8 +232,8 @@ def main(config):
     test_len = int(config['parameters']['test_size'] * len(train_dataset))
     train_len = len(train_dataset) - test_len
     train_dataset, val_dataset = torch.utils.data.random_split(train_dataset, [train_len, test_len])
-    train_dataloader = DataLoader(train_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
-    val_dataloader = DataLoader(val_dataset, batch_size=config['parameters']['batch_size'], shuffle=True)
+    train_dataloader = DataLoader(train_dataset, batch_size=config['parameters']['batch_size'], shuffle=True, pin_memory=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=config['parameters']['batch_size'], shuffle=True, pin_memory=True)
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
     save_dir = config['save_dir'] + config['model'] + '_' + timestr
