@@ -5,6 +5,8 @@ import h5py
 import numpy as np
 from torch.utils.data import Dataset
 import torchvision.transforms as T
+import matplotlib.pyplot as plt
+from torchvision import transforms
 
 
 
@@ -19,8 +21,8 @@ class Galaxy10DECals(Dataset):
         self.transform = transform
         with h5py.File(self.dataset_path,"r") as f:
             self.img = f['images'][()]
-            self.label = f['labels'][()]
-            self.length = len(f['labels'][()])
+            self.label = f['ans'][()]
+            self.length = len(f['ans'][()])
 
     def __getitem__(self, idx):
 
@@ -55,19 +57,32 @@ class Galaxy10DECalsTest(Dataset):
         img = self.dataset['images'][idx]
         label = torch.tensor(self.dataset['labels'][idx],dtype=torch.long)
         angle = torch.tensor(self.dataset['angles'][idx],dtype=torch.long)
+        redshift = torch.tensor(self.dataset['redshifts'][idx],dtype=torch.float)
+        
         if self.transform:
             img = self.transform(img)
-        return img, label , angle
+        return img, label , angle, redshift
 
     def __len__(self):
         return self.length
 
 if __name__ == '__main__':
     print(sys.argv[1])
-    transform = T.ToTensor()
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.RandomRotation(180),
+        transforms.CenterCrop(180),
+        transforms.Resize(256),
+        transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
+        transforms.RandomHorizontalFlip(p=0.3),
+        transforms.RandomVerticalFlip(p=0.3),
+        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+    ])
     dataset = Galaxy10DECals(sys.argv[1],transform=transform)
     #dataset = Galaxy10DECalsTest(sys.argv[1],transform=transform)
     print(len(dataset))
-    img , label = dataset[1232]
+    img , label = dataset[12342]
     print(img.shape)
     print(label)
+    plt.imshow(img.permute(1,2,0).numpy())
+    plt.show()

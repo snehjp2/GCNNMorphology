@@ -3,12 +3,13 @@ import torch.nn as nn
 from torch.nn import functional as F
 from e2cnn import gspaces
 from e2cnn import nn as e2cnn_nn
-# import e2resnet 
+import e2resnet 
 import e2wrn
-from torchsummary import summary
+import torchvision
+#from torchsummary import summary
 
 num_classes = 10
-feature_fields = [8, 8, 16, 16, 16, 16, 32, 32, 32]    
+feature_fields = [24, 24, 48, 48, 48, 48, 96, 96, 96]    
 
 class GeneralSteerableCNN(torch.nn.Module):
     
@@ -61,7 +62,6 @@ class GeneralSteerableCNN(torch.nn.Module):
             e2cnn_nn.ReLU(out_type, inplace=True)
         )
 
-        
         # convolution 3
         # the old output type is the input type to the next layer
         in_type = self.block2.out_type
@@ -152,7 +152,10 @@ class GeneralSteerableCNN(torch.nn.Module):
             torch.nn.Linear(9*c, 64),
             torch.nn.BatchNorm1d(64),
             torch.nn.ELU(inplace=True),
-            torch.nn.Linear(64, n_classes),
+            torch.nn.Linear(64, 32),
+            torch.nn.BatchNorm1d(32),
+            torch.nn.ELU(inplace=True),
+            torch.nn.Linear(32, n_classes),
         )
     
     def forward(self, input: torch.Tensor):
@@ -248,62 +251,72 @@ def load_c16():
 
 def load_wrn50_2():
     WRN_50_2 = torch.hub.load('pytorch/vision:v0.10.0', 'wide_resnet50_2', pretrained=True)
-    for param in WRN_50_2.parameters():
-        param.requires_grad = False
+    # for param in WRN_50_2.parameters():
+    #     param.requires_grad = False
     WRN_50_2.fc = nn.Linear(WRN_50_2.fc.in_features, num_classes)
     return WRN_50_2
 
 def load_resnet18():
     RN_18 = torch.hub.load('pytorch/vision:v0.10.0', 'resnet18', pretrained=True)
-    for param in RN_18.parameters():
-        param.requires_grad = False
+    # for param in RN_18.parameters():
+    #     param.requires_grad = False
     RN_18.fc = nn.Linear(RN_18.fc.in_features, num_classes)
     return RN_18
 
 def load_resnet50():
     RN_50 = torch.hub.load('pytorch/vision:v0.10.0', 'resnet50', pretrained=True)
-    for param in RN_50.parameters():
-        param.requires_grad = False
+    # for param in RN_50.parameters():
+    #     param.requires_grad = False
     RN_50.fc = nn.Linear(RN_50.fc.in_features, num_classes)
     return RN_50
 
+def load_densenet121():
+    densenet121 = torchvision.models.densenet121(pretrained=True)
+    # for param in densenet121.parameters():
+    #     param.requires_grad = False
+    densenet121.classifier = nn.Linear(densenet121.classifier.in_features, num_classes)
+    return densenet121
+
 
 model_dict = {
-    'ResNet18' : load_resnet18,
-    'ResNet50' : load_resnet50,
-    'WRN50_2' : load_wrn50_2,
-    'D2' : load_d2,
-    'D4' : load_d4,
-    'D8' : load_d8,
-    'D16' : load_d16,
-    'C2' : load_c2,
-    'C4' : load_c4,
-    'C8' : load_c8,
-    'C16' : load_c16,
-    'WRN16d8d4d1': e2wrn.wrn16_8_stl_d8d4d1,
-    'WRN16d8d4d4' : e2wrn.wrn16_8_stl_d8d4d4,
-    'WRN16d1d1d1' : e2wrn.wrn16_8_stl_d1d1d1,
-    'WRN28_10_d8d4d1' : e2wrn.wrn28_10_d8d4d1,
-    'WRN28_7_d8d4d1' : e2wrn.wrn28_7_d8d4d1,
-    'WRN28_10_c8c4c1' : e2wrn.wrn28_10_c8c4c1,
-    'WRN28_10_d1d1d1' : e2wrn.wrn28_10_d1d1d1,
-    # 'c1resnet18' : e2resnet.c1resnet18,
-    # 'd1resnet18' : e2resnet.d1resnet18,
-    # 'c4resnet18' : e2resnet.c4resnet18,
-    # 'd4resnet18' : e2resnet.d4resnet18,
-    # 'small_c4resnet' : e2resnet.small_c4resnet
+    'ResNet18' : load_resnet18, ## done
+    'ResNet50' : load_resnet50, ## done
+    'WRN50_2' : load_wrn50_2, ## done
+    'densenet121' : load_densenet121, ## done
+    'D2' : load_d2, ## done 
+    'D4' : load_d4, ## done
+    'D8' : load_d8, ## done
+    'D16' : load_d16, ## done
+    'C2' : load_c2, ## done
+    'C4' : load_c4, ## done
+    'C8' : load_c8,  ## done
+    'C16' : load_c16, ## done
+    'WRN16d8d4d1': e2wrn.wrn16_8_stl_d8d4d1,  ## done
+    'WRN16d8d4d4' : e2wrn.wrn16_8_stl_d8d4d4, ## done
+    'WRN16d1d1d1' : e2wrn.wrn16_8_stl_d1d1d1, ## done
+    'WRN28_10_d8d4d1' : e2wrn.wrn28_10_d8d4d1, ## done
+    'WRN28_7_d8d4d1' : e2wrn.wrn28_7_d8d4d1, ## done
+    'WRN28_10_c8c4c1' : e2wrn.wrn28_10_c8c4c1, ## done
+    'WRN28_10_d1d1d1' : e2wrn.wrn28_10_d1d1d1, ## done
+    'c1resnet18' : e2resnet.c1resnet18, ## done
+    'd1resnet18' : e2resnet.d1resnet18, ## done
+    'c4resnet18' : e2resnet.c4resnet18, ## done
+    'd4resnet18' : e2resnet.d4resnet18, ## done
+    'small_c4resnet18' : e2resnet.small_c4resnet,
+    'c4resnet50' : e2resnet.c4resnet50, ## done 
+    'c2resnet50' : e2resnet.c2resnet50, ## done
+    'small_c4resnet50' : e2resnet.small_c4resnet50,
+    'd4resnet50' : e2resnet.d4resnet50
 }
 
 if __name__ == "__main__":
-    
-    ### input size = (batch_size, 3, 256, 256)
-    input_size = (3, 256, 256)
-    
 
-    #models = [D2_model, D4_model, D8_model, D16_model, C2_model, C4_model, C8_model, C16_model, WRN_50_2, RN_18, WRNc8c4c1, WRNd8d4d1]
+    ## model checks 
     
-    #for model in models:
-    #    print(model)
-    model = model_dict['D4']()
-    summary(model, input_size=input_size)
+    model = model_dict['d4resnet50']()
 
+    x = torch.rand(size=(1,3,256,256))
+    y = model(x)
+    print(y.shape)
+
+    print(f'Trainable parameters = {sum(p.numel() for p in model.parameters() if p.requires_grad)}')

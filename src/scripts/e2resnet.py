@@ -5,7 +5,7 @@ from escnn import nn, gspaces
 
 class E2BasicBlock(torch.nn.Module):
     expansion: int = 1
-    def __init__(self, r2_act, inplanes, planes, stride, downsample, norm_layer):
+    def __init__(self, r2_act, inplanes, planes, stride, downsample, norm_layer ):
         super().__init__()
         in_type = nn.FieldType(r2_act, inplanes * [r2_act.regular_repr])
         out_type = nn.FieldType(r2_act, planes * [r2_act.regular_repr])
@@ -39,11 +39,12 @@ class E2BasicBlock(torch.nn.Module):
 
 
 class E2BottleNeck(torch.nn.Module):
-    expansion: int = 4
-    def __init__(self, r2_act, inplanes, planes, stride, downsample, norm_layer):
+    expansion: int = 2
+    def __init__(self, r2_act, inplanes, planes, stride, downsample, norm_layer , base_width=64):
+        super().__init__()
         in_type = nn.FieldType(r2_act, inplanes * [r2_act.regular_repr])
         out_type = nn.FieldType(r2_act, planes * [r2_act.regular_repr])
-        exp_type = nn.FieldType(r2_act, expansion * planes * [r2_act.regular_repr])
+        exp_type = nn.FieldType(r2_act, self.expansion * planes * [r2_act.regular_repr])
 
         self.conv1 = nn.R2Conv(in_type, out_type, kernel_size=1, bias=False)
         self.bn1 = norm_layer(out_type)
@@ -73,7 +74,7 @@ class E2BottleNeck(torch.nn.Module):
 
         out = self.conv3(out)
         out = self.bn3(out)
-
+        
         if self.downsample is not None:
             identity = self.downsample(x)
 
@@ -103,6 +104,8 @@ class E2ResNet(torch.nn.Module):
         self.inplanes = self.base_width
 
         out_type = nn.FieldType(r2_act, self.base_width * [r2_act.regular_repr])
+
+        self.mask_module = nn.MaskModule(self.in_type, 224, margin=1)
         self.conv1 = nn.R2Conv(
             self.in_type,
             out_type,
@@ -140,7 +143,7 @@ class E2ResNet(torch.nn.Module):
 
         if stride != 1 or self.inplanes != planes:
             in_type = nn.FieldType(r2_act, self.inplanes * [r2_act.regular_repr])
-            out_type = nn.FieldType(r2_act, planes * [r2_act.regular_repr])
+            out_type = nn.FieldType(r2_act, block.expansion * planes * [r2_act.regular_repr])
             downsample = nn.SequentialModule(
                 nn.R2Conv(in_type, out_type, kernel_size=1, padding=0, stride=stride),
                 self.norm_layer(out_type),
@@ -160,7 +163,8 @@ class E2ResNet(torch.nn.Module):
 
         return torch.nn.Sequential(*layers)
 
-    def forward(self, x: nn.GeometricTensor):
+    def forward(self, x):
+        x = nn.GeometricTensor(x, self.in_type)
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu1(x)
@@ -173,9 +177,95 @@ class E2ResNet(torch.nn.Module):
 
         x = self.avgpool(x)
         x = self.gpool(x).tensor
+        x = x.view(x.size(0), -1)
         x = self.fc(x)
 
         return x
+
+
+class E2ResNet50(torch.nn.Module):
+    def __init__(self,
+        r2_act : gspaces.GSpace2D,
+        layers: List[int],
+        num_classes: int = 10,
+        base_width: int = 64,
+        ):
+        super().__init__()
+
+        self.r2_act = r2_act
+        self.num_classes = num_classes
+        self.inplanes = base_width
+        self.norm_layer = nn.InnerBatchNorm
+    
+        self.in_type = nn.FieldType(r2_act, 3 * [r2_act.trivial_repr])
+        out_type = nn.FieldType(r2_act, self.inplanes * [r2_act.regular_repr])
+
+        self.mask_module = nn.MaskModule(self.in_type, 256, margin=1)
+        self.conv1 = nn.R2Conv(self.in_type, out_type,kernel_size=7, stride=2, padding=3, bias=False)
+        self.bn1 = self.norm_layer(out_type)
+        self.relu1 = nn.ReLU(out_type, True)
+        self.maxpool = nn.PointwiseMaxPool(out_type, kernel_size=3, stride=2, padding=1)
+        self.layer1 = self._make_layer(E2BottleNeck, 64, layers[0])
+        self.layer2 = self._make_layer(E2BottleNeck,  128, layers[1], stride=2)
+        self.layer3 = self._make_layer(E2BottleNeck, 256, layers[2], stride=2)
+        self.layer4 = self._make_layer(E2BottleNeck, 512, layers[3], stride=2)
+        
+        out_type = nn.FieldType(r2_act,  2 * 512 * [r2_act.regular_repr])
+
+        self.avgpool = nn.PointwiseAdaptiveAvgPool(out_type, (1, 1))
+
+        self.gpool = nn.GroupPooling(out_type)
+        
+        self.fc = torch.nn.Linear(512*2, num_classes) 
+    
+
+        
+    
+    def _make_layer(self, block, planes, blocks, stride = 1):
+        downsample = None
+        if stride != 1 or self.inplanes != planes * block.expansion:
+            in_type = nn.FieldType(self.r2_act, self.inplanes * [self.r2_act.regular_repr])
+            out_type = nn.FieldType(self.r2_act, planes * block.expansion * [self.r2_act.regular_repr])
+            downsample = nn.SequentialModule(
+                nn.R2Conv(in_type, out_type, kernel_size=1, stride=stride, padding=0),
+                self.norm_layer(out_type),
+            )
+        
+        layers = []
+        layers.append(
+            block(
+                self.r2_act, self.inplanes, planes, stride, downsample, self.norm_layer
+            )
+        )
+        self.inplanes = planes * block.expansion
+        for i in range(1, blocks):
+            layers.append(
+                block(self.r2_act, self.inplanes, planes, 1, None, self.norm_layer)
+            )
+
+        return torch.nn.Sequential(*layers) 
+
+    
+    
+    def forward(self, x):
+        x = nn.GeometricTensor(x, self.in_type)
+        x = self.mask_module(x)
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = self.relu1(x)
+        x = self.maxpool(x)
+        
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+        x = self.avgpool(x)
+        x = self.gpool(x)
+        x = x.tensor
+        x = x.view(x.size(0), -1)
+        x = self.fc(x)
+        return x
+
 
 def c1resnet18(num_classes: int=10, base_width: int=80):
     r2_act = gspaces.trivialOnR2()
@@ -224,5 +314,21 @@ def small_c4resnet(num_classes: int=10):
         block=E2BasicBlock,
         layers=[1, 1, 1, 1],
         num_classes=num_classes,
-        base_width=5,
+        base_width=5
     )
+
+def small_c4resnet50():
+    r2_act = gspaces.rot2dOnR2(N=4)
+    return E2ResNet50(r2_act,layers=[3, 2, 2, 2])
+
+def c4resnet50():
+    r2_act = gspaces.rot2dOnR2(N=4)
+    return E2ResNet50(r2_act,layers=[3, 4, 6, 3])
+
+def c2resnet50():
+    r2_act = gspaces.rot2dOnR2(N=2)
+    return E2ResNet50(r2_act,layers=[3, 2, 2, 2])
+
+def d4resnet50():
+    r2_act = gspaces.flipRot2dOnR2(N=4)
+    return E2ResNet50(r2_act,layers=[3, 2, 2, 2])

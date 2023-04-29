@@ -1,27 +1,20 @@
-import os, sys
-# I like to use typing, but you don't have to!
-# from typing import Any, Dict, Tuple, Union
+import os
 import argparse
 import yaml
 import numpy as np
-from numpy.typing import NDArray
 import matplotlib.pyplot as plt
 import time
 from sklearn.metrics import confusion_matrix
 import seaborn as sn
 import pandas as pd
-
 import torch
 from torch.utils.data import DataLoader
 from torch import nn
 from torch.nn import functional as F
 from torch import optim
-import torchvision
-from torchvision import datasets, transforms
-from e2cnn import gspaces
-from e2cnn import nn as e2cnn_nn
+from torchvision import transforms
 from models import model_dict, feature_fields
-from dataset import Galaxy10DECals, Galaxy10DECalsTest
+from dataset import Galaxy10DECals
 from tqdm import tqdm
 import random
 
@@ -34,12 +27,13 @@ def set_all_seeds(num):
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(num)
 
-
 def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = None, epochs=100, device='cuda', save_dir='checkpoints', early_stopping_patience=10, report_interval=5):
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
+    model = nn.DataParallel(model)
     model.to(device)
+    
     print("Model Loaded to Device!")
     best_val_acc = 0
     no_improvement_count = 0
@@ -49,7 +43,8 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
     for epoch in range(epochs):
         model.train()
         train_loss = 0.0
-        for i, batch in tqdm(enumerate(train_dataloader, 0), unit="batch", total=len(train_dataloader)):
+        # for i, batch in tqdm(enumerate(train_dataloader, 0), unit="batch", total=len(train_dataloader)):
+        for i, batch in tqdm(enumerate(train_dataloader)):
             inputs, targets = batch
             inputs, targets = inputs.to(device), targets.to(device)
 
@@ -95,7 +90,7 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
                 best_val_acc = val_acc
                 no_improvement_count = 0
                 best_val_epoch = epoch + 1
-                torch.save(model.state_dict(), os.path.join(save_dir, f"best_model.pt"))
+                torch.save(model.module.state_dict(), os.path.join(save_dir, f"best_model.pt"))
             else:
                 no_improvement_count += 1
 
@@ -103,7 +98,7 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
                 print(f"Early stopping after {early_stopping_patience} epochs without improvement.")
                 break
 
-    torch.save(model.state_dict(), os.path.join(save_dir, "final_model.pt"))
+    torch.save(model.module.state_dict(), os.path.join(save_dir, "final_model.pt"))
     
     # Plot loss vs. training step graph
     plt.figure(figsize=(10, 5))
@@ -135,11 +130,12 @@ def evaluate(eval_loader: DataLoader, model: nn.Module):
     print("Correct answer in {:.1f}% of cases.".format(accuracy * 100))
     
 @torch.no_grad()
-def plot_confusion_matrix(data_loader: DataLoader, save_dir: str, model: nn.Module, device = 'cuda'):
+def plot_confusion_matrix(data_loader: DataLoader, save_dir: str, model: nn.Module):
     best_model = model
     best_model_path = f'{save_dir}/best_model.pt'
     
     best_model.load_state_dict(torch.load(best_model_path, map_location = device))
+    best_model.to(device)
     y_pred = []
     y_true = []
 
@@ -180,6 +176,29 @@ def plot_predictions(eval_loader: DataLoader, model: nn.Module):
         plt.imshow(example[0][i][0])
         plt.axis("off")
         plt.savefig('../../plots/eval_saved.png')
+        
+def subsample(original_dataset, test_size):
+    
+    original_indices = np.asarray([x for x in range(17736)])
+    augmented_indices = np.asarray([x for x in range(17736, len(original_dataset))])
+    
+    num_orig_train = int((1- test_size) * len(original_indices))
+    num_orig_val = len(original_indices) - num_orig_train
+
+    orig_train_indices = np.random.choice(original_indices, num_orig_train, replace=False)
+    ind = np.zeros(len(original_indices), dtype=bool)
+    ind[orig_train_indices] = True
+    orig_val_indices = original_indices[~ind]
+    
+    train_inices = np.concatenate((orig_train_indices, augmented_indices))
+    train_sampler = torch.utils.data.SubsetRandomSampler(train_inices)
+    val_sampler = torch.utils.data.SubsetRandomSampler(orig_val_indices)
+
+    # Create data loaders for both the training and validation sets
+    train_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=train_sampler, pin_memory=True)
+    val_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=val_sampler, pin_memory=True)
+    
+    return train_dataloader, val_dataloader
 
 
 def main(config):
@@ -190,34 +209,36 @@ def main(config):
 
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones = config['parameters']['milestones'],gamma=config['parameters']['lr_decay'])
     
-    # transform = transforms.Compose([
-    #     transforms.ToTensor(),
-    # ])
-    
     transform = transforms.Compose([
         transforms.ToTensor(),
+        transforms.RandomRotation(180),
+        transforms.CenterCrop(180),
+        transforms.Resize(256),
+        transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
+        transforms.RandomHorizontalFlip(p=0.3),
+        transforms.RandomVerticalFlip(p=0.3),
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
     
     print("Loading train dataset!")
     start = time.time()
-    train_dataset = Galaxy10DECals(config['dataset'],transform)
+    train_dataset = Galaxy10DECals(config['dataset'], transform)
     end = time.time()
     print(f"dataset loaded in {end - start} s")
-    train_length = int(0.8* len(train_dataset))
+    
 
-    val_length = len(train_dataset)-train_length
-
-    train_dataset, val_dataset = torch.utils.data.random_split(train_dataset,(train_length, val_length))
-    train_dataloader = DataLoader(train_dataset, batch_size = config['parameters']['batch_size'], shuffle=True)
-    val_dataloader = DataLoader(val_dataset, batch_size = config['parameters']['batch_size'], shuffle=True)
+    # train_dataloader, val_dataloader = subsample(train_dataset, 0.2)
+    
+    test_len = int(config['parameters']['test_size'] * len(train_dataset))
+    train_len = len(train_dataset) - test_len
+    train_dataset, val_dataset = torch.utils.data.random_split(train_dataset, [train_len, test_len])
+    train_dataloader = DataLoader(train_dataset, batch_size=config['parameters']['batch_size'], shuffle=True, pin_memory=True)
+    val_dataloader = DataLoader(val_dataset, batch_size=config['parameters']['batch_size'], shuffle=True, pin_memory=True)
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
     save_dir = config['save_dir'] + config['model'] + '_' + timestr
     best_val_epoch, best_val_acc, final_loss = train_model(model, train_dataloader, val_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
     print('Training Done')
-    
-    plot_confusion_matrix(data_loader = val_dataloader, save_dir = save_dir, model = model)
     
     config['best_val_acc'] = best_val_acc
     config['best_val_epoch'] = best_val_epoch
@@ -228,12 +249,12 @@ def main(config):
     yaml.dump(config, file)
     file.close()
     
+    plot_confusion_matrix(data_loader = val_dataloader, save_dir = save_dir, model = model)
+
+    
 if __name__ == '__main__':
 
-    if torch.cuda.is_available():
-        device = torch.device('cuda')
-    else:
-        device = torch.device('cpu') 
+    device = ('cuda' if torch.cuda.is_available() else 'cpu')
         
     set_all_seeds(42)
 

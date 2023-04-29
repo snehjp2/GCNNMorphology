@@ -28,11 +28,13 @@ def load_models(directory_path):
     
     for file_name in os.listdir(directory_path):
         file_path = os.path.join(directory_path, file_name)
+        print(file_path)
         if file_name.endswith('.pt') and os.path.isfile(file_path):
+            print(f'Loading {file_name}...')
             model_name = os.path.splitext(file_name)[0]
             model = model_dict[str(model_name)]()
             model.load_state_dict(torch.load(file_path, map_location=device))
-            model = model.to(device)
+            print(f'Finishing Loading {model_name}')
 
             trained_models[model_name] = model
             
@@ -41,7 +43,7 @@ def load_models(directory_path):
     return trained_models
 
 @torch.no_grad()
-def compute_metrics(eval_loader: DataLoader, model: nn.Module, model_name: str, save_dir: str):
+def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, save_dir: str):
     
     classes = ('Disturbed Galaxies', 'Merging Galaxies', 
         'Round Smooth Galaxies', 'In-between Round Smooth Galaxies', 
@@ -50,19 +52,22 @@ def compute_metrics(eval_loader: DataLoader, model: nn.Module, model_name: str, 
         'Edge-on Galaxies without Bulge', 'Edge-on Galaxies with Bulge')
     
     y_pred, y_true = [], []
-    model = model.to(device)
     
-    for batch in tqdm(eval_loader, unit="batch", total=len(eval_loader)):
-        inputs, labels = batch[0].to(device), batch[1].to(device)
-        outputs = model(inputs)
+    # model = nn.DataParallel(model)
+    model.to(device)
+    model.eval()
+    
+    for batch in tqdm(test_loader, unit="batch", total=len(test_loader)):
+        input, label, angle, redshift = batch
+        input, label = input.to(device), label.to(device)
+        outputs = model(input)
         pred_labels = torch.argmax(outputs, dim=-1).cpu().numpy()
-        tmp = torch.tensor(labels == pred_labels, dtype=torch.float).mean()
         
         y_pred.extend(pred_labels)
-        y_true.extend(labels.cpu().numpy())
+        y_true.extend(label.cpu().numpy())
     
-    y_pred, y_true = np.asarray(y_pred), np.asarray(y_true)    
-    sklearn_report = classification_report(y_true, y_pred, output_dict=True, labels=classes)
+    y_pred, y_true = np.asarray(y_pred), np.asarray(y_true)  
+    sklearn_report = classification_report(y_true, y_pred, output_dict=True, target_names=classes)
 
     cf_matrix = confusion_matrix(y_true, y_pred)
     df_cm = pd.DataFrame(cf_matrix / np.sum(cf_matrix, axis=1)[:, None], index = [i for i in classes],
@@ -71,36 +76,36 @@ def compute_metrics(eval_loader: DataLoader, model: nn.Module, model_name: str, 
     sn.heatmap(df_cm, annot=True)
     plt.title(f'{model_name} Confusion Matrix')
     plt.savefig(os.path.join(save_dir, f"confusion_matrix_{model_name}.png"), bbox_inches='tight')
+    plt.close()
     
     return sklearn_report
     
 @torch.no_grad()
-def main():
+def main(model_dir):
     
-    trained_models = load_models(args.path)
-    print('Models Loaded!')
+    trained_models = load_models(model_dir)
+    print('All Models Loaded!')
     
     model_metrics = dict.fromkeys(trained_models.keys())
     
     for model_name, model in tqdm(trained_models.items()):
-        full_report = compute_metrics(eval_loader=test_dataloader, model=model, model_name=model_name, save_dir=args.path)
+        full_report = compute_metrics(test_loader=test_dataloader, model=model, model_name=model_name, save_dir=model_dir)
         
         model_metrics[model_name] = full_report
 
     print('Compiling All Metrics')
-    with open(f'{args.path}/test_metrics.yaml', 'w') as file:
+    with open(f'{model_dir}/test_metrics_2.yaml', 'w') as file:
         yaml.dump(model_metrics, file)
     
 if __name__ == '__main__':
     
-    if torch.cuda.is_available():
-        device = torch.device('cuda')
-    else:
-        device = torch.device('cpu') 
+    device = ('cuda' if torch.cuda.is_available() else 'cpu')
     
-    parser = argparse.ArgumentParser(description = 'Path to Models')
-    parser.add_argument('--path', metavar = 'path', required=True,
+    parser = argparse.ArgumentParser(description = 'Path to Models and Data')
+    parser.add_argument('--model_path', metavar = 'model_path', required=True,
                     help='Location of the model directory')
+    
+    parser.add_argument('--data_path', metavar = 'data_path', required=True, help='Location of the test data file')
 
     args = parser.parse_args()
     
@@ -109,9 +114,9 @@ if __name__ == '__main__':
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
     
-    test_path = '/Users/snehpandya/Projects/GCNNMorphology/data/random_rotations.hdf5'
-    test_dataset = Galaxy10DECalsTest(test_path, transform)
+    test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
+    print("Test Dataset Loaded!")
     test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=True)
     
-    main()
+    main(str(args.model_path))
     
