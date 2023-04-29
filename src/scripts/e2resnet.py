@@ -328,3 +328,7 @@ def c4resnet50():
 def c2resnet50():
     r2_act = gspaces.rot2dOnR2(N=2)
     return E2ResNet50(r2_act,layers=[3, 2, 2, 2])
+
+def d4resnet50():
+    r2_act = gspaces.flipRot2dOnR2(N=4)
+    return E2ResNet50(r2_act,layers=[3, 2, 2, 2])

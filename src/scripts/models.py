@@ -305,7 +305,8 @@ model_dict = {
     'small_c4resnet18' : e2resnet.small_c4resnet,
     'c4resnet50' : e2resnet.c4resnet50, ## done 
     'c2resnet50' : e2resnet.c2resnet50, ## done
-    'small_c4resnet50' : e2resnet.small_c4resnet50
+    'small_c4resnet50' : e2resnet.small_c4resnet50,
+    'd4resnet50' : e2resnet.d4resnet50
 }
 
 if __name__ == "__main__":
@@ -314,14 +315,20 @@ if __name__ == "__main__":
     input_size = (3, 256, 256)
     #for model in models:
     #    print(model)
-    model = model_dict['D4']()
-    model_children = list(model.children())
-    x = []
+    model = model_dict['d4resnet50']()
+    #model_children = list(model.children())
+    #x = []
     
-    for i in range(len(model_children)):
+    '''for i in range(len(model_children)):
          if type(model_children[i]) == e2cnn_nn.SequentialModule:            
             children_list = list(model_children[i].children()) 
             for j in range(len(children_list)):
                     x.append(children_list[j].export())
     print(x)
 
+    '''
+    x = torch.rand(size=(1,3,256,256))
+    y = model(x)
+    print(y.shape)
+
+    print(sum(p.numel() for p in model.parameters() if p.requires_grad))
