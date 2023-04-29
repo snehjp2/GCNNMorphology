@@ -310,25 +310,13 @@ model_dict = {
 }
 
 if __name__ == "__main__":
-    
-    ### input size = (batch_size, 3, 256, 256)
-    input_size = (3, 256, 256)
-    #for model in models:
-    #    print(model)
-    model = model_dict['d4resnet50']()
-    #model_children = list(model.children())
-    #x = []
-    
-    '''for i in range(len(model_children)):
-         if type(model_children[i]) == e2cnn_nn.SequentialModule:            
-            children_list = list(model_children[i].children()) 
-            for j in range(len(children_list)):
-                    x.append(children_list[j].export())
-    print(x)
 
-    '''
+    ## model checks 
+    
+    model = model_dict['d4resnet50']()
+
     x = torch.rand(size=(1,3,256,256))
     y = model(x)
     print(y.shape)
 
-    print(sum(p.numel() for p in model.parameters() if p.requires_grad))
+    print(f'Trainable parameters = {sum(p.numel() for p in model.parameters() if p.requires_grad)}')
