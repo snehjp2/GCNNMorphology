@@ -2,3 +2,4 @@ src/.ipynb_checkpoints/save_data-checkpoint.ipynb
 src/.ipynb_checkpoints/image-checkpoint.jpg
 src/scripts/__pycache__/
 src/config/
+src/sbatch/
