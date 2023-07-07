@@ -27,7 +27,7 @@ def set_all_seeds(num):
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(num)
 
-def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = None, epochs=100, device='cuda', save_dir='checkpoints', early_stopping_patience=10, report_interval=5):
+def train_model(model, train_dataloader, val_dataloader, optimizer, model_name, scheduler = None, epochs=100, device='cuda', save_dir='checkpoints', early_stopping_patience=10, report_interval=5):
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -99,7 +99,9 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
                 break
 
     torch.save(model.module.state_dict(), os.path.join(save_dir, "final_model.pt"))
-    
+    np.save(os.path.join(save_dir, f"losses-{model_name}.npy"), np.array(losses))
+    np.save(os.path.join(save_dir, f"steps-{model_name}.npy"), np.array(steps))
+
     # Plot loss vs. training step graph
     plt.figure(figsize=(10, 5))
     plt.plot(steps, losses)
@@ -177,31 +179,9 @@ def plot_predictions(eval_loader: DataLoader, model: nn.Module):
         plt.axis("off")
         plt.savefig('../../plots/eval_saved.png')
         
-def subsample(original_dataset, test_size):
-    
-    original_indices = np.asarray([x for x in range(17736)])
-    augmented_indices = np.asarray([x for x in range(17736, len(original_dataset))])
-    
-    num_orig_train = int((1- test_size) * len(original_indices))
-    num_orig_val = len(original_indices) - num_orig_train
-
-    orig_train_indices = np.random.choice(original_indices, num_orig_train, replace=False)
-    ind = np.zeros(len(original_indices), dtype=bool)
-    ind[orig_train_indices] = True
-    orig_val_indices = original_indices[~ind]
-    
-    train_inices = np.concatenate((orig_train_indices, augmented_indices))
-    train_sampler = torch.utils.data.SubsetRandomSampler(train_inices)
-    val_sampler = torch.utils.data.SubsetRandomSampler(orig_val_indices)
-
-    # Create data loaders for both the training and validation sets
-    train_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=train_sampler, pin_memory=True)
-    val_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=val_sampler, pin_memory=True)
-    
-    return train_dataloader, val_dataloader
-
 
 def main(config):
+    model_name = config['model']
     model = model_dict[config['model']]()
     params_to_optimize = [p for p in model.parameters() if p.requires_grad]
     optimizer = optim.AdamW(params_to_optimize, lr = config['parameters']['lr'], 
@@ -226,8 +206,6 @@ def main(config):
     end = time.time()
     print(f"dataset loaded in {end - start} s")
     
-
-    # train_dataloader, val_dataloader = subsample(train_dataset, 0.2)
     
     test_len = int(config['parameters']['test_size'] * len(train_dataset))
     train_len = len(train_dataset) - test_len
@@ -237,7 +215,7 @@ def main(config):
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
     save_dir = config['save_dir'] + config['model'] + '_' + timestr
-    best_val_epoch, best_val_acc, final_loss = train_model(model, train_dataloader, val_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
+    best_val_epoch, best_val_acc, final_loss = train_model(model, train_dataloader, val_dataloader, optimizer, model_name, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
     print('Training Done')
     
     config['best_val_acc'] = best_val_acc
