@@ -4,7 +4,6 @@ from torch.nn import functional as F
 from escnn import gspaces
 from escnn import nn as escnn_nn
 import e2resnet 
-import e2wrn
 import torchvision
 #from torchsummary import summary
 
