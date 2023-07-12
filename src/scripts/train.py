@@ -192,7 +192,6 @@ def main(config):
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.RandomRotation(180),
-        #transforms.CenterCrop(180),
         transforms.Resize(255),
         transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
         transforms.RandomHorizontalFlip(p=0.3),

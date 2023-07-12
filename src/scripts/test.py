@@ -53,7 +53,7 @@ def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, 
     
     y_pred, y_true = [], []
     
-    # model = nn.DataParallel(model)
+    model = nn.DataParallel(model)
     model.to(device)
     model.eval()
     
@@ -111,7 +111,8 @@ if __name__ == '__main__':
     
     transform = transforms.Compose([
         transforms.ToTensor(),
-        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
+        transforms.Resize(255)
     ])
     
     test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
