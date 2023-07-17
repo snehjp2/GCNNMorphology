@@ -28,8 +28,11 @@ def load_models(directory_path):
     
     for file_name in os.listdir(directory_path):
         file_path = os.path.join(directory_path, file_name)
-        print(file_path)
         if file_name.endswith('.pt') and os.path.isfile(file_path):
+            
+            if file_name not in model_dict.keys():
+                continue
+            
             print(f'Loading {file_name}...')
             model_name = os.path.splitext(file_name)[0]
             model = model_dict[str(model_name)]()

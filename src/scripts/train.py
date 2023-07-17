@@ -189,7 +189,7 @@ def main(config):
 
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones = config['parameters']['milestones'],gamma=config['parameters']['lr_decay'])
     
-    transform = transforms.Compose([
+    train_transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.RandomRotation(180),
         transforms.Resize(255),
@@ -199,16 +199,24 @@ def main(config):
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
     
+    val_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
+        transforms.Resize(255)
+    ])
+    
     print("Loading train dataset!")
     start = time.time()
-    train_dataset = Galaxy10DECals(config['dataset'], transform)
+    train_dataset = Galaxy10DECals(config['dataset'], train_transform)
+    
     end = time.time()
     print(f"dataset loaded in {end - start} s")
-    
     
     test_len = int(config['parameters']['test_size'] * len(train_dataset))
     train_len = len(train_dataset) - test_len
     train_dataset, val_dataset = torch.utils.data.random_split(train_dataset, [train_len, test_len])
+    val_dataset.transform = val_transform
+    
     train_dataloader = DataLoader(train_dataset, batch_size=config['parameters']['batch_size'], shuffle=True, pin_memory=True)
     val_dataloader = DataLoader(val_dataset, batch_size=config['parameters']['batch_size'], shuffle=True, pin_memory=True)
 

@@ -42,9 +42,10 @@ class Galaxy10DECalsTest(Dataset):
     Args:
         dataset_path (string) : path to h5 file
     """
-    def __init__(self,dataset_path : str, transform = None):
+    def __init__(self,dataset_path : str, train_transform = None, val_transform = None) :
         self.dataset_path = dataset_path
-        self.transform = transform
+        self.train_transform = train_transform
+        self.val_transform = val_transform
         with h5py.File(self.dataset_path,"r") as f:
             self.img = f['images'][()]
             self.label = f['labels'][()]
@@ -60,8 +61,12 @@ class Galaxy10DECalsTest(Dataset):
         angle = torch.tensor(self.angle[idx],dtype=torch.long)
         redshift = torch.tensor(self.redshift[idx],dtype=torch.float)
         
-        if self.transform:
-            img = self.transform(img)
+        if self.train_transform is not None:
+            img = self.train_transform(img)
+            
+        if self.val_transform is not None:
+            img = self.val_transform(img)
+            
         return img, label, angle, redshift
 
     def __len__(self):
