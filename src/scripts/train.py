@@ -247,14 +247,14 @@ if __name__ == '__main__':
         
     set_all_seeds(42)
 
-    # parser = argparse.ArgumentParser(description = 'Train the models')
-    # parser.add_argument('--config', metavar = 'config', required=False,
-    #                 help='Location of the config file')
+    parser = argparse.ArgumentParser(description = 'Train the models')
+    parser.add_argument('--config', metavar = 'config', required=True,
+                    help='Location of the config file')
 
-    # args = parser.parse_args()
+    args = parser.parse_args()
 
 
-    # with open(args.config, 'r') as f:
-    #     config = yaml.safe_load(f)
-    config = None
+    with open(args.config, 'r') as f:
+        config = yaml.safe_load(f)
+
     main(config)
