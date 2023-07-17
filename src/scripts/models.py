@@ -130,11 +130,11 @@ class GeneralSteerableCNN(torch.nn.Module):
         # Fully Connected
         self.fully_net = torch.nn.Sequential(
             torch.nn.Linear(25*c, 64),
-            torch.nn.Dropout(0.2),
+            #torch.nn.Dropout(0.2),
             torch.nn.BatchNorm1d(64),
             torch.nn.ELU(inplace=True),
             torch.nn.Linear(64, 32),
-            torch.nn.Dropout(0.2),
+            #torch.nn.Dropout(0.2),
             torch.nn.BatchNorm1d(32),
             torch.nn.ELU(inplace=True),
             torch.nn.Linear(32, n_classes),
