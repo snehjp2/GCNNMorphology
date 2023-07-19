@@ -3,6 +3,7 @@ import torch.nn as nn
 from torch.nn import functional as F
 from escnn import gspaces
 from escnn import nn as escnn_nn
+import cnn
 import e2resnet 
 import torchvision
 #from torchsummary import summary
@@ -183,7 +184,9 @@ class GeneralSteerableCNN(torch.nn.Module):
 
         return x
 
-
+def load_d1():
+    D1_model = GeneralSteerableCNN(N=1,reflections=True)
+    return D1_model
 
 def load_d2():
     D2_model = GeneralSteerableCNN(N=2,reflections=True)
@@ -200,6 +203,10 @@ def load_d8():
 def load_d16():
     D16_model = GeneralSteerableCNN(N=16,reflections=True)
     return D16_model
+
+def load_c1():
+    C1_model = GeneralSteerableCNN(N=1)
+    return C1_model
 
 def load_c2():
     C2_model = GeneralSteerableCNN(N=2)
@@ -239,25 +246,28 @@ def load_densenet121():
 
 
 model_dict = {
-    'ResNet18' : load_resnet18, ## done
-    'ResNet50' : load_resnet50, ## done
-    'WRN50_2' : load_wrn50_2, ## done
-    'densenet121' : load_densenet121, ## done
-    'D2' : load_d2, ## done 
-    'D4' : load_d4, ## done
-    'D8' : load_d8, ## done
-    'D16' : load_d16, ## done
-    'C2' : load_c2, ## done
-    'C4' : load_c4, ## done
-    'C8' : load_c8,  ## done
-    'C16' : load_c16, ## done
-    'c1resnet18' : e2resnet.c1resnet18, ## done
-    'd1resnet18' : e2resnet.d1resnet18, ## done
-    'c4resnet18' : e2resnet.c4resnet18, ## done
-    'd4resnet18' : e2resnet.d4resnet18, ## done
+    'ResNet18' : load_resnet18, 
+    'ResNet50' : load_resnet50, 
+    'WRN50_2' : load_wrn50_2, 
+    'densenet121' : load_densenet121, 
+    'D1' : load_d1,
+    'D2' : load_d2,  
+    'D4' : load_d4, 
+    'D8' : load_d8, 
+    'D16' : load_d16, 
+    'C1' : load_c1, 
+    'C2' : load_c2, 
+    'C4' : load_c4, 
+    'C8' : load_c8,  
+    'C16' : load_c16, 
+    'CNN' : cnn.load_CNN,
+    'c1resnet18' : e2resnet.c1resnet18, 
+    'd1resnet18' : e2resnet.d1resnet18, 
+    'c4resnet18' : e2resnet.c4resnet18, 
+    'd4resnet18' : e2resnet.d4resnet18, 
     'small_c4resnet18' : e2resnet.small_c4resnet,
-    'c4resnet50' : e2resnet.c4resnet50, ## done 
-    'c2resnet50' : e2resnet.c2resnet50, ## done
+    'c4resnet50' : e2resnet.c4resnet50,  
+    'c2resnet50' : e2resnet.c2resnet50, 
     'small_c4resnet50' : e2resnet.small_c4resnet50,
     'd4resnet50' : e2resnet.d4resnet50
 }

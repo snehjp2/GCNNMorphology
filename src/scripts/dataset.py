@@ -8,6 +8,7 @@ import torchvision.transforms as T
 import matplotlib.pyplot as plt
 import time
 from torchvision import transforms
+import copy
 
 
 
@@ -42,10 +43,9 @@ class Galaxy10DECalsTest(Dataset):
     Args:
         dataset_path (string) : path to h5 file
     """
-    def __init__(self,dataset_path : str, train_transform = None, val_transform = None) :
+    def __init__(self,dataset_path : str, transform = None):
         self.dataset_path = dataset_path
-        self.train_transform = train_transform
-        self.val_transform = val_transform
+        self.transform = transform
         with h5py.File(self.dataset_path,"r") as f:
             self.img = f['images'][()]
             self.label = f['labels'][()]
@@ -61,12 +61,8 @@ class Galaxy10DECalsTest(Dataset):
         angle = torch.tensor(self.angle[idx],dtype=torch.long)
         redshift = torch.tensor(self.redshift[idx],dtype=torch.float)
         
-        if self.train_transform is not None:
-            img = self.train_transform(img)
-            
-        if self.val_transform is not None:
-            img = self.val_transform(img)
-            
+        if self.transform:
+            img = self.transform(img)
         return img, label, angle, redshift
 
     def __len__(self):
@@ -74,7 +70,7 @@ class Galaxy10DECalsTest(Dataset):
 
 if __name__ == '__main__':
     
-    transform = transforms.Compose([
+    train_transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.RandomRotation(180),
         transforms.Resize(255),
@@ -83,13 +79,25 @@ if __name__ == '__main__':
         transforms.RandomVerticalFlip(p=0.3),
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
-    start_time = time.time()
-    dataset = Galaxy10DECalsTest(sys.argv[1],transform=transform)
-    end_time = time.time()
-    print("Time taken to load dataset: ", end_time-start_time)
     
-    start_time = time.time()
-    for i in range(len(dataset)):
-        img ,label, _, _ = dataset[i]
+    val_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
+        transforms.Resize(255)
+    ])
+    
+    train_dataset = Galaxy10DECals('/Users/snehpandya/Projects/GCNNMorphology/data/Galaxy10_DECals.h5')
+    val_dataset = copy.deepcopy(train_dataset)
+    
+    indices = torch.randperm(len(train_dataset))
+    val_size = int(len(train_dataset) * .2)
+    train_dataset = torch.utils.data.Subset(train_dataset, indices[:-val_size])
+    val_dataset = torch.utils.data.Subset(val_dataset, indices[-val_size:])
+    assert len(train_dataset) + len(val_dataset) == len(indices)
+    train_dataset.dataset.transform = train_transform
+    val_dataset.dataset.transform = val_transform
+    
+    
+    print(train_dataset.dataset.transform)
+    print(val_dataset.dataset.transform)
     end_time = time.time()
-    print("Time taken to load all images: ", end_time-start_time)
