@@ -17,6 +17,7 @@ from models import model_dict, feature_fields
 from dataset import Galaxy10DECals
 from tqdm import tqdm
 import random
+import copy
 
 def set_all_seeds(num):
     random.seed(num)
