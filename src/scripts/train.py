@@ -178,7 +178,7 @@ def train_model_da(model, train_dataloader, val_dataloader, optimizer, epochs=10
             if val_acc > best_val_acc:
                 best_val_acc = val_acc
                 no_improvement_count = 0
-                torch.save(model.module.state_dict(), os.path.join(save_dir, f"best_model.pt"))
+                torch.save(model.eval().module.state_dict(), os.path.join(save_dir, f"best_model.pt"))
             else:
                 no_improvement_count += 1
 
@@ -186,7 +186,7 @@ def train_model_da(model, train_dataloader, val_dataloader, optimizer, epochs=10
                 print(f"Early stopping after {early_stopping_patience} epochs without improvement.")
                 break
 
-    torch.save(model.module.state_dict(), os.path.join(save_dir, "final_model.pt"))
+    torch.save(model.eval().module.state_dict(), os.path.join(save_dir, "final_model.pt"))
     print("Training Finished!")
 
 

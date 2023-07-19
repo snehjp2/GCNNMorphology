@@ -36,6 +36,7 @@ def load_models(directory_path):
             print(f'Loading {file_name}...')
             model_name = os.path.splitext(file_name)[0]
             model = model_dict[str(model_name)]()
+            model.eval()
             model.load_state_dict(torch.load(file_path, map_location=device))
             print(f'Finishing Loading {model_name}')
 
