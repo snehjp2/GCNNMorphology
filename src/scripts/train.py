@@ -89,6 +89,7 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, model_name, 
                 no_improvement_count = 0
                 best_val_epoch = epoch + 1
                 torch.save(model.eval().module.state_dict(), os.path.join(save_dir, f"best_model.pt"))
+                torch.save(model.eval().module.state_dict(), os.path.join(save_dir, f"best_model.pt"))
             else:
                 no_improvement_count += 1
 
@@ -96,6 +97,7 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, model_name, 
                 print(f"Early stopping after {early_stopping_patience} epochs without improvement.")
                 break
 
+    torch.save(model.eval().module.state_dict(), os.path.join(save_dir, "final_model.pt"))
     torch.save(model.eval().module.state_dict(), os.path.join(save_dir, "final_model.pt"))
     np.save(os.path.join(save_dir, f"losses-{model_name}.npy"), np.array(losses))
     np.save(os.path.join(save_dir, f"steps-{model_name}.npy"), np.array(steps))
@@ -283,6 +285,15 @@ def main(config):
     print("Loading train dataset!")
     start = time.time()
     train_dataset = Galaxy10DECals(config['dataset'])
+    val_dataset = copy.deepcopy(train_dataset)
+
+    indices = torch.randperm(len(train_dataset))
+    val_size = int(len(train_dataset) * config['parameters']['test_size'])
+    train_dataset = torch.utils.data.Subset(train_dataset, indices[:-val_size])
+    val_dataset = torch.utils.data.Subset(val_dataset, indices[-val_size:])
+    assert len(train_dataset) + len(val_dataset) == len(indices)
+    train_dataset.dataset.transform = train_transform
+    val_dataset.dataset.transform = val_transform
     end = time.time()
     print(f"dataset loaded in {end - start} s")
     
@@ -327,5 +338,5 @@ if __name__ == '__main__':
 
     with open(args.config, 'r') as f:
         config = yaml.safe_load(f)
-   
+
     main(config)
