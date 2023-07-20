@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torchsummary import summary
+#from torchsummary import summary
 
 num_classes = 10
 feature_fields = [12, 24, 48, 48, 48, 48, 96, 96, 96, 112, 192]    

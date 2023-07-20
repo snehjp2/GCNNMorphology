@@ -181,7 +181,7 @@ if __name__ == '__main__':
 	is_equivarient = False
 	if any(char.isdigit() for char in args.model_name):
 		is_equivarient = True
-	feature_model = load_model(args.model_path, args.model_name)
+	feature_model = load_model(args.model_path, args.model_name, is_equivarient)
 	transform = transforms.Compose([
         transforms.ToTensor(),
 		transforms.Resize(255),
