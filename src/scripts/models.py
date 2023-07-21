@@ -202,6 +202,14 @@ def load_d16():
     D16_model = GeneralSteerableCNN(N=16,reflections=True)
     return D16_model
 
+def load_d32():
+    D32_model = GeneralSteerableCNN(N=32,reflections=True)
+    return D32_model
+
+def load_d64():
+    D64_model = GeneralSteerableCNN(N=64,reflections=True)
+    return D64_model
+
 def load_c1():
     C1_model = GeneralSteerableCNN(N=1)
     return C1_model
@@ -253,6 +261,8 @@ model_dict = {
     'D4' : load_d4, 
     'D8' : load_d8, 
     'D16' : load_d16, 
+    'D32' : load_d32,
+    'D64' : load_d64,
     'C1' : load_c1, 
     'C2' : load_c2, 
     'C4' : load_c4, 
