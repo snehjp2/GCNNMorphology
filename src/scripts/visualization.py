@@ -19,19 +19,26 @@ import seaborn as sns
 
 
 class FeatureModel(nn.Module):
-	def __init__(self, base_model: nn.Module):
+	def __init__(self, base_model: nn.Module, is_equivarient):
 		super(FeatureModel, self).__init__()
 		self.features = torch.nn.Sequential(*list(base_model.children())[:-1])
-		self.in_type = base_model.input_type
+		self.is_equivarient = is_equivarient
+		if is_equivarient:
+			self.in_type = base_model.input_type
+
 	def forward(self, x):
-		x = escnn_nn.GeometricTensor(x, self.in_type)
+		if self.is_equivarient:
+			x = escnn_nn.GeometricTensor(x, self.in_type)
 		x = self.features(x)
-		x = x.tensor
+		if self.is_equivarient:
+			x = x.tensor
 		x = x.reshape(x.shape[0], -1)
 		return x
 
 
-def load_model(model_path: str, model_name: str):
+
+
+def load_model(model_path: str, model_name: str, is_equivarient: bool):
 	"""
 	Load model from .pt file.
 	"""
@@ -44,7 +51,7 @@ def load_model(model_path: str, model_name: str):
 
 	model.load_state_dict(ckpt)
 
-	feature_model = FeatureModel(model)
+	feature_model = FeatureModel(model, is_equivarient)
 	feature_model.eval()
 	return feature_model
 	
@@ -170,7 +177,11 @@ if __name__ == '__main__':
 		device = torch.device('cuda')
 	else:
 		device = torch.device('cpu')
-	feature_model = load_model(args.model_path, args.model_name)
+	#checks if model_name has number in it
+	is_equivarient = False
+	if any(char.isdigit() for char in args.model_name):
+		is_equivarient = True
+	feature_model = load_model(args.model_path, args.model_name, is_equivarient)
 	transform = transforms.Compose([
         transforms.ToTensor(),
 		transforms.Resize(255),
