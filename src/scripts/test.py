@@ -98,7 +98,7 @@ def main(model_dir):
         model_metrics[model_name] = full_report
 
     print('Compiling All Metrics')
-    with open(f'{model_dir}/test_metrics_2.yaml', 'w') as file:
+    with open(f'{model_dir}/{args.output_name}.yaml', 'w') as file:
         yaml.dump(model_metrics, file)
     
 if __name__ == '__main__':
@@ -110,6 +110,8 @@ if __name__ == '__main__':
                     help='Location of the model directory')
     
     parser.add_argument('--data_path', metavar = 'data_path', required=True, help='Location of the test data file')
+    
+    parser.add_argument('--output_name', metavar = 'output_name', required=True, help='Name of the output file')
 
     args = parser.parse_args()
     
