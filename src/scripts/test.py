@@ -30,9 +30,6 @@ def load_models(directory_path):
         file_path = os.path.join(directory_path, file_name)
         if file_name.endswith('.pt') and os.path.isfile(file_path):
             
-            if file_name not in model_dict.keys():
-                continue
-            
             print(f'Loading {file_name}...')
             model_name = os.path.splitext(file_name)[0]
             model = model_dict[str(model_name)]()
@@ -47,7 +44,7 @@ def load_models(directory_path):
     return trained_models
 
 @torch.no_grad()
-def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, save_dir: str):
+def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, save_dir: str, output_name: str):
     
     classes = ('Disturbed Galaxies', 'Merging Galaxies', 
         'Round Smooth Galaxies', 'In-between Round Smooth Galaxies', 
@@ -79,13 +76,13 @@ def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, 
     plt.figure(figsize = (12,7))
     sn.heatmap(df_cm, annot=True)
     plt.title(f'{model_name} Confusion Matrix')
-    plt.savefig(os.path.join(save_dir, f"confusion_matrix_{model_name}.png"), bbox_inches='tight')
+    plt.savefig(os.path.join(save_dir, f"confusion_matrix_{model_name}_{output_name}.png"), bbox_inches='tight')
     plt.close()
     
     return sklearn_report
     
 @torch.no_grad()
-def main(model_dir):
+def main(model_dir, output_name):
     
     trained_models = load_models(model_dir)
     print('All Models Loaded!')
@@ -93,12 +90,12 @@ def main(model_dir):
     model_metrics = dict.fromkeys(trained_models.keys())
     
     for model_name, model in tqdm(trained_models.items()):
-        full_report = compute_metrics(test_loader=test_dataloader, model=model, model_name=model_name, save_dir=model_dir)
+        full_report = compute_metrics(test_loader=test_dataloader, model=model, model_name=model_name, save_dir=model_dir, output_name=output_name)
         
         model_metrics[model_name] = full_report
 
     print('Compiling All Metrics')
-    with open(f'{model_dir}/{args.output_name}.yaml', 'w') as file:
+    with open(f'{model_dir}/{output_name}.yaml', 'w') as file:
         yaml.dump(model_metrics, file)
     
 if __name__ == '__main__':
@@ -125,5 +122,5 @@ if __name__ == '__main__':
     print("Test Dataset Loaded!")
     test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=True)
     
-    main(str(args.model_path))
+    main(str(args.model_path), str(args.output_name))
     
