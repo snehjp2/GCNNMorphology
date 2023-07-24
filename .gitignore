@@ -3,3 +3,5 @@ src/.ipynb_checkpoints/image-checkpoint.jpg
 src/scripts/__pycache__/
 src/config/
 src/sbatch/
+
+.DS_Store
