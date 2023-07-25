@@ -8,6 +8,7 @@ import torch.nn as nn
 import numpy as np
 from torchvision import transforms
 import yaml
+from adversarialattack import OnePixelAttack
 from sklearn.metrics import confusion_matrix, classification_report
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -21,7 +22,13 @@ input: path to directory containing trained models in .pt format.
 returns: .yaml file with accuracy, precision, recall, and f1-score.
          Confusion matrix for each model on test set.
 """
-
+classes = ('Disturbed Galaxies', 'Merging Galaxies', 
+        'Round Smooth Galaxies', 'In-between Round Smooth Galaxies', 
+        'Cigar Shaped Smooth Galaxies', 'Barred Spiral Galaxies', 
+        'Unbarred Tight Spiral Galaxies', 'Unbarred Loose Spiral Galaxies', 
+        'Edge-on Galaxies without Bulge', 'Edge-on Galaxies with Bulge')
+    
+    
 def load_models(directory_path):
 
     trained_models = dict.fromkeys(model_dict.keys())
@@ -45,12 +52,6 @@ def load_models(directory_path):
 
 @torch.no_grad()
 def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, save_dir: str, output_name: str):
-    
-    classes = ('Disturbed Galaxies', 'Merging Galaxies', 
-        'Round Smooth Galaxies', 'In-between Round Smooth Galaxies', 
-        'Cigar Shaped Smooth Galaxies', 'Barred Spiral Galaxies', 
-        'Unbarred Tight Spiral Galaxies', 'Unbarred Loose Spiral Galaxies', 
-        'Edge-on Galaxies without Bulge', 'Edge-on Galaxies with Bulge')
     
     y_pred, y_true = [], []
     
@@ -82,21 +83,52 @@ def compute_metrics(test_loader: DataLoader, model: nn.Module, model_name: str, 
     return sklearn_report
     
 @torch.no_grad()
-def main(model_dir, output_name):
+def main(model_dir, output_name, N=None):
     
-    trained_models = load_models(model_dir)
-    print('All Models Loaded!')
-    
-    model_metrics = dict.fromkeys(trained_models.keys())
-    
-    for model_name, model in tqdm(trained_models.items()):
-        full_report = compute_metrics(test_loader=test_dataloader, model=model, model_name=model_name, save_dir=model_dir, output_name=output_name)
+    if N is not None:
+        trained_models = load_models(model_dir)
+        print('All Models Loaded!')
         
-        model_metrics[model_name] = full_report
+        model_metrics = {model_name: {class_name: {"precision": [], "recall": [], "f1-score": [], "support": []} 
+                                    for class_name in classes} 
+                        for model_name in trained_models.keys()}
 
-    print('Compiling All Metrics')
-    with open(f'{model_dir}/{output_name}.yaml', 'w') as file:
-        yaml.dump(model_metrics, file)
+        for i in range(N):
+            print(f"Starting evaluation {i + 1} of {N}")
+            for model_name, model in tqdm(trained_models.items()):
+                full_report = compute_metrics(test_loader=test_dataloader, model=model, 
+                                            model_name=f"{model_name}_{i + 1}", save_dir=model_dir, output_name=output_name)
+                
+                # Append the metrics of this iteration to the respective lists
+                for class_name in classes:
+                    for metric in ["precision", "recall", "f1-score", "support"]:
+                        model_metrics[model_name][class_name][metric].append(full_report[class_name][metric])
+        
+        # Compute the mean of the metrics across all iterations
+        for model_name in model_metrics:
+            for class_name in classes:
+                for metric in ["precision", "recall", "f1-score", "support"]:
+                    model_metrics[model_name][class_name][metric] = np.mean(model_metrics[model_name][class_name][metric])
+
+        print('Compiling All Metrics')
+        with open(f'{model_dir}/{output_name}.yaml', 'w') as file:
+            yaml.dump(model_metrics, file)
+        
+        trained_models = load_models(model_dir)
+        print('All Models Loaded!')
+        
+    else:
+        
+        model_metrics = dict.fromkeys(trained_models.keys())
+        
+        for model_name, model in tqdm(trained_models.items()):
+            full_report = compute_metrics(test_loader=test_dataloader, model=model, model_name=model_name, save_dir=model_dir, output_name=output_name)
+            
+            model_metrics[model_name] = full_report
+
+        print('Compiling All Metrics')
+        with open(f'{model_dir}/{output_name}.yaml', 'w') as file:
+            yaml.dump(model_metrics, file)
     
 if __name__ == '__main__':
     
@@ -132,5 +164,5 @@ if __name__ == '__main__':
     print("Test Dataset Loaded!")
     test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=True)
     
-    main(str(args.model_path), str(args.output_name))
+    main(str(args.model_path), str(args.output_name), N=100)
     
