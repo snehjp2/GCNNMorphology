@@ -102,22 +102,22 @@ def main(model_dir, output_name, N=None):
                 # Append the metrics of this iteration to the respective lists
                 for class_name in classes:
                     for metric in ["precision", "recall", "f1-score", "support"]:
-                        model_metrics[model_name][class_name][metric].append(full_report[class_name][metric])
+                        model_metrics[model_name][class_name][metric].append(float(full_report[class_name][metric]))
         
         # Compute the mean of the metrics across all iterations
         for model_name in model_metrics:
             for class_name in classes:
                 for metric in ["precision", "recall", "f1-score", "support"]:
-                    model_metrics[model_name][class_name][metric] = np.mean(model_metrics[model_name][class_name][metric])
+                    model_metrics[model_name][class_name][metric] = float(np.mean(model_metrics[model_name][class_name][metric]))
 
         print('Compiling All Metrics')
         with open(f'{model_dir}/{output_name}.yaml', 'w') as file:
             yaml.dump(model_metrics, file)
         
+    else:
+        
         trained_models = load_models(model_dir)
         print('All Models Loaded!')
-        
-    else:
         
         model_metrics = dict.fromkeys(trained_models.keys())
         
@@ -164,5 +164,5 @@ if __name__ == '__main__':
     print("Test Dataset Loaded!")
     test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=True)
     
-    main(str(args.model_path), str(args.output_name), N=100)
+    main(str(args.model_path), str(args.output_name), N=10)
     
