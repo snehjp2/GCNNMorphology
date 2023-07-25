@@ -110,13 +110,23 @@ if __name__ == '__main__':
     
     parser.add_argument('--output_name', metavar = 'output_name', required=True, help='Name of the output file')
 
+    parser.add_argument('--adversarial_attack', metavar = 'adversarial_attack', required=False, type=bool, default=False, help='Whether to use adversarial attack')
+
     args = parser.parse_args()
     
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
-        transforms.Resize(255)
-    ])
+    if args.adversarial_attack:
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Resize(255),
+            transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
+            OnePixelAttack()
+        ])
+    else:
+        transform = transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
+            transforms.Resize(255)
+        ])
     
     test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
     print("Test Dataset Loaded!")
