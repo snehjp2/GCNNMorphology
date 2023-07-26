@@ -103,21 +103,21 @@ def main(model_dir, output_name, N=None):
                 for class_name in classes:
                     for metric in ["precision", "recall", "f1-score", "support"]:
                         model_metrics[model_name][class_name][metric].append(float(full_report[class_name][metric]))
-                    model_metrics['accuracy'].append(float(full_report['accuracy']))
-                    model_metrics['macro avg']['f1-score'].append(float(full_report['macro avg']['f1-score']))
-                    model_metrics['macro avg']['precision'].append(float(full_report['macro avg']['precision']))
-                    model_metrics['macro avg']['recall'].append(float(full_report['macro avg']['recall']))
-                    model_metrics['macro avg']['support'].append(float(full_report['macro avg']['support']))
+                    model_metrics[model_name]['accuracy'].append(float(full_report['accuracy']))
+                    model_metrics[model_name]['macro avg']['f1-score'].append(float(full_report['macro avg']['f1-score']))
+                    model_metrics[model_name]['macro avg']['precision'].append(float(full_report['macro avg']['precision']))
+                    model_metrics[model_name]['macro avg']['recall'].append(float(full_report['macro avg']['recall']))
+                    model_metrics[model_name]['macro avg']['support'].append(float(full_report['macro avg']['support']))
         
         # Compute the mean of the metrics across all iterations
         for model_name in model_metrics:
             for class_name in classes:
                 for metric in ["precision", "recall", "f1-score", "support"]:
                     model_metrics[model_name][class_name][metric] = float(np.mean(model_metrics[model_name][class_name][metric]))
-                model_metrics['accuracy'] = float(np.mean(model_metrics['accuracy']))
-                model_metrics['macro avg']['f1-score'] = float(np.mean(model_metrics['macro avg']['f1-score']))
-                model_metrics['macro avg']['precision'] = float(np.mean(model_metrics['macro avg']['precision']))
-                model_metrics['macro avg']['recall'] = float(np.mean(model_metrics['macro avg']['recall']))
+                model_metrics[model_name]['accuracy'] = float(np.mean(model_metrics['accuracy']))
+                model_metrics[model_name]['macro avg']['f1-score'] = float(np.mean(model_metrics['macro avg']['f1-score']))
+                model_metrics[model_name]['macro avg']['precision'] = float(np.mean(model_metrics['macro avg']['precision']))
+                model_metrics[model_name]['macro avg']['recall'] = float(np.mean(model_metrics['macro avg']['recall']))
                 
 
         print('Compiling All Metrics')
