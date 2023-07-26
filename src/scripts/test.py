@@ -92,6 +92,12 @@ def main(model_dir, output_name, N=None):
         model_metrics = {model_name: {class_name: {"precision": [], "recall": [], "f1-score": [], "support": []} 
                                     for class_name in classes} 
                         for model_name in trained_models.keys()}
+        
+        for model_name in model_metrics:
+            model_metrics[model_name]['accuracy'] = []
+            model_metrics[model_name]['macro avg'] = {"precision": [], "recall": [], "f1-score": [], "support": []}
+            model_metrics[model_name]['weighted avg'] = {"precision": [], "recall": [], "f1-score": [], "support": []}
+    
 
         for i in range(N):
             print(f"Starting evaluation {i + 1} of {N}")
@@ -103,22 +109,24 @@ def main(model_dir, output_name, N=None):
                 for class_name in classes:
                     for metric in ["precision", "recall", "f1-score", "support"]:
                         model_metrics[model_name][class_name][metric].append(float(full_report[class_name][metric]))
-                    model_metrics[model_name]['accuracy'].append(float(full_report['accuracy']))
-                    model_metrics[model_name]['macro avg']['f1-score'].append(float(full_report['macro avg']['f1-score']))
-                    model_metrics[model_name]['macro avg']['precision'].append(float(full_report['macro avg']['precision']))
-                    model_metrics[model_name]['macro avg']['recall'].append(float(full_report['macro avg']['recall']))
-                    model_metrics[model_name]['macro avg']['support'].append(float(full_report['macro avg']['support']))
-        
-        # Compute the mean of the metrics across all iterations
+                        
+                # Append accuracy, macro avg, and weighted avg
+                model_metrics[model_name]['accuracy'].append(float(full_report['accuracy']))
+                for metric in ["precision", "recall", "f1-score", "support"]:
+                    model_metrics[model_name]['macro avg'][metric].append(float(full_report['macro avg'][metric]))
+                    model_metrics[model_name]['weighted avg'][metric].append(float(full_report['weighted avg'][metric]))
+    
+    # Compute the mean of the metrics across all iterations
         for model_name in model_metrics:
             for class_name in classes:
                 for metric in ["precision", "recall", "f1-score", "support"]:
                     model_metrics[model_name][class_name][metric] = float(np.mean(model_metrics[model_name][class_name][metric]))
-                model_metrics[model_name]['accuracy'] = float(np.mean(model_metrics['accuracy']))
-                model_metrics[model_name]['macro avg']['f1-score'] = float(np.mean(model_metrics['macro avg']['f1-score']))
-                model_metrics[model_name]['macro avg']['precision'] = float(np.mean(model_metrics['macro avg']['precision']))
-                model_metrics[model_name]['macro avg']['recall'] = float(np.mean(model_metrics['macro avg']['recall']))
-                
+
+            # Compute the mean of accuracy, macro avg, and weighted avg
+            model_metrics[model_name]['accuracy'] = float(np.mean(model_metrics[model_name]['accuracy']))
+            for metric in ["precision", "recall", "f1-score", "support"]:
+                model_metrics[model_name]['macro avg'][metric] = float(np.mean(model_metrics[model_name]['macro avg'][metric]))
+                model_metrics[model_name]['weighted avg'][metric] = float(np.mean(model_metrics[model_name]['weighted avg'][metric]))
 
         print('Compiling All Metrics')
         with open(f'{model_dir}/{output_name}.yaml', 'w') as file:
