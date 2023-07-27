@@ -1,11 +1,13 @@
 import numpy as np
 import torch
 import torch.nn.functional as F
+from dataset import Galaxy10DECalsTest
+from torchvision import transforms
 import matplotlib.pyplot as plt
 from models import model_dict
 from train import set_all_seeds
 import random
-
+import argparse
 
 def show(img):
     npimg = img.cpu().numpy()
@@ -48,7 +50,8 @@ def evaluate(base_network, candidates, img, label, model):
     with torch.no_grad():
         for i, xs in enumerate(candidates):
             p_img = perturb(xs, img)
-            preds.append(F.softmax(base_network(p_img.unsqueeze(0))[1].squeeze(), dim=0)[int(label)].item())
+            out = base_network(p_img.unsqueeze(0))
+            preds.append(F.softmax(out.squeeze(), dim=0)[int(label)].item())
  
     return np.array(preds)
 
@@ -81,6 +84,7 @@ def attack(model, img, true_label, target_label=None, iters=100, pop_size=400, v
         return (is_targeted and fitness.max() > 0.5) or ((not is_targeted) and fitness.min() < 0.05)
     
     for iteration in range(iters):
+        print(f'Iteration {iteration}')
         # Early Stopping
         if is_success():
             break
@@ -113,7 +117,7 @@ def attack(model, img, true_label, target_label=None, iters=100, pop_size=400, v
     return is_success(), best_solution, best_score, perturbed_img, iteration+1 #it starts at 0
 
 def load_model(model_name, path):
-	model = model_dict[model_name]
+	model = model_dict[model_name]()
 	model.eval()
 	model.load_state_dict(torch.load(path, map_location=device))
 	
@@ -159,5 +163,5 @@ if __name__ == '__main__':
 	print("Iterations:", iterations)
 
 	plt.title(f'{model_name} Perturbed image')
-	plt.savefig(os.path.join('/work/GDL/purvik/', f"perturbed_image_{model_name}.png"), bbox_inches='tight')
+	plt.savefig(os.path.join('../../../save_dir/', f"perturbed_image_{model_name}.png"), bbox_inches='tight')
 	plt.close()
