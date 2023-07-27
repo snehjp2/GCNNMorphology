@@ -14,8 +14,12 @@ def show(img):
     plt.imshow(np.transpose(npimg, (1,2,0)), interpolation='nearest')
 
 def tell(base_network, img, label, model, target_label=None):
-    output = F.softmax(base_network(img.unsqueeze(0))[1].squeeze(), dim=0)
-    LABELS = ('spiral', 'elliptical', 'merger')
+    output = F.softmax(base_network(img.unsqueeze(0)).squeeze(), dim=0)
+    LABELS =  ('Disturbed Galaxies', 'Merging Galaxies', 'Round Smooth Galaxies', 
+               'In-between Round Smooth Galaxies','Cigar Shaped Smooth Galaxies',
+               'Barred Spiral Galaxies', 'Unbarred Tight Spiral Galaxies',
+               'Unbarred Loose Spiral Galaxies', 'Edge-on Galaxies without Bulge',
+               'Edge-on Galaxies with Bulge')
     print("Incoming label: ", label)
     print("True Label:", LABELS[int(label.item())], "-->", int(label.item()))
     print("Prediction:", LABELS[output.tolist().index(max(output.tolist()))],"-->", output.tolist().index(max(output.tolist())))

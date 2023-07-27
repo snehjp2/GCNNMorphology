@@ -27,7 +27,7 @@ class ConvBlock(nn.Module):
     
 
 class GeneralCNN(nn.Module):
-    def __init__(self, num_classes: int =num_classes, feature_fields: list[int] = feature_fields):
+    def __init__(self, num_classes: int =num_classes, feature_fields = feature_fields):
         super(GeneralCNN, self).__init__()
         self.num_classes = num_classes
         self.feature_fields = feature_fields
