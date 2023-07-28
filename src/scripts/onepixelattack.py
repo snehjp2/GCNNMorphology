@@ -61,8 +61,6 @@ def evaluate(base_network, candidates, img, label, model):
     with torch.no_grad():
         for i in range(0, len(perturbed_img), 128):
             data = perturbed_img[i:i+128] if i+128 < len(perturbed_img) else perturbed_img[i:]
-            print(f'type of data: {type(data)}')
-            print(f'shape of data: {data.shape}')
             data = data.to(device)
             output = F.softmax(base_network(data), dim=1)
             preds.append(output[:,int(label)].cpu().numpy())
@@ -75,7 +73,7 @@ def evaluate(base_network, candidates, img, label, model):
             preds.append(F.softmax(out.squeeze(), dim=0)[int(label)].item())
     '''
  
-    return np.array(preds)
+    return np.concatenate(preds)
 
 def evolve(candidates, F=0.5, strategy="clip"):
     gen2 = candidates.copy()
