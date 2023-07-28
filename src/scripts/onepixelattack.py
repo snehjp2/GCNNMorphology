@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader, data_utils
+from torch.utils.data import DataLoader, TensorDataset
 from dataset import Galaxy10DECalsTest
 from torchvision import transforms
 import matplotlib.pyplot as plt
@@ -58,10 +58,11 @@ def evaluate(base_network, candidates, img, label, model):
         p_img = perturb(xs, img)
         perturbed_img.append(p_img)
     perturbed_img = torch.stack(perturbed_img)
-    test = data_utils.TensorDataset(perturbed_img)
-    test_loader = DataLoader(test, batch_size=128, shuffle=False)
     with torch.no_grad():
-        for data in test_loader:
+        for i in range(0, len(perturbed_img), 128):
+            data = perturbed_img[i:i+128] if i+128 < len(perturbed_img) else perturbed_img[i:]
+            print(f'type of data: {type(data)}')
+            print(f'shape of data: {data.shape}')
             data = data.to(device)
             output = F.softmax(base_network(data), dim=1)
             preds.append(output[:,int(label)].cpu().numpy())
