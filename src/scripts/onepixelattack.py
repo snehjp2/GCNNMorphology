@@ -203,7 +203,7 @@ if __name__ == '__main__':
 	print("Iterations:", iterations)
 	
 	fig, ax = plt.subplots()
-	ax.imshow(np.transpose(perturbed_img, (1,2,0)), interpolation='nearest') 
+	ax.imshow(np.transpose(perturbed_img.cpu().numpy(), (1,2,0)), interpolation='nearest') 
 	ax.set_title(f'{args.model} Perturbed Image')
 	fig.savefig(os.path.join('../../../save_dir/', f"perturbed_image_{args.model}.png"), bbox_inches='tight')
 	plt.close(fig)
