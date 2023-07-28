@@ -181,6 +181,6 @@ if __name__ == '__main__':
 	print("Best Score:", best_score)
 	print("Iterations:", iterations)
 
-	plt.title(f'{model_name} Perturbed image')
-	plt.savefig(os.path.join('../../../save_dir/', f"perturbed_image_{model_name}.png"), bbox_inches='tight')
+	plt.title(f'{args.model} Perturbed image')
+	plt.savefig(os.path.join('../../../save_dir/', f"perturbed_image_{args.model}.png"), bbox_inches='tight')
 	plt.close()
