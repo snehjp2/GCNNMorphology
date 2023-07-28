@@ -13,6 +13,7 @@ import argparse
 import time
 import os
 
+
 def show(img):
 	npimg = img.cpu().numpy()
 	plt.imshow(np.transpose(npimg, (1,2,0)), interpolation='nearest')
@@ -171,7 +172,7 @@ if __name__ == '__main__':
 
 	args = parser.parse_args()
 
-	models = load_models(args.model_dir_path)
+    models = load_models(args.model_dir_path)
 
 	transform = transforms.Compose([
 			transforms.ToTensor(),

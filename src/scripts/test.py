@@ -32,7 +32,7 @@ classes = ('Disturbed Galaxies', 'Merging Galaxies',
 def load_models(directory_path):
 
     trained_models = dict.fromkeys(model_dict.keys())
-    
+    device = ('cuda' if torch.cuda.is_available() else 'cpu') 
     for file_name in os.listdir(directory_path):
         file_path = os.path.join(directory_path, file_name)
         if file_name.endswith('.pt') and os.path.isfile(file_path):
