@@ -8,6 +8,7 @@ from models import model_dict
 from train import set_all_seeds
 import random
 import argparse
+import time
 
 def show(img):
     npimg = img.cpu().numpy()
@@ -74,7 +75,7 @@ def evolve(candidates, F=0.5, strategy="clip"):
     
     return gen2
 
-def attack(model, img, true_label, target_label=None, iters=100, pop_size=400, verbose=True):
+def attack(model, img, true_label, model_name, target_label=None, iters=100, pop_size=400, verbose=True):
     # Targeted: maximize target_label if given (early stop > 50%)
     # Untargeted: minimize true_label otherwise (early stop < 5%)
 
@@ -86,7 +87,8 @@ def attack(model, img, true_label, target_label=None, iters=100, pop_size=400, v
     
     def is_success():
         return (is_targeted and fitness.max() > 0.5) or ((not is_targeted) and fitness.min() < 0.05)
-    
+
+    fitness_history  = [] 
     for iteration in range(iters):
         print(f'Iteration {iteration}')
         # Early Stopping
@@ -100,24 +102,37 @@ def attack(model, img, true_label, target_label=None, iters=100, pop_size=400, v
             print("Target Probability [Iteration {}]:".format(iteration), fitness.max() if is_targeted else fitness.min())
         
         # Generate new candidate solutions
+        start1 = time.time()
         new_gen_candidates = evolve(candidates, strategy="resample")
-        
+        end1 = time.time()
+        print(f"Time to generate new candidates for {iteration}: ", end1-start1)
         # Evaluate new solutions
+        start2 = time.time()
         new_gen_fitness = evaluate(model, new_gen_candidates, img, label, model)
-        
+        end2 = time.time()
+        print(f"Time to evaluate new candidates for {iteration}: ", end2-start2)
         # Replace old solutions with new ones where they are better
         successors = new_gen_fitness > fitness if is_targeted else new_gen_fitness < fitness
         candidates[successors] = new_gen_candidates[successors]
         fitness[successors] = new_gen_fitness[successors]
+        best_idx = fitness.argmax() if is_targeted else fitness.argmin()
+        fitness_history.append(fitness[best_idx])
     
     best_idx = fitness.argmax() if is_targeted else fitness.argmin()
     best_solution = candidates[best_idx]
     best_score = fitness[best_idx]
     
+    
     if verbose:
         visualize_perturbation(model, best_solution, img, true_label, model, target_label)
 
     perturbed_img = perturb(best_solution, img)
+
+    fitness_history = np.array(fitness_history)
+    steps = np.array([x+1 for x in range(len(fitness_history))])
+    plt.plot(fitness_history, steps)
+    plt.title(f'{model_name} Fitness History')
+    plt.savefig(os.path.join('../../../save_dir/', f"fitness_history_{model_name}.png"), bbox_inches='tight')
     return is_success(), best_solution, best_score, perturbed_img, iteration+1 #it starts at 0
 
 def load_model(model_name, path):
@@ -159,7 +174,7 @@ if __name__ == '__main__':
 	img = img.to(device)
 	model = model.to(device)
 
-	is_success, best_solution, best_score, perturbed_img, iterations = attack(model, img, label, target_label=None, iters=100, pop_size=400, verbose=True)
+	is_success, best_solution, best_score, perturbed_img, iterations = attack(model, img, label, args.model, target_label=None, iters=100, pop_size=400, verbose=True)
 
 	print("Attack Success:", is_success)
 	print("Best Solution:", best_solution)
