@@ -10,10 +10,13 @@ from train import set_all_seeds
 import random
 import argparse
 import time
+import os
 
 def show(img):
     npimg = img.cpu().numpy()
     plt.imshow(np.transpose(npimg, (1,2,0)), interpolation='nearest')
+  
+
 
 def tell(base_network, img, label, model, target_label=None):
     output = F.softmax(base_network(img.unsqueeze(0)).squeeze(), dim=0)
@@ -34,7 +37,7 @@ def tell(base_network, img, label, model, target_label=None):
 def visualize_perturbation(base_network, p, img, label, model, target_label=None):
     p_img = perturb(p, img)
     print("Perturbation:", p)
-    show(p_img)
+    #show(p_img)
     tell(base_network, p_img, label, model, target_label)
 
 def perturb(p, img):
@@ -145,9 +148,12 @@ def attack(model, img, true_label, model_name, target_label=None, iters=100, pop
 
     fitness_history = np.array(fitness_history)
     steps = np.array([x+1 for x in range(len(fitness_history))])
-    plt.plot(steps, fitness_history)
-    plt.title(f'{model_name} Fitness History')
-    plt.savefig(os.path.join('../../../save_dir/', f"fitness_history_{model_name}.png"), bbox_inches='tight')
+
+    fig, ax = plt.subplots()
+    ax.plot(steps, fitness_history)
+    ax.set(xlabel='Iteration', ylabel='Fitness', title=f'{model_name} Fitness History')
+    fig.savefig(os.path.join('../../../save_dir/', f"fitness_history_{model_name}.png"), bbox_inches='tight')
+    plt.close(fig)
     return is_success(), best_solution, best_score, perturbed_img, iteration+1 #it starts at 0
 
 def load_model(model_name, path):
@@ -195,7 +201,10 @@ if __name__ == '__main__':
 	print("Best Solution:", best_solution)
 	print("Best Score:", best_score)
 	print("Iterations:", iterations)
+	
+	fig, ax = plt.subplots()
+	ax.imshow(perturbed_img.transpose(1,2,0), interpolation='nearest') 
+	ax.set_title(f'{args.model} Perturbed Image')
+	fig.savefig(os.path.join('../../../save_dir/', f"perturbed_image_{args.model}.png"), bbox_inches='tight')
+	plt.close(fig)
 
-	plt.title(f'{args.model} Perturbed image')
-	plt.savefig(os.path.join('../../../save_dir/', f"perturbed_image_{args.model}.png"), bbox_inches='tight')
-	plt.close()
