@@ -130,7 +130,7 @@ def attack(model, img, true_label, model_name, target_label=None, iters=100, pop
 
     fitness_history = np.array(fitness_history)
     steps = np.array([x+1 for x in range(len(fitness_history))])
-    plt.plot(fitness_history, steps)
+    plt.plot(steps, fitness_history)
     plt.title(f'{model_name} Fitness History')
     plt.savefig(os.path.join('../../../save_dir/', f"fitness_history_{model_name}.png"), bbox_inches='tight')
     return is_success(), best_solution, best_score, perturbed_img, iteration+1 #it starts at 0
