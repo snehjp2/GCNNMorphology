@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import torch.nn.functional as F
+from torch.utils.data import DataLoader, data_utils
 from dataset import Galaxy10DECalsTest
 from torchvision import transforms
 import matplotlib.pyplot as plt
@@ -52,11 +53,26 @@ def perturb(p, img):
 def evaluate(base_network, candidates, img, label, model):
     preds = []
     model.train(False)
+    perturbed_img = []
+    for i, xs in enumerate(candidates):
+        p_img = perturb(xs, img)
+        perturbed_img.append(p_img)
+    perturbed_img = torch.stack(perturbed_img)
+    test = data_utils.TensorDataset(perturbed_img)
+    test_loader = DataLoader(test, batch_size=128, shuffle=False)
+    with torch.no_grad():
+        for data in test_loader:
+            data = data.to(device)
+            output = F.softmax(base_network(data), dim=1)
+            preds.append(output[:,int(label)].cpu().numpy())
+
+    '''
     with torch.no_grad():
         for i, xs in enumerate(candidates):
             p_img = perturb(xs, img)
             out = base_network(p_img.unsqueeze(0))
             preds.append(F.softmax(out.squeeze(), dim=0)[int(label)].item())
+    '''
  
     return np.array(preds)
 
