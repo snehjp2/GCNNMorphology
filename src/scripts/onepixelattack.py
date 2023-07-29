@@ -109,6 +109,7 @@ def attack(model, img, true_label, model_name, target_label=None, iters=100, pop
 		return (is_targeted and fitness.max() > 0.5) or ((not is_targeted) and fitness.min() < 0.05)
 
 	is_missclassified = False
+	fitness_history = []
 	for iteration in range(iters):
 		print(f'Iteration {iteration}')
 		# Early Stopping
