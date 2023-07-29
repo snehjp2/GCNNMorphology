@@ -138,7 +138,7 @@ def attack(model, img, true_label, model_name, target_label=None, iters=100, pop
 		best_candidate = candidates[best_idx]
 		p_img = perturb(best_candidate, img)
 		out = F.softmax(model(p_img.unsqueeze(0)).squeeze(), dim=0)
-		pred_label = out.cpu().numpy().argmax()
+		pred_label = out.detach().cpu().numpy().argmax()
 		if pred_label != true_label and not is_missclassified:
 			print(f"First missclassfication at iteration {iteration}")
 			is_missclassified = True
@@ -190,7 +190,7 @@ if __name__ == '__main__':
 	fig, ax = plt.subplots()
 	for model_name, model in models.items():
 
-		print(f"Attacking {name}...")
+		print(f"Attacking {model_name}...")
 
 		is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, target_label=None, iters=100, pop_size=400, verbose=True)
 		steps = [x for x in range(len(fitness_history))]
