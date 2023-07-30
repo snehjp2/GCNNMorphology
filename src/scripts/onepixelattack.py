@@ -210,7 +210,7 @@ if __name__ == '__main__':
 
 	fig, ax = plt.subplots()
 	ax.imshow(np.transpose(perturbed_img.cpu().numpy(), (1,2,0)), interpolation='nearest') 
-	ax.set_title(f'{args.model} Perturbed Image')
+	ax.set_title('Perturbed Image')
 	fig.savefig(os.path.join(args.model_dir_path, f"perturbed_image_{model_name}.png"), bbox_inches='tight', dpi=300)
 	plt.close(fig)
 
