@@ -157,17 +157,8 @@ def attack(model, img, true_label, model_name, target_label=None, iters=100, pop
 	return is_success(), best_solution, best_score, perturbed_img, iteration+1, fitness_history #it starts at 0
 
 
-def main(model_dir_path, data_path, output_name):
-    
-	models = load_models(str(model_dir_path))
+def main(model_dir_path, test_dataset, output_name):
 
-	transform = transforms.Compose([
-			transforms.ToTensor(),
-			transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
-			transforms.Resize(255)
-		])
-
-	test_dataset = Galaxy10DECalsTest(str(data_path), transform)
 	i = random.randint(0, len(test_dataset))
 	img, label, angle, redshift = test_dataset[i]
 
@@ -200,23 +191,26 @@ def main(model_dir_path, data_path, output_name):
 	plt.close(fig)
 
 if __name__ == '__main__':
-
+    
 	device = ('cuda' if torch.cuda.is_available() else 'cpu')
-
-	# set_all_seeds(42)
-
+ 
 	parser = argparse.ArgumentParser(description = 'One pixel attack on a model')
 
 	parser.add_argument('--model_dir_path', metavar = 'config', required=True,
 					help='path to model directory')
-
 	parser.add_argument('--data_path', metavar = 'data_path', required=True, help='Location of the test data file')
- 
 	parser.add_argument('--output_name', metavar = 'output_name', required=True, help='Name of the output file')
-
 	args = parser.parse_args()
-
+ 
+	models = load_models(str(args.model_dir_path))
+	transform = transforms.Compose([
+			transforms.ToTensor(),
+			transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
+			transforms.Resize(255)
+		]
+                                
+	test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
 
 	for i in range(10):
 		set_all_seeds(i)
-		main(args.model_dir_path, args.data_path, f"{args.output_name}_{i}")
+		main(args.model_dir_path, test_dataset, f"{args.output_name}_{i}")
