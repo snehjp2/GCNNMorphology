@@ -181,7 +181,7 @@ def main(model_dir_path, test_dataset, output_name):
 	ax.set_ylabel('Target Probability')
 	ax.set_title('Target Probability vs Iteration')
 	ax.legend()
-	fig.savefig(os.path.join(model_dir_path, f"{output_name}.png"), bbox_inches='tight', dpi=300)
+	fig.savefig(os.path.join(model_dir_path, f"{output_name}_{i}.png"), bbox_inches='tight', dpi=300)
 	plt.close(fig)
 
 	fig, ax = plt.subplots()
@@ -202,15 +202,15 @@ if __name__ == '__main__':
 	parser.add_argument('--output_name', metavar = 'output_name', required=True, help='Name of the output file')
 	args = parser.parse_args()
  
-	models = load_models(str(args.model_dir_path))
+	models = load_models(args.model_dir_path)
 	transform = transforms.Compose([
 			transforms.ToTensor(),
 			transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
 			transforms.Resize(255)
-		]
+		])
                                 
 	test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
 
 	for i in range(10):
 		set_all_seeds(i)
-		main(args.model_dir_path, test_dataset, f"{args.output_name}_{i}")
+		main(args.model_dir_path, test_dataset, args.output_name)
