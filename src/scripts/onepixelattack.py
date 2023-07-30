@@ -204,13 +204,13 @@ if __name__ == '__main__':
 	ax.set_ylabel('Target Probability')
 	ax.set_title('Target Probability vs Iteration')
 	ax.legend()
-	fig.savefig(os.path.join('../../../save_dir/', f"target_probability_vs_iterartion.png"), bbox_inches='tight')
+	fig.savefig(os.path.join(args.model_dir_path, f"target_probability_vs_iterartion.png"), bbox_inches='tight', dpi=300)
 	plt.close(fig)
 
 
 	fig, ax = plt.subplots()
 	ax.imshow(np.transpose(perturbed_img.cpu().numpy(), (1,2,0)), interpolation='nearest') 
 	ax.set_title(f'{args.model} Perturbed Image')
-	fig.savefig(os.path.join('../../../save_dir/', f"perturbed_image_{model_name}.png"), bbox_inches='tight')
+	fig.savefig(os.path.join(args.model_dir_path, f"perturbed_image_{model_name}.png"), bbox_inches='tight', dpi=300)
 	plt.close(fig)
 
