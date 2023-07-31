@@ -12,11 +12,11 @@ import random
 import argparse
 import time
 import os
-
+import h5py 
 
 def show(img):
 	npimg = img.cpu().numpy()
-	plt.imshow(np.transpose(npimg, (1,2,0)), interpolation='nearest')
+	plt. imshow(np.transpose(npimg, (1,2,0)), interpolation='nearest')
   
 
 
@@ -55,7 +55,7 @@ def perturb(p, img):
 	
 	return p_img
 
-def evaluate(base_network, candidates, img, label, model):
+ def evaluate(base_network, candidates, img, label, model):
 	preds = []
 	model.train(False)
 	perturbed_img = []
@@ -95,30 +95,28 @@ def evolve(candidates, F=0.5, strategy="clip"):
 	
 	return gen2
 
-def attack(model, img, true_label, model_name, target_label=None, iters=100, pop_size=400, verbose=True):
+def attack(model, img, true_label, model_name, iters=100, pop_size=400, verbose=True):
 	# Targeted: maximize target_label if given (early stop > 50%)
 	# Untargeted: minimize true_label otherwise (early stop < 5%)
 	model = model.to(device)
 	candidates = np.random.random((pop_size,5))
 	candidates[:,2:5] = np.clip(np.random.normal(0.5, 0.5, (pop_size, 3)), 0, 1)
-	is_targeted = target_label is not None
-	label = target_label if is_targeted else true_label
+	label = true_label
 	fitness = evaluate(model, candidates, img, label, model)
 	
 	def is_success():
-		return (is_targeted and fitness.max() > 0.5) or ((not is_targeted) and fitness.min() < 0.05)
+		return  fitness.min() < 0.05
 
 	is_missclassified = False
 	fitness_history = []
 	for iteration in range(iters):
-		print(f'Iteration {iteration}')
 		# Early Stopping
 		if is_success():
 			break
-			
+	    '''
 		if fitness.max() < .4 and iteration > 80:
 			break
-		
+		'''
 		if verbose and iteration % 10 == 0: # Print progress
 			print("Target Probability [Iteration {}]:".format(iteration), fitness.max() if is_targeted else fitness.min())
 		
@@ -142,9 +140,10 @@ def attack(model, img, true_label, model_name, target_label=None, iters=100, pop
 		if pred_label != true_label and not is_missclassified:
 			print(f"First missclassfication at iteration {iteration}")
 			is_missclassified = True
+            break
 
 	
-	best_idx = fitness.argmax() if is_targeted else fitness.argmin()
+	best_idx = fitness.argmin()
 	best_solution = candidates[best_idx]
 	best_score = fitness[best_idx]
 	
@@ -154,7 +153,7 @@ def attack(model, img, true_label, model_name, target_label=None, iters=100, pop
 
 	perturbed_img = perturb(best_solution, img)
 
-	return is_success(), best_solution, best_score, perturbed_img, iteration+1, fitness_history #it starts at 0
+	return (is_success() or is_missclassified), best_solution, best_score, perturbed_img, iteration+1, fitness_history #it starts at 0
 
 
 def main(model_dir_path, test_dataset, output_name):
@@ -163,32 +162,51 @@ def main(model_dir_path, test_dataset, output_name):
 	img, label, angle, redshift = test_dataset[i]
 
 	img = img.to(device)
+    perturbed_imgages = []
+	labels = []
 
-	fig, ax = plt.subplots()
-	for model_name, model in models.items():
+    #fig, ax = plt.subplots()
+    for i in range(len(test_dataset)):
+        img, label, angle, redshift = test_dataset[i]
+        labels.append(label)
+        img = img.to(device)
 
-		print(f"Attacking {model_name}...")
+        for model_name, model in models.items():
 
-		is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, target_label=None, iters=100, pop_size=400, verbose=True)
-		steps = [x for x in range(len(fitness_history))]
-		ax.plot(steps, fitness_history, label=model_name)
-		print("Attack Success:", is_success)
-		print("Best Solution:", best_solution)
-		print("Best Score:", best_score)
-		print("Iterations:", iterations)
 
-	ax.set_xlabel('Iteration')
-	ax.set_ylabel('Target Probability')
-	ax.set_title('Target Probability vs Iteration')
-	ax.legend()
-	fig.savefig(os.path.join(model_dir_path, f"{output_name}_{i}.png"), bbox_inches='tight', dpi=300)
-	plt.close(fig)
+            is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, target_label=None, iters=100, pop_size=400, verbose=False)
+            '''
+            steps = [x for x in range(len(fitness_history))]
+            ax.plot(steps, fitness_history, label=model_name)
+            print("Attack Success:", is_success)
+            print("Best Solution:", best_solution)
+            print("Best Score:", best_score)
+            print("Iterations:", iterations)
+        
+        ax.set_xlabel('Iteration')
+        ax.set_ylabel('Target Probability')
+        ax.set_title('Target Probability vs Iteration')
+        ax.legend()
+        fig.savefig(os.path.join(model_dir_path, f"{output_name}_{i}.png"), bbox_inches='tight', dpi=300)
+        plt.close(fig)
+        
+        fig, ax = plt.subplots()
+        ax.imshow(np.transpose(perturbed_img.cpu().numpy(), (1,2,0)), interpolation='nearest') 
+        ax.set_title('Perturbed Image')
+        fig.savefig(os.path.join(model_dir_path, f"perturbed_image_{i}.png"), bbox_inches='tight', dpi=300)
+        plt.close(fig)
+        '''
+        perturbed_img = perturbed_img.cpu().numpy()
+        perturbed_imgages.append(perturbed_img)
+        perturbed_imgages = np.concatenate(perturbed_imgages)
+        labels = np.asarray(labels)
+        
+        f = h5py.File('../../../data/perturbed_imgages.hdf5','w')
+        dataset = f.create_dataset("images", np.shape(perturbed_imgages), data=perturbed_imgages, compression='gzip', chunks=True)
+        label_dataset = f.create_dataset("labels", np.shape(labels), data=labels, compression='gzip', chunks=True)
+        f.close()
 
-	fig, ax = plt.subplots()
-	ax.imshow(np.transpose(perturbed_img.cpu().numpy(), (1,2,0)), interpolation='nearest') 
-	ax.set_title('Perturbed Image')
-	fig.savefig(os.path.join(model_dir_path, f"perturbed_image_{i}.png"), bbox_inches='tight', dpi=300)
-	plt.close(fig)
+    
 
 if __name__ == '__main__':
     
