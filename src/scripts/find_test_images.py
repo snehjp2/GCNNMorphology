@@ -75,6 +75,9 @@ if __name__ == '__main__':
     
     subset_images, subset_labels = main(args.model_dir)
     
+    subset_images_np = torch.stack([img for img, _ in subset_images]).numpy()
+    subset_labels_np = np.array(subset_labels)
+    
     ## save subset as h5 file 
     
     def save_in_h5py(f, images, labels):
@@ -84,7 +87,7 @@ if __name__ == '__main__':
             "labels", np.shape(labels), data=labels,  compression='gzip', chunks=True)
         
     f = h5py.File(f'{args.model_dir}/{args.output_name}.h5','w')
-    save_in_h5py(f, subset_images, subset_labels)
+    save_in_h5py(f, subset_images_np.astype(np.uint8), subset_labels_np)
     f.close()
     
     
