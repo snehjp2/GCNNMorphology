@@ -236,7 +236,7 @@ if __name__ == '__main__':
 			transforms.Resize(255)
 		])
                                 
-	test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
+	test_dataset = Galaxy10DECalsTest(str(args.data_path), transform, extended=False)
 
 	for i in range(10):
 		set_all_seeds(i)
