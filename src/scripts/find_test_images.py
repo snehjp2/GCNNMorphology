@@ -30,7 +30,7 @@ def compute_accuracy(test_loader: DataLoader, model: nn.Module, model_name: str,
         y_true.extend(label.cpu().numpy())        
         indices = np.where(pred_labels == label.cpu().numpy())[0]
         
-        return indices
+    return indices
         
 def main(model_dir):
     
