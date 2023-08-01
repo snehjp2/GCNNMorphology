@@ -54,9 +54,11 @@ def main(model_dir):
     for idx in range(len(test_dataset)):
         if idx in intersection_set:
             image, label = test_dataset[idx]
-            subset_images.append(image)
-            subset_labels.append(label)
-        
+            subset_images.append(image.cpu().numpy())
+            subset_labels.append(label.cpu().numpy())
+    
+    print(f"Number of images in the subset: {len(subset_images)}")
+    print(f"Number of images in original test set: {len(test_dataset)}")
     return subset_images, subset_labels
 
 
