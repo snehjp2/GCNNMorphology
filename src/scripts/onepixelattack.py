@@ -180,7 +180,8 @@ def main(model_dir_path, test_dataset, output_name):
 
 			is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, target_label=None, iters=100, pop_size=400, verbose=False)
 			if is_success:
-				perturbed_imgages[model_name].append(perturbed_img.cpu().numpy())
+				perturbed_img = perturbed_img.cpu().numpy()
+				perturbed_imgages[model_name].append(perturbed_img)
 				labels[model_name].append(label)
 			'''
 			steps = [x for x in range(len(fitness_history))]
