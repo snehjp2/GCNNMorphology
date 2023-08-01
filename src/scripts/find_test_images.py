@@ -28,7 +28,7 @@ def compute_accuracy(test_loader: DataLoader, model: nn.Module, model_name: str,
         
         y_pred.extend(pred_labels)
         y_true.extend(label.cpu().numpy())        
-        indices = np.where(pred_labels == label.cpu().numpy())[0]
+    indices = np.where(pred_labels == label.cpu().numpy())[0]
         
     return indices
         
