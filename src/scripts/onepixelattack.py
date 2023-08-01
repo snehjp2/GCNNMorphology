@@ -55,7 +55,7 @@ def perturb(p, img):
 	
 	return p_img
 
- def evaluate(base_network, candidates, img, label, model):
+def evaluate(base_network, candidates, img, label, model):
 	preds = []
 	model.train(False)
 	perturbed_img = []
@@ -113,7 +113,7 @@ def attack(model, img, true_label, model_name, iters=100, pop_size=400, verbose=
 		# Early Stopping
 		if is_success():
 			break
-	    '''
+		'''
 		if fitness.max() < .4 and iteration > 80:
 			break
 		'''
@@ -140,7 +140,7 @@ def attack(model, img, true_label, model_name, iters=100, pop_size=400, verbose=
 		if pred_label != true_label and not is_missclassified:
 			print(f"First missclassfication at iteration {iteration}")
 			is_missclassified = True
-            break
+			break
 
 	
 	best_idx = fitness.argmin()
@@ -162,49 +162,49 @@ def main(model_dir_path, test_dataset, output_name):
 	img, label, angle, redshift = test_dataset[i]
 
 	img = img.to(device)
-    perturbed_imgages = []
+	perturbed_imgages = []
 	labels = []
 
     #fig, ax = plt.subplots()
-    for i in range(len(test_dataset)):
-        img, label, angle, redshift = test_dataset[i]
-        labels.append(label)
-        img = img.to(device)
+	for i in range(len(test_dataset)):
+		img, label, angle, redshift = test_dataset[i]
+		labels.append(label)
+		img = img.to(device)
 
-        for model_name, model in models.items():
+		for model_name, model in models.items():
 
 
-            is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, target_label=None, iters=100, pop_size=400, verbose=False)
-            '''
-            steps = [x for x in range(len(fitness_history))]
-            ax.plot(steps, fitness_history, label=model_name)
-            print("Attack Success:", is_success)
-            print("Best Solution:", best_solution)
-            print("Best Score:", best_score)
-            print("Iterations:", iterations)
-        
-        ax.set_xlabel('Iteration')
-        ax.set_ylabel('Target Probability')
-        ax.set_title('Target Probability vs Iteration')
-        ax.legend()
-        fig.savefig(os.path.join(model_dir_path, f"{output_name}_{i}.png"), bbox_inches='tight', dpi=300)
-        plt.close(fig)
-        
-        fig, ax = plt.subplots()
-        ax.imshow(np.transpose(perturbed_img.cpu().numpy(), (1,2,0)), interpolation='nearest') 
-        ax.set_title('Perturbed Image')
-        fig.savefig(os.path.join(model_dir_path, f"perturbed_image_{i}.png"), bbox_inches='tight', dpi=300)
-        plt.close(fig)
-        '''
-        perturbed_img = perturbed_img.cpu().numpy()
-        perturbed_imgages.append(perturbed_img)
-        perturbed_imgages = np.concatenate(perturbed_imgages)
-        labels = np.asarray(labels)
-        
-        f = h5py.File('../../../data/perturbed_imgages.hdf5','w')
-        dataset = f.create_dataset("images", np.shape(perturbed_imgages), data=perturbed_imgages, compression='gzip', chunks=True)
-        label_dataset = f.create_dataset("labels", np.shape(labels), data=labels, compression='gzip', chunks=True)
-        f.close()
+			is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, target_label=None, iters=100, pop_size=400, verbose=False)
+			'''
+			steps = [x for x in range(len(fitness_history))]
+			ax.plot(steps, fitness_history, label=model_name)
+			print("Attack Success:", is_success)
+			print("Best Solution:", best_solution)
+			print("Best Score:", best_score)
+			print("Iterations:", iterations)
+		
+		ax.set_xlabel('Iteration')
+		ax.set_ylabel('Target Probability')
+		ax.set_title('Target Probability vs Iteration')
+		ax.legend()
+		fig.savefig(os.path.join(model_dir_path, f"{output_name}_{i}.png"), bbox_inches='tight', dpi=300)
+		plt.close(fig)
+		
+		fig, ax = plt.subplots()
+		ax.imshow(np.transpose(perturbed_img.cpu().numpy(), (1,2,0)), interpolation='nearest') 
+		ax.set_title('Perturbed Image')
+		fig.savefig(os.path.join(model_dir_path, f"perturbed_image_{i}.png"), bbox_inches='tight', dpi=300)
+		plt.close(fig)
+		'''
+		perturbed_img = perturbed_img.cpu().numpy()
+		perturbed_imgages.append(perturbed_img)
+		perturbed_imgages = np.concatenate(perturbed_imgages)
+		labels = np.asarray(labels)
+		
+		f = h5py.File('../../../data/perturbed_imgages.hdf5','w')
+		dataset = f.create_dataset("images", np.shape(perturbed_imgages), data=perturbed_imgages, compression='gzip', chunks=True)
+		label_dataset = f.create_dataset("labels", np.shape(labels), data=labels, compression='gzip', chunks=True)
+		f.close()
 
     
 
