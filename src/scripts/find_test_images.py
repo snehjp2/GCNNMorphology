@@ -53,7 +53,7 @@ def main(model_dir):
 
     for idx in range(len(test_dataset)):
         if idx in intersection_set:
-            image, label = test_dataset[idx]
+            image, label, _, _ = test_dataset[idx]
             subset_images.append(image.cpu().numpy())
             subset_labels.append(label.cpu().numpy())
     
