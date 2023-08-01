@@ -55,7 +55,7 @@ def main(model_dir):
         if idx in intersection_set:
             image, label = test_dataset[idx]
             subset_images.append(image)
-        subset_labels.append(label)
+            subset_labels.append(label)
         
     return subset_images, subset_labels
 
