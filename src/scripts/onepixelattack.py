@@ -156,10 +156,10 @@ def attack(model, img, true_label, model_name, iters=100, pop_size=400, verbose=
 	return (is_success() or is_missclassified), best_solution, best_score, perturbed_img, iteration+1, fitness_history #it starts at 0
 
 
-def main(model_dir_path, test_dataset, output_name):
+def main(model_dir_path, test_dataset, output_name=None):
 
 	i = random.randint(0, len(test_dataset))
-	img, label, angle, redshift = test_dataset[i]
+	img, label = test_dataset[i]
 
 	img = img.to(device)
 	perturbed_imgages = {}
@@ -178,7 +178,7 @@ def main(model_dir_path, test_dataset, output_name):
 		for model_name, model in models.items():
 
 
-			is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, target_label=None, iters=100, pop_size=400, verbose=False)
+			is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, target_label=None, iters=200, pop_size=400, verbose=False)
 			if is_success:
 				perturbed_img = perturbed_img.cpu().numpy()
 				perturbed_imgages[model_name].append(perturbed_img)
@@ -226,7 +226,7 @@ if __name__ == '__main__':
 	parser.add_argument('--model_dir_path', metavar = 'config', required=True,
 					help='path to model directory')
 	parser.add_argument('--data_path', metavar = 'data_path', required=True, help='Location of the test data file')
-	parser.add_argument('--output_name', metavar = 'output_name', required=True, help='Name of the output file')
+	#parser.add_argument('--output_name', metavar = 'output_name', required=True, help='Name of the output file')
 	args = parser.parse_args()
  
 	models = load_models(args.model_dir_path)
@@ -240,4 +240,4 @@ if __name__ == '__main__':
 
 	for i in range(10):
 		set_all_seeds(i)
-		main(args.model_dir_path, test_dataset, args.output_name)
+		main(args.model_dir_path, test_dataset)
