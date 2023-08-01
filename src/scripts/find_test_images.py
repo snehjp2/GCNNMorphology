@@ -46,8 +46,17 @@ def main(model_dir):
     ## find the intersection of all the indices
     
     intersection = list(set.intersection(*map(set, indices_dict.values())))
-    subset_images = torch.utils.data.Subset(test_dataset, intersection)
-    subset_labels = [test_dataset[i][1] for i in intersection]
+    intersection_set = set(intersection)  # create a set for faster lookups
+
+    subset_images = []
+    subset_labels = []
+
+    for idx in range(len(test_dataset)):
+        if idx in intersection_set:
+            image, label = test_dataset[idx]
+            subset_images.append(image)
+        subset_labels.append(label)
+        
     return subset_images, subset_labels
 
 
@@ -75,7 +84,7 @@ if __name__ == '__main__':
     
     subset_images, subset_labels = main(args.model_dir)
     
-    subset_images_np = torch.stack([img for img, _ in subset_images]).numpy()
+    subset_images_np = np.array(subset_images)
     subset_labels_np = np.array(subset_labels)
     
     ## save subset as h5 file 
