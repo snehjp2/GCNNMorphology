@@ -162,8 +162,12 @@ def main(model_dir_path, test_dataset, output_name):
 	img, label, angle, redshift = test_dataset[i]
 
 	img = img.to(device)
-	perturbed_imgages = []
-	labels = []
+	perturbed_imgages = {}
+	labels = {}
+
+	for model_name in models.keys():
+		perturbed_imgages[model_name] = []
+		labels[model_name] = []
 
     #fig, ax = plt.subplots()
 	for i in range(len(test_dataset)):
@@ -175,6 +179,9 @@ def main(model_dir_path, test_dataset, output_name):
 
 
 			is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, target_label=None, iters=100, pop_size=400, verbose=False)
+			if is_success:
+				perturbed_imgages[model_name].append(perturbed_img.cpu().numpy())
+				labels[model_name].append(label)
 			'''
 			steps = [x for x in range(len(fitness_history))]
 			ax.plot(steps, fitness_history, label=model_name)
@@ -196,15 +203,16 @@ def main(model_dir_path, test_dataset, output_name):
 		fig.savefig(os.path.join(model_dir_path, f"perturbed_image_{i}.png"), bbox_inches='tight', dpi=300)
 		plt.close(fig)
 		'''
-		perturbed_img = perturbed_img.cpu().numpy()
-		perturbed_imgages.append(perturbed_img)
-		perturbed_imgages = np.concatenate(perturbed_imgages)
-		labels = np.asarray(labels)
-		
-		f = h5py.File('../../../data/perturbed_imgages.hdf5','w')
-		dataset = f.create_dataset("images", np.shape(perturbed_imgages), data=perturbed_imgages, compression='gzip', chunks=True)
-		label_dataset = f.create_dataset("labels", np.shape(labels), data=labels, compression='gzip', chunks=True)
-		f.close()
+
+	f = h5py.File('../../../data/perturbed_imgages.hdf5','w')
+	
+	for model_name in perturbed_imgages.keys():
+		images = np.concatenate(perturbed_imgages[model_name])
+		labels_out = np.concatenate(labels[model_name])
+		dataset = f.create_dataset(f"images_{model_name}", np.shape(images), data=images, compression='gzip', chunks=True)
+		label_dataset = f.create_dataset(f"labels_{model_name}", np.shape(labels_out), data=labels_out, compression='gzip', chunks=True)
+	
+	f.close()
 
     
 
