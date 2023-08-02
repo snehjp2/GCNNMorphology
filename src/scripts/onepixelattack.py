@@ -158,10 +158,6 @@ def attack(model, img, true_label, model_name, iters=100, pop_size=400, verbose=
 
 def main(model_dir_path, test_dataset, output_name=None):
 
-	i = random.randint(0, len(test_dataset))
-	img, label = test_dataset[i]
-
-	img = img.to(device)
 	perturbed_imgages = {}
 	labels = {}
 
@@ -171,14 +167,13 @@ def main(model_dir_path, test_dataset, output_name=None):
 
     #fig, ax = plt.subplots()
 	for i in range(len(test_dataset)):
-		img, label, angle, redshift = test_dataset[i]
-		labels.append(label)
+		img, label = test_dataset[i]
 		img = img.to(device)
 
 		for model_name, model in models.items():
 
 
-			is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, target_label=None, iters=200, pop_size=400, verbose=False)
+			is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, iters=200, pop_size=400, verbose=False)
 			if is_success:
 				perturbed_img = perturbed_img.cpu().numpy()
 				perturbed_imgages[model_name].append(perturbed_img)
@@ -209,7 +204,7 @@ def main(model_dir_path, test_dataset, output_name=None):
 	
 	for model_name in perturbed_imgages.keys():
 		images = np.concatenate(perturbed_imgages[model_name])
-		labels_out = np.concatenate(labels[model_name])
+		labels_out = np.asarray(labels[model_name])
 		dataset = f.create_dataset(f"images_{model_name}", np.shape(images), data=images, compression='gzip', chunks=True)
 		label_dataset = f.create_dataset(f"labels_{model_name}", np.shape(labels_out), data=labels_out, compression='gzip', chunks=True)
 	
