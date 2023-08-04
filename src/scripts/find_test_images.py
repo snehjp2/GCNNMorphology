@@ -23,7 +23,7 @@ def correct_classified_indices(test_dataset: Galaxy10DECalsTest, model: nn.Modul
     model.to(device)
     model.eval()
     
-    for batch in tqdm(test_loader, unit="batch", total=len(test_dataloader)):
+    for batch in tqdm(test_dataloader, unit="batch", total=len(test_dataloader)):
         input, label, _, _ = batch
         input, label = input.to(device), label.to(device)
         outputs = model(input)
@@ -92,6 +92,8 @@ if __name__ == '__main__':
     
     subset_images_np = np.array(subset_images)
     subset_labels_np = np.array(subset_labels)
+    
+    print(len(subset_images_np), len(subset_labels_np))
     
     ## save subset as h5 file 
     
