@@ -1,7 +1,7 @@
 import numpy as np 
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader, TensorDataset, Subset
 from dataset import Galaxy10DECalsTest
 from test import load_models
 from torchvision import transforms
@@ -103,7 +103,7 @@ def evolve(candidates, F=0.5, strategy="clip"):
     
     return gen2
 
-def attack(model, img, true_label, model_name, iters=100, pop_size=400, verbose=True):
+def attack(model, img, true_label, iters=100, pop_size=400, verbose=True):
     # Targeted: maximize target_label if given (early stop > 50%)
     # Untargeted: minimize true_label otherwise (early stop < 5%)
     model = model.to(device)
@@ -168,33 +168,31 @@ def main(model, test_dataset, args):
 
     perturbed_imgages = []
     labels = []
-    indexes = []
+    indices = []
     iteration_counter = []
 
     for i in range(len(test_dataset)):
-        img, label = test_dataset[i]
+        img, label,_, _ = test_dataset[i]
         img = img.to(device)
 
-
-
-        is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, model_name, iters=200, pop_size=400, verbose=False)
+        is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, iters=200, pop_size=400, verbose=False)
         if is_success:
             perturbed_img = perturbed_img.cpu().numpy()
             perturbed_imgages.append(perturbed_img)
             labels.append(label)
             iteration_counter.append(iterations)
-            indexs.append(i)
+            indices.append(i)
 
-    f = h5py.File(os.path.join(args.output_dir,f"perturbed_imgages_{args.model_name}.h5"),'w')
+    f = h5py.File(os.path.join(args.output_dir,f"perturbed_images_{args.model_name}.h5"),'w')
 
     images = np.concatenate(perturbed_imgages)
     labels_out = np.asarray(labels)
-    indexs = np.asarray(indexes)
+    indices = np.asarray(indices)
     iteration_counter = np.asarray(iteration_counter)
     dataset = f.create_dataset(f"images", np.shape(images), data=images, compression='gzip', chunks=True)
     label_dataset = f.create_dataset(f"labels", np.shape(labels_out), data=labels_out, compression='gzip', chunks=True)
-    indexs = f.create_dataset(f"indexes", np.shape(indexes), data=indexes, compression='gzip', chunks=True)
-    iteration_counter = f.create_dataset(f"iterations", np.shape(iteration_counter), np.shape(iteration_counter), data=iteration_counter, compression='gzip', chunks=True)
+    indices = f.create_dataset(f"indices", np.shape(indices), data=indices, compression='gzip', chunks=True)
+    iteration_counter = f.create_dataset(f"iterations", np.shape(iteration_counter), data=iteration_counter, compression='gzip', chunks=True)
     f.close()
  
 
@@ -221,7 +219,8 @@ if __name__ == '__main__':
     test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
 
     indices = correct_classified_indices(test_dataset, model)
-    test_dataset = test_dataset[indices]
+    print(f"Number of images in the subset: {len(indices)}")
+    test_dataset = Subset(test_dataset, indices)
 
 
     main(model, test_dataset, args)

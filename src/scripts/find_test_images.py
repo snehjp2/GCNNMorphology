@@ -13,7 +13,7 @@ import h5py
 from tqdm import tqdm
 
 
-def correct_classified_indices(test_dataset: Galaxy10DECalsTest, model: nn.Module):
+def correct_classified_indices(test_dataset: Galaxy10DECalsTest, model: nn.Module, device: str = 'cuda'):
 
     test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=False)
 
@@ -23,15 +23,17 @@ def correct_classified_indices(test_dataset: Galaxy10DECalsTest, model: nn.Modul
     model.to(device)
     model.eval()
     
-    for batch in tqdm(test_loader, unit="batch", total=len(test_loader)):
+    for batch in tqdm(test_loader, unit="batch", total=len(test_dataloader)):
         input, label, _, _ = batch
         input, label = input.to(device), label.to(device)
         outputs = model(input)
         pred_labels = torch.argmax(outputs, dim=-1).cpu().numpy()
-        
+
         y_pred.extend(pred_labels)
-        y_true.extend(label.cpu().numpy())        
-    indices = np.where(pred_labels == label.cpu().numpy())[0]
+        y_true.extend(label.cpu().numpy())    
+
+    y_pred, y_true = np.asarray(y_pred), np.asarray(y_true)    
+    indices = np.where(y_pred == y_true)[0]
         
     return indices
         
