@@ -12,8 +12,11 @@ import yaml
 import h5py
 from tqdm import tqdm
 
-def compute_accuracy(test_loader: DataLoader, model: nn.Module, model_name: str, save_dir: str, output_name: str):
-    
+
+def correct_classified_indices(test_dataset: Galaxy10DECalsTest, model: nn.Module):
+
+    test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=False)
+
     y_pred, y_true = [], []
     
     model = nn.DataParallel(model)
@@ -41,7 +44,7 @@ def main(model_dir):
     indices_dict = {model_name: None for model_name in trained_models.keys()}
     
     for model_name, model in tqdm(trained_models.items()):
-        indices_dict[model_name] = compute_accuracy(test_dataloader, model, model_name, args.model_dir, args.output_name)
+        indices_dict[model_name] = correct_classified_indices(test_dataset, model)
         
     ## find the intersection of all the indices
     
@@ -82,7 +85,6 @@ if __name__ == '__main__':
     
     test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
     print("Test Dataset Loaded!")
-    test_dataloader = DataLoader(test_dataset, batch_size = 128, shuffle=False)
     
     subset_images, subset_labels = main(args.model_dir)
     

@@ -56,8 +56,6 @@ class Galaxy10DECalsTest(Dataset):
             self.length = len(f['labels'][()])
         if self.img.shape[1] == 3:
             self.img = np.transpose(self.img, (0,2,3,1))
-        print(self.img.shape)
-        print(self.label.shape)
 
 
     def __getitem__(self, idx):
