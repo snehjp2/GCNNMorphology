@@ -55,16 +55,18 @@ def main(model_dir):
 
     subset_images = []
     subset_labels = []
+    subset_idxs = []
 
     for idx in range(len(test_dataset)):
         if idx in intersection_set:
             image, label, _, _ = test_dataset[idx]
             subset_images.append(image.cpu().numpy())
             subset_labels.append(label.cpu().numpy())
+            subset_idxs.append(idx)
     
     print(f"Number of images in the subset: {len(subset_images)}")
     print(f"Number of images in original test set: {len(test_dataset)}")
-    return subset_images, subset_labels
+    return subset_images, subset_labels, subset_idxs
 
 
 if __name__ == '__main__':
@@ -88,13 +90,13 @@ if __name__ == '__main__':
     test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
     print("Test Dataset Loaded!")
     
-    subset_images, subset_labels = main(args.model_dir)
+    subset_images, subset_labels, subset_idxs = main(args.model_dir)
     
     subset_images_np = np.array(subset_images)
     subset_labels_np = np.array(subset_labels)
     
     print(len(subset_images_np), len(subset_labels_np))
-    print(subset_labels)
+    print(subset_idxs)
     ## save label list
     np.save(f'{args.model_dir}/{args.output_name}_labels.npy', subset_labels_np)
     
