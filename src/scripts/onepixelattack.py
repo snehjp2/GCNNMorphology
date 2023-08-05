@@ -19,7 +19,7 @@ def show(img):
     npimg = img.cpu().numpy()
     plt. imshow(np.transpose(npimg, (1,2,0)), interpolation='nearest')
 
-def load_model(model_name: str, model_dir_path: str, device: str= 'cuda')
+def load_model(model_name, model_dir_path, device = 'cuda')
     file_path = os.path.join(model_dir_path,f"{model_name}.pt")
     model = model_dict[model_name]()
     model.eval()
