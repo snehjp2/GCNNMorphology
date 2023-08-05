@@ -94,11 +94,9 @@ if __name__ == '__main__':
     
     subset_images_np = np.array(subset_images)
     subset_labels_np = np.array(subset_labels)
-    
-    print(len(subset_images_np), len(subset_labels_np))
-    print(subset_idxs)
-    ## save label list
-    np.save(f'{args.model_dir}/{args.output_name}_labels.npy', subset_labels_np)
+    subset_idxs_np = np.array(subset_idxs)
+
+    np.save(f'{args.model_dir}/{args.output_name}_idxs.npy', subset_idxs)
     
     ## save subset as h5 file 
     
