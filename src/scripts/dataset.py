@@ -50,6 +50,8 @@ class Galaxy10DECalsTest(Dataset):
         with h5py.File(self.dataset_path, "r") as f:
             self.img = f['images'][()]
             self.label = f['labels'][()]
+            self.angle = f['angles'][()]
+            self.redshift = f['redshifts'][()]
 
             # If custom_idxs is provided, use it to select a subset of the dataset
             if custom_idxs is not None:
