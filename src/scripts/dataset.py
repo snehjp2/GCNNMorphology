@@ -44,40 +44,34 @@ class Galaxy10DECalsTest(Dataset):
         dataset_path (string): path to h5 file
         custom_idxs (array-like): array of indices to select from the dataset
     """
-    def __init__(self, dataset_path: str, transform=None, extended=True, custom_idxs=None):
+    def __init__(self, dataset_path: str, transform=None, custom_idxs=None):
         self.dataset_path = dataset_path
         self.transform = transform
-        self.extended = extended
         with h5py.File(self.dataset_path, "r") as f:
             self.img = f['images'][()]
             self.label = f['labels'][()]
-            if extended:
-                self.angle = f['angles'][()]
-                self.redshift = f['redshifts'][()]
-                
+
             # If custom_idxs is provided, use it to select a subset of the dataset
             if custom_idxs is not None:
                 self.img = self.img[custom_idxs]
                 self.label = self.label[custom_idxs]
-                if extended:
-                    self.angle = self.angle[custom_idxs]
-                    self.redshift = self.redshift[custom_idxs]
-                    
+                
             self.length = len(self.label)
 
     def __len__(self):
         return self.length
 
     def __getitem__(self, idx):
-        sample = self.img[idx]
-        label = self.label[idx]
         
-        if self.extended:
-            angle = self.angle[idx]
-            redshift = self.redshift[idx]
-            return (sample, label, angle, redshift) if self.transform is None else self.transform((sample, label, angle, redshift))
-        else:
-            return (sample, label) if self.transform is None else self.transform((sample, label))
+        img = self.img[idx]
+        label = torch.tensor(self.label[idx],dtype=torch.long)
+        angle = torch.tensor(self.angle[idx],dtype=torch.float)
+        redshift = torch.tensor(self.redshift[idx],dtype=torch.float)
+        
+        if self.transform:
+            img = self.transform(img)
+            
+        return img, label, angle, redshift
 
 
 if __name__ == '__main__':

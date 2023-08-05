@@ -173,7 +173,7 @@ def main(model, test_dataset, args):
     iteration_counter = []
 
     for i in range(len(test_dataset)):
-        img, label,_, _ = test_dataset[i]
+        img, label, _, _ = test_dataset[i]
         img = img.to(device)
 
         is_success, best_solution, best_score, perturbed_img, pred_label, iterations, fitness_history = attack(model, img, label, iters=200, pop_size=400, verbose=False)

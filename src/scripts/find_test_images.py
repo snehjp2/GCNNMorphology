@@ -66,6 +66,7 @@ def main(model_dir):
     
     print(f"Number of images in the subset: {len(subset_images)}")
     print(f"Number of images in original test set: {len(test_dataset)}")
+    
     return subset_images, subset_labels, subset_idxs
 
 
