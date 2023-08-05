@@ -191,7 +191,7 @@ def main(model, test_dataset, args):
     labels_out = np.asarray(labels)
     indices = np.asarray(indices)
     iteration_counter = np.asarray(iteration_counter)
-    dataset = f.create_dataset(f"images", np.shape(images), data=images, compression='gzip', chunks=True)
+    image_dataset = f.create_dataset(f"images", np.shape(images), data=images, compression='gzip', chunks=True)
     label_dataset = f.create_dataset(f"labels", np.shape(labels_out), data=labels_out, compression='gzip', chunks=True)
     pred_label_dataset = f.create_dataset(f"pred_labels", np.shape(pred_labels), data=pred_labels, compression='gzip', chunks=True)
     indices_dataset = f.create_dataset(f"indices", np.shape(indices), data=indices, compression='gzip', chunks=True)
@@ -209,6 +209,7 @@ if __name__ == '__main__':
     parser.add_argument('--model_dir_path', metavar = 'config', required=True,help='path to model directory')
     parser.add_argument('--data_path', metavar = 'data_path', required=True, help='Location of the test data file')
     parser.add_argument('--output_dir', metavar = 'output_dir', required=True, help='output directory')
+    parser.add_argument('--idx_path', metavar='idx_path', required=True, help='directory of the indices')
     args = parser.parse_args()
 
     model = load_model(args.model_name, args.model_dir_path)
@@ -219,7 +220,7 @@ if __name__ == '__main__':
             transforms.Resize(255)
         ])
 
-    test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
+    test_dataset = Galaxy10DECalsTest(str(args.data_path), transform, custom_idxs=args.idx_path)
 
     # indices = correct_classified_indices(test_dataset, model)
     # print(f"Number of images in the subset: {len(indices)}")
