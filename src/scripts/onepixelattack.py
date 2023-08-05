@@ -27,7 +27,7 @@ def load_model(model_name, model_dir_path, device = 'cuda'):
 
     return model
 
-def tell(base_network, img, label, model, target_label=None):
+def tell(base_network, img, label, target_label=None):
     output = F.softmax(base_network(img.unsqueeze(0)).squeeze(), dim=0)
     LABELS =  ('Disturbed Galaxies', 'Merging Galaxies', 'Round Smooth Galaxies', 
                'In-between Round Smooth Galaxies','Cigar Shaped Smooth Galaxies',
@@ -43,11 +43,11 @@ def tell(base_network, img, label, model, target_label=None):
     if target_label is not None:
         print("Target Label Probability:", output[int(target_label)].item())
  
-def visualize_perturbation(base_network, p, img, label, model, target_label=None):
+def visualize_perturbation(base_network, p, img, label,target_label=None):
     p_img = perturb(p, img)
     print("Perturbation:", p)
     #show(p_img)
-    tell(base_network, p_img, label, model, target_label)
+    tell(base_network, p_img, label, target_label)
 
 def perturb(p, img):
     img_size = img.size(1) # C x _H_ x W, assume H == W
@@ -102,7 +102,7 @@ def evolve(candidates, F=0.5, strategy="clip"):
     
     return gen2
 
-def attack(model, img, true_label, iters=100, pop_size=400, verbose=True):
+def attack(model, img, true_label, iters=100, pop_size=400):
     # Targeted: maximize target_label if given (early stop > 50%)
     # Untargeted: minimize true_label otherwise (early stop < 5%)
     model = model.to(device)
@@ -124,9 +124,6 @@ def attack(model, img, true_label, iters=100, pop_size=400, verbose=True):
         if fitness.max() < .4 and iteration > 80:
             break
         '''
-        if verbose and iteration % 10 == 0: # Print progress
-            print("Target Probability [Iteration {}]:".format(iteration), fitness.max() if is_targeted else fitness.min())
-        
         # Generate new candidate solutions
         new_gen_candidates = evolve(candidates, strategy="resample")
         
@@ -167,14 +164,12 @@ def main(model, test_dataset, args):
     indices = []
     iteration_counter = []
     
-    print("Starting main")
     for i in range(len(test_dataset)):
         img, label, _, _ = test_dataset[i]
         print(f"Image {i} with label {label}")
         img = img.to(device)
         
-        print("Starting attack")
-        is_success, best_solution, best_score, perturbed_img, pred_label, iterations, fitness_history = attack(model, img, label, iters=200, pop_size=400, verbose=False)
+        is_success, best_solution, best_score, perturbed_img, pred_label, iterations, fitness_history = attack(model, img, label, iters=200, pop_size=400)
         if is_success:
             print(f"Success at iteration {iterations}")
             perturbed_img = perturbed_img.cpu().numpy()
@@ -184,7 +179,7 @@ def main(model, test_dataset, args):
             pred_labels.append(pred_label)
             indices.append(i)
 
-    f = h5py.File(os.path.join(args.output_dir,f"perturbed_images_{args.model_name}.h5"),'w')
+    f = h5py.File(os.path.join(args.output_dir,f"onepixel_attack_results_{args.model_name}.h5"),'w')
 
     images = np.concatenate(perturbed_images)
     labels_out = np.asarray(labels)
@@ -211,7 +206,6 @@ if __name__ == '__main__':
     parser.add_argument('--idx_path', metavar='idx_path', required=True, help='directory of the indices')
     args = parser.parse_args()
     
-    print('Loading Model')
     model = load_model(args.model_name, args.model_dir_path)
     print('Model Loaded')
 
