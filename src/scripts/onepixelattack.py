@@ -19,9 +19,9 @@ def show(img):
     npimg = img.cpu().numpy()
     plt. imshow(np.transpose(npimg, (1,2,0)), interpolation='nearest')
 
-def load_model(model_name, model_dir_path, device = 'cuda')
+def load_model(model_name, model_dir_path, device = 'cuda'):
     file_path = os.path.join(model_dir_path,f"{model_name}.pt")
-    model = model_dict[model_name]()
+    model = model_dict[str(model_name)]()
     model.eval()
     model.load_state_dict(torch.load(file_path, map_location=device))
 
@@ -210,7 +210,8 @@ if __name__ == '__main__':
     parser.add_argument('--output_dir', metavar = 'output_dir', required=True, help='output directory')
     parser.add_argument('--idx_path', metavar='idx_path', required=True, help='directory of the indices')
     args = parser.parse_args()
-
+    
+    print('Loading Model')
     model = load_model(args.model_name, args.model_dir_path)
     print('Model Loaded')
 
