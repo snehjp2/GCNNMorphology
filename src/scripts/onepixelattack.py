@@ -13,6 +13,7 @@ import random
 import argparse
 import time
 import os
+from tqdm import tqdm
 import h5py 
 
 def show(img):
@@ -164,7 +165,7 @@ def main(model, test_dataset, args):
     indices = []
     iteration_counter = []
     
-    for i in range(len(test_dataset)):
+    for i in tqdm(range(len(test_dataset))):
         img, label, _, _ = test_dataset[i]
         print(f"Image {i} with label {label}")
         img = img.to(device)
