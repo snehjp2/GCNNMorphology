@@ -217,6 +217,7 @@ if __name__ == '__main__':
     
     custom_idxs = np.load(str(args.idx_path), allow_pickle=True)
     test_dataset = Galaxy10DECalsTest(str(args.data_path), transform, custom_idxs=custom_idxs)
+    print(len(test_dataset))
     print('Dataset Loaded')
 
     main(model, test_dataset, args)
