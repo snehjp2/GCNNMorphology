@@ -94,17 +94,20 @@ if __name__ == '__main__':
     subset_labels_np = np.array(subset_labels)
     
     print(len(subset_images_np), len(subset_labels_np))
+    print(subset_labels)
+    ## save label list
+    np.save(f'{args.model_dir}/{args.output_name}_labels.npy', subset_labels_np)
     
     ## save subset as h5 file 
     
-    def save_in_h5py(f, images, labels):
-        dataset = f.create_dataset(
-            "images", np.shape(images), data=images, compression='gzip', chunks=True)
-        meta_set = f.create_dataset(
-            "labels", np.shape(labels), data=labels,  compression='gzip', chunks=True)
+    # def save_in_h5py(f, images, labels):
+    #     dataset = f.create_dataset(
+    #         "images", np.shape(images), data=images, compression='gzip', chunks=True)
+    #     meta_set = f.create_dataset(
+    #         "labels", np.shape(labels), data=labels,  compression='gzip', chunks=True)
         
-    f = h5py.File(f'{args.model_dir}/{args.output_name}.h5','w')
-    save_in_h5py(f, subset_images_np.astype(np.uint8), subset_labels_np)
-    f.close()
+    # f = h5py.File(f'{args.model_dir}/{args.output_name}.h5','w')
+    # save_in_h5py(f, subset_images_np.astype(np.uint8), subset_labels_np)
+    # f.close()
     
     
