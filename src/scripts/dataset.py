@@ -36,46 +36,49 @@ class Galaxy10DECals(Dataset):
     def __len__(self):
         return self.length
 
-
 class Galaxy10DECalsTest(Dataset):
-    """Loading Galaxy10 DECals test dataset from .h5 file.
-    Test dataset has original images roated at random angles.
-    Args:
-        dataset_path (string) : path to h5 file
     """
-    def __init__(self,dataset_path : str, transform = None, extended=True):
+    Loading Galaxy10 DECals test dataset from .h5 file.
+    Test dataset has original images rotated at random angles.
+    Args:
+        dataset_path (string): path to h5 file
+        custom_idxs (array-like): array of indices to select from the dataset
+    """
+    def __init__(self, dataset_path: str, transform=None, extended=True, custom_idxs=None):
         self.dataset_path = dataset_path
         self.transform = transform
         self.extended = extended
-        with h5py.File(self.dataset_path,"r") as f:
+        with h5py.File(self.dataset_path, "r") as f:
             self.img = f['images'][()]
             self.label = f['labels'][()]
             if extended:
                 self.angle = f['angles'][()]
                 self.redshift = f['redshifts'][()]
-            self.length = len(f['labels'][()])
-        if self.img.shape[1] == 3:
-            self.img = np.transpose(self.img, (0,2,3,1))
-
-
-    def __getitem__(self, idx):
-
-        img = self.img[idx]
-        label = torch.tensor(self.label[idx],dtype=torch.long)
-        if self.extended:
-            angle = torch.tensor(self.angle[idx],dtype=torch.long)
-            redshift = torch.tensor(self.redshift[idx],dtype=torch.float)
-
-        if self.transform:
-            img = self.transform(img)
-
-        if self.extended:
-             return img, label, angle, redshift
-        else:
-            return img, label
+                
+            # If custom_idxs is provided, use it to select a subset of the dataset
+            if custom_idxs is not None:
+                self.img = self.img[custom_idxs]
+                self.label = self.label[custom_idxs]
+                if extended:
+                    self.angle = self.angle[custom_idxs]
+                    self.redshift = self.redshift[custom_idxs]
+                    
+            self.length = len(self.label)
 
     def __len__(self):
         return self.length
+
+    def __getitem__(self, idx):
+        sample = self.img[idx]
+        label = self.label[idx]
+        
+        if self.extended:
+            angle = self.angle[idx]
+            redshift = self.redshift[idx]
+            return (sample, label, angle, redshift) if self.transform is None else self.transform((sample, label, angle, redshift))
+        else:
+            return (sample, label) if self.transform is None else self.transform((sample, label))
+
 
 if __name__ == '__main__':
     

@@ -113,7 +113,7 @@ def attack(model, img, true_label, iters=100, pop_size=400, verbose=True):
     fitness = evaluate(model, candidates, img, label, model)
     
     def is_success():
-        return  fitness.min() < 0.05
+        return fitness.min() < 0.05
 
     is_missclassified = False
     fitness_history = []
@@ -161,13 +161,14 @@ def attack(model, img, true_label, iters=100, pop_size=400, verbose=True):
 
     perturbed_img = perturb(best_solution, img)
 
-    return (is_success() or is_missclassified), best_solution, best_score, perturbed_img, iteration+1, fitness_history #it starts at 0
+    return (is_success() or is_missclassified), best_solution, best_score, perturbed_img, pred_label, iteration+1, fitness_history #it starts at 0
 
 
 def main(model, test_dataset, args):
 
-    perturbed_imgages = []
+    perturbed_images = []
     labels = []
+    pred_labels = []
     indices = []
     iteration_counter = []
 
@@ -175,24 +176,26 @@ def main(model, test_dataset, args):
         img, label,_, _ = test_dataset[i]
         img = img.to(device)
 
-        is_success, best_solution, best_score, perturbed_img, iterations, fitness_history = attack(model, img, label, iters=200, pop_size=400, verbose=False)
+        is_success, best_solution, best_score, perturbed_img, pred_label, iterations, fitness_history = attack(model, img, label, iters=200, pop_size=400, verbose=False)
         if is_success:
             perturbed_img = perturbed_img.cpu().numpy()
-            perturbed_imgages.append(perturbed_img)
+            perturbed_images.append(perturbed_img)
             labels.append(label)
             iteration_counter.append(iterations)
+            pred_labels.append(pred_label)
             indices.append(i)
 
     f = h5py.File(os.path.join(args.output_dir,f"perturbed_images_{args.model_name}.h5"),'w')
 
-    images = np.concatenate(perturbed_imgages)
+    images = np.concatenate(perturbed_images)
     labels_out = np.asarray(labels)
     indices = np.asarray(indices)
     iteration_counter = np.asarray(iteration_counter)
     dataset = f.create_dataset(f"images", np.shape(images), data=images, compression='gzip', chunks=True)
     label_dataset = f.create_dataset(f"labels", np.shape(labels_out), data=labels_out, compression='gzip', chunks=True)
-    indices = f.create_dataset(f"indices", np.shape(indices), data=indices, compression='gzip', chunks=True)
-    iteration_counter = f.create_dataset(f"iterations", np.shape(iteration_counter), data=iteration_counter, compression='gzip', chunks=True)
+    pred_label_dataset = f.create_dataset(f"pred_labels", np.shape(pred_labels), data=pred_labels, compression='gzip', chunks=True)
+    indices_dataset = f.create_dataset(f"indices", np.shape(indices), data=indices, compression='gzip', chunks=True)
+    iteration_counter_dataset = f.create_dataset(f"iterations", np.shape(iteration_counter), data=iteration_counter, compression='gzip', chunks=True)
     f.close()
  
 
@@ -218,9 +221,9 @@ if __name__ == '__main__':
 
     test_dataset = Galaxy10DECalsTest(str(args.data_path), transform)
 
-    indices = correct_classified_indices(test_dataset, model)
-    print(f"Number of images in the subset: {len(indices)}")
-    test_dataset = Subset(test_dataset, indices)
+    # indices = correct_classified_indices(test_dataset, model)
+    # print(f"Number of images in the subset: {len(indices)}")
+    # test_dataset = Subset(test_dataset, indices)
 
 
     main(model, test_dataset, args)
