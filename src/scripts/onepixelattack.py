@@ -219,13 +219,9 @@ if __name__ == '__main__':
             transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
             transforms.Resize(255)
         ])
-
-    test_dataset = Galaxy10DECalsTest(str(args.data_path), transform, custom_idxs=args.idx_path)
-
-    # indices = correct_classified_indices(test_dataset, model)
-    # print(f"Number of images in the subset: {len(indices)}")
-    # test_dataset = Subset(test_dataset, indices)
-
+    
+    custom_idxs = np.load(str(args.idx_path), allow_pickle=True)
+    test_dataset = Galaxy10DECalsTest(str(args.data_path), transform, custom_idxs=custom_idxs)
 
     main(model, test_dataset, args)
 
