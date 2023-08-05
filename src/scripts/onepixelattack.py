@@ -19,14 +19,13 @@ def show(img):
     npimg = img.cpu().numpy()
     plt. imshow(np.transpose(npimg, (1,2,0)), interpolation='nearest')
 
-def load_model(model_name: str, model_dir_path: str, device: str= 'cuda') -> GeneralSteerableCNN:
+def load_model(model_name: str, model_dir_path: str, device: str= 'cuda')
     file_path = os.path.join(model_dir_path,f"{model_name}.pt")
     model = model_dict[model_name]()
     model.eval()
     model.load_state_dict(torch.load(file_path, map_location=device))
 
     return model
-
 
 def tell(base_network, img, label, model, target_label=None):
     output = F.softmax(base_network(img.unsqueeze(0)).squeeze(), dim=0)
@@ -154,10 +153,6 @@ def attack(model, img, true_label, iters=100, pop_size=400, verbose=True):
     best_idx = fitness.argmin()
     best_solution = candidates[best_idx]
     best_score = fitness[best_idx]
-    
-    
-    if verbose:
-        visualize_perturbation(model, best_solution, img, true_label, model, target_label)
 
     perturbed_img = perturb(best_solution, img)
 
@@ -171,13 +166,17 @@ def main(model, test_dataset, args):
     pred_labels = []
     indices = []
     iteration_counter = []
-
+    
+    print("Starting main")
     for i in range(len(test_dataset)):
         img, label, _, _ = test_dataset[i]
+        print(f"Image {i} with label {label}")
         img = img.to(device)
-
+        
+        print("Starting attack")
         is_success, best_solution, best_score, perturbed_img, pred_label, iterations, fitness_history = attack(model, img, label, iters=200, pop_size=400, verbose=False)
         if is_success:
+            print(f"Success at iteration {iterations}")
             perturbed_img = perturbed_img.cpu().numpy()
             perturbed_images.append(perturbed_img)
             labels.append(label)
@@ -213,6 +212,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     model = load_model(args.model_name, args.model_dir_path)
+    print('Model Loaded')
 
     transform = transforms.Compose([
             transforms.ToTensor(),
@@ -222,6 +222,7 @@ if __name__ == '__main__':
     
     custom_idxs = np.load(str(args.idx_path), allow_pickle=True)
     test_dataset = Galaxy10DECalsTest(str(args.data_path), transform, custom_idxs=custom_idxs)
+    print('Dataset Loaded')
 
     main(model, test_dataset, args)
 
