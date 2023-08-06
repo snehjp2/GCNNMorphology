@@ -120,7 +120,7 @@ def attack(model, img, true_label, iters=100, pop_size=400):
     candidates[:,2:5] = np.clip(np.random.normal(0.5, 0.5, (pop_size, 3)), 0, 1)
     label = true_label
     
-    fitness = evaluate(model, candidates, img, label, model)
+    fitness = evaluate(candidates, img, label, model)
     fitness_history = []
     
     def is_success():
