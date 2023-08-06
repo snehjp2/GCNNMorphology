@@ -65,8 +65,9 @@ def perturb(p, img):
     return p_img
 
 def evaluate(candidates, img, label, model):
-    img = img.to(device)
+    
     model = model.to(device)
+    img = img.to(device)
     label = label.to(device)
     
     preds = []
@@ -76,18 +77,22 @@ def evaluate(candidates, img, label, model):
     perturbed_img = [perturb(xs, img) for xs in candidates]
     perturbed_img = torch.stack(perturbed_img).to(device)  
     
-    batch_size = 128
-    num_batches = int(np.ceil(len(perturbed_img) / batch_size))
-    
     with torch.no_grad():
-        for i in range(num_batches):
-            start_idx = i * batch_size
-            end_idx = min((i + 1) * batch_size, len(perturbed_img))
-            batch = perturbed_img[start_idx:end_idx]
-            output = F.softmax(model(batch), dim=1)
-            preds.extend(output[:, int(label)].cpu().numpy())
+        for i in range(0, len(perturbed_img), 128):
+            data = perturbed_img[i:i+128] if i+128 < len(perturbed_img) else perturbed_img[i:]
+            data = data.to(device)
+            output = F.softmax(model(data), dim=1)
+            preds.append(output[:,int(label)].cpu().numpy())
 
-    return np.array(preds)
+    '''
+    with torch.no_grad():
+        for i, xs in enumerate(candidates):
+            p_img = perturb(xs, img)
+            out = base_network(p_img.unsqueeze(0))
+            preds.append(F.softmax(out.squeeze(), dim=0)[int(label)].item())
+    '''
+ 
+    return np.concatenate(preds)
 
 def evolve(candidates, F=0.5, strategy="clip"):
     gen2 = candidates.copy()
@@ -115,7 +120,7 @@ def attack(model, img, true_label, iters=100, pop_size=400):
     candidates[:,2:5] = np.clip(np.random.normal(0.5, 0.5, (pop_size, 3)), 0, 1)
     label = true_label
     
-    fitness = evaluate(candidates, img, label, model)
+    fitness = evaluate(model, candidates, img, label, model)
     fitness_history = []
     
     def is_success():
@@ -129,7 +134,7 @@ def attack(model, img, true_label, iters=100, pop_size=400):
             break
 
         # Generate new candidate solutions
-        new_gen_candidates = evolve(candidates, strategy="clip")
+        new_gen_candidates = evolve(candidates, strategy="resample")
         
         # Evaluate new solutions
         new_gen_fitness = evaluate(new_gen_candidates, img, label, model)
@@ -225,5 +230,3 @@ if __name__ == '__main__':
     print('Dataset Loaded')
 
     main(model, test_dataset, args)
-
-
