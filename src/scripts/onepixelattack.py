@@ -51,6 +51,7 @@ def visualize_perturbation(base_network, p, img, label,target_label=None):
     tell(base_network, p_img, label, target_label)
 
 def perturb(p, img):
+    img = img.to(device)
     img_size = img.size(1) # C x _H_ x W, assume H == W
     p_img = img.clone()
     xy = (np.round(p[0:2].copy()*img_size, 0).astype(int))
@@ -63,19 +64,24 @@ def perturb(p, img):
     
     return p_img
 
-def evaluate(base_network, candidates, img, label, model):
+def evaluate(candidates, img, label, model):
+    
+    model = model.to(device)
+    img = img.to(device)
+    label = label.to(device)
+    
     preds = []
     model.train(False)
     perturbed_img = []
-    for i, xs in enumerate(candidates):
-        p_img = perturb(xs, img)
-        perturbed_img.append(p_img)
-    perturbed_img = torch.stack(perturbed_img)
+ 
+    perturbed_img = [perturb(xs, img) for xs in candidates]
+    perturbed_img = torch.stack(perturbed_img).to(device)  
+    
     with torch.no_grad():
         for i in range(0, len(perturbed_img), 128):
             data = perturbed_img[i:i+128] if i+128 < len(perturbed_img) else perturbed_img[i:]
             data = data.to(device)
-            output = F.softmax(base_network(data), dim=1)
+            output = F.softmax(model(data), dim=1)
             preds.append(output[:,int(label)].cpu().numpy())
 
     '''
@@ -107,29 +113,31 @@ def attack(model, img, true_label, iters=100, pop_size=400):
     # Targeted: maximize target_label if given (early stop > 50%)
     # Untargeted: minimize true_label otherwise (early stop < 5%)
     model = model.to(device)
+    img = img.to(device)
+    true_label = true_label.to(device)
+    
     candidates = np.random.random((pop_size,5))
     candidates[:,2:5] = np.clip(np.random.normal(0.5, 0.5, (pop_size, 3)), 0, 1)
     label = true_label
+    
     fitness = evaluate(model, candidates, img, label, model)
+    fitness_history = []
     
     def is_success():
         return fitness.min() < 0.05
 
     is_missclassified = False
-    fitness_history = []
+
     for iteration in range(iters):
         # Early Stopping
         if is_success():
             break
-        '''
-        if fitness.max() < .4 and iteration > 80:
-            break
-        '''
+
         # Generate new candidate solutions
         new_gen_candidates = evolve(candidates, strategy="resample")
         
         # Evaluate new solutions
-        new_gen_fitness = evaluate(model, new_gen_candidates, img, label, model)
+        new_gen_fitness = evaluate(new_gen_candidates, img, label, model)
        
         # Replace old solutions with new ones where they are better
         successors = new_gen_fitness < fitness
