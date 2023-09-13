@@ -205,7 +205,7 @@ class SO2SteerableCNN(torch.nn.Module):
         self.input_type = in_type
 
         # We need to mask the input image since the corners are moved outside the grid under rotations
-        self.mask = escnn_nn.MaskModule(in_type, 29, margin=1)
+        self.mask = escnn_nn.MaskModule(in_type, 255, margin=1)
 
         # convolution 1
         # first we build the non-linear layer, which also constructs the right feature type
