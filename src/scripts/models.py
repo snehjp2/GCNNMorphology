@@ -297,9 +297,10 @@ class SO2SteerableCNN(torch.nn.Module):
 
         # Fully Connected classifier
         self.fully_net = torch.nn.Sequential(
-            torch.nn.BatchNorm1d(c),
+            torch.nn.Linear(3249*c, 64),
+            torch.nn.BatchNorm1d(64),
             torch.nn.ELU(inplace=True),
-            torch.nn.Linear(c, 32),
+            torch.nn.Linear(64, 32),
             torch.nn.BatchNorm1d(32),
             torch.nn.ELU(inplace=True),
             torch.nn.Linear(32, n_classes),
