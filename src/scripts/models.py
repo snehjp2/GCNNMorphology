@@ -199,23 +199,23 @@ class SO2SteerableCNN(torch.nn.Module):
         self.G = self.r2_act.fibergroup
 
         # the input image is a scalar field, corresponding to the trivial representation
-        in_type = nn.FieldType(self.r2_act, [self.r2_act.trivial_repr])
+        in_type = escnn_nn.FieldType(self.r2_act, [self.r2_act.trivial_repr])
 
         # we store the input type for wrapping the images into a geometric tensor during the forward pass
         self.input_type = in_type
 
         # We need to mask the input image since the corners are moved outside the grid under rotations
-        self.mask = nn.MaskModule(in_type, 29, margin=1)
+        self.mask = escnn_nn.MaskModule(in_type, 29, margin=1)
 
         # convolution 1
         # first we build the non-linear layer, which also constructs the right feature type
         # we choose 8 feature fields, each transforming under the regular representation of SO(2) up to frequency 3
         # When taking the ELU non-linearity, we sample the feature fields on N=16 points
-        activation1 = nn.FourierELU(self.r2_act, 8, irreps=self.G.bl_irreps(3), N=16, inplace=True)
+        activation1 = escnn_nn.FourierELU(self.r2_act, 8, irreps=self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation1.in_type
         self.block1 = nn.SequentialModule(
-            nn.R2Conv(in_type, out_type, kernel_size=7, padding=1, bias=False),
-            nn.IIDBatchNorm2d(out_type),
+            escnn_nn.R2Conv(in_type, out_type, kernel_size=7, padding=1, bias=False),
+            escnn_nn.IIDBatchNorm2d(out_type),
             activation1,
         )
 
@@ -223,27 +223,27 @@ class SO2SteerableCNN(torch.nn.Module):
         # the old output type is the input type to the next layer
         in_type = self.block1.out_type
         # the output type of the second convolution layer are 16 regular feature fields
-        activation2 = nn.FourierELU(self.r2_act, 16, irreps=self.G.bl_irreps(3), N=16, inplace=True)
+        activation2 = escnn_nn.FourierELU(self.r2_act, 16, irreps=self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation2.in_type
-        self.block2 = nn.SequentialModule(
-            nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
-            nn.IIDBatchNorm2d(out_type),
+        self.block2 = escnn_nn.SequentialModule(
+            escnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
+            escnn_nn.IIDBatchNorm2d(out_type),
             activation2
         )
         # to reduce the downsampling artifacts, we use a Gaussian smoothing filter
-        self.pool1 = nn.SequentialModule(
-            nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=2)
+        self.pool1 = escnn_nn.SequentialModule(
+            escnn_nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=2)
         )
 
         # convolution 3
         # the old output type is the input type to the next layer
         in_type = self.block2.out_type
         # the output type of the third convolution layer are 32 regular feature fields
-        activation3 = nn.FourierELU(self.r2_act, 32, irreps=self.G.bl_irreps(3), N=16, inplace=True)
+        activation3 = escnn_nn.FourierELU(self.r2_act, 32, irreps=self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation3.in_type
-        self.block3 = nn.SequentialModule(
-            nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
-            nn.IIDBatchNorm2d(out_type),
+        self.block3 = escnn_nn.SequentialModule(
+            escnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
+            escnn_nn.IIDBatchNorm2d(out_type),
             activation3
         )
 
@@ -251,26 +251,26 @@ class SO2SteerableCNN(torch.nn.Module):
         # the old output type is the input type to the next layer
         in_type = self.block3.out_type
         # the output type of the fourth convolution layer are 64 regular feature fields
-        activation4 = nn.FourierELU(self.r2_act, 32, irreps=self.G.bl_irreps(3), N=16, inplace=True)
+        activation4 = escnn_nn.FourierELU(self.r2_act, 32, irreps=self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation4.in_type
-        self.block4 = nn.SequentialModule(
-            nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
-            nn.IIDBatchNorm2d(out_type),
+        self.block4 = escnn_nn.SequentialModule(
+            escnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
+            escnn_nn.IIDBatchNorm2d(out_type),
             activation4
         )
-        self.pool2 = nn.SequentialModule(
-            nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=2)
+        self.pool2 = escnn_nn.SequentialModule(
+            escnn_nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=2)
         )
 
         # convolution 5
         # the old output type is the input type to the next layer
         in_type = self.block4.out_type
         # the output type of the fifth convolution layer are 96 regular feature fields
-        activation5 = nn.FourierELU(self.r2_act, 64, irreps=self.G.bl_irreps(3), N=16, inplace=True)
+        activation5 = escnn_nn.FourierELU(self.r2_act, 64, irreps=self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation5.in_type
-        self.block5 = nn.SequentialModule(
-            nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
-            nn.IIDBatchNorm2d(out_type),
+        self.block5 = escnn_nn.SequentialModule(
+            escnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=2, bias=False),
+            escnn_nn.IIDBatchNorm2d(out_type),
             activation5
         )
 
@@ -278,22 +278,22 @@ class SO2SteerableCNN(torch.nn.Module):
         # the old output type is the input type to the next layer
         in_type = self.block5.out_type
         # the output type of the sixth convolution layer are 64 regular feature fields
-        activation6 = nn.FourierELU(self.r2_act, 64, irreps=G.bl_irreps(3), N=16, inplace=True)
+        activation6 = escnn_nn.FourierELU(self.r2_act, 64, irreps=G.bl_irreps(3), N=16, inplace=True)
         out_type = activation6.in_type
-        self.block6 = nn.SequentialModule(
-            nn.R2Conv(in_type, out_type, kernel_size=5, padding=1, bias=False),
-            nn.IIDBatchNorm2d(out_type),
+        self.block6 = escnn_nn.SequentialModule(
+            escnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=1, bias=False),
+            escnn_nn.IIDBatchNorm2d(out_type),
             activation6
         )
-        self.pool3 = nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=1, padding=0)
+        self.pool3 = escnn_nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=1, padding=0)
 
         # number of output invariant channels
         c = 64
 
         # last 1x1 convolution layer, which maps the regular fields to c=64 invariant scalar fields
         # this is essential to provide *invariant* features in the final classification layer
-        output_invariant_type = nn.FieldType(self.r2_act, c*[self.r2_act.trivial_repr])
-        self.invariant_map = nn.R2Conv(out_type, output_invariant_type, kernel_size=1, bias=False)
+        output_invariant_type = escnn_nn.FieldType(self.r2_act, c*[self.r2_act.trivial_repr])
+        self.invariant_map = escnn_nn.R2Conv(out_type, output_invariant_type, kernel_size=1, bias=False)
 
         # Fully Connected classifier
         self.fully_net = torch.nn.Sequential(
