@@ -33,17 +33,23 @@ class ConvBlock(nn.Module):
 
 class GeneralSteerableCNN(torch.nn.Module):
     
-    def __init__(self, N, n_classes=num_classes, feature_fields = feature_fields, reflections = False):
+    def __init__(self, N, n_classes=num_classes, feature_fields = feature_fields, reflections = False, maximum_frequency = None):
         
         super(GeneralSteerableCNN, self).__init__()
         
         self.N = N
 
-        if (reflections == True) and (self.N == 1):
+        if (reflections == True) and (self.N == 1):  ## D1 case
           self.r2_act = gspaces.flip2dOnR2()
 
         elif reflections == True:
           self.r2_act = gspaces.flipRot2dOnR2(N=self.N)
+          
+        elif (reflections == True) and (self.N == -1):
+            self.r2_act = gspaces.flipRot2dOnR2(N=self.N, maximum_frequency=6)
+            
+        elif self.N == -1:
+            self.r2_act = gspaces.rot2dOnR2(N=self.N, maximum_frequency=6)
 
         else:
           self.r2_act = gspaces.rot2dOnR2(N=self.N)
@@ -250,6 +256,12 @@ def load_densenet121():
     densenet121.classifier = nn.Linear(densenet121.classifier.in_features, num_classes)
     return densenet121
 
+def load_SO2():
+    SO2_model = GeneralSteerableCNN(N=-1)
+    return SO2_model
+
+def load_O2():
+    O2_model = GeneralSteerableCNN(N=-1, reflections=True)
 
 model_dict = {
     'ResNet18' : load_resnet18, 
@@ -269,6 +281,8 @@ model_dict = {
     'C8' : load_c8,  
     'C16' : load_c16, 
     'CNN' : cnn.load_CNN,
+    'O2' : load_O2,
+    'SO2' : load_SO2,
     'c1resnet18' : e2resnet.c1resnet18, 
     'd1resnet18' : e2resnet.d1resnet18, 
     'c4resnet18' : e2resnet.c4resnet18, 
