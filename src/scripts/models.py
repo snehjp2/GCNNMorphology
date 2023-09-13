@@ -199,7 +199,7 @@ class SO2SteerableCNN(torch.nn.Module):
         self.G = self.r2_act.fibergroup
 
         # the input image is a scalar field, corresponding to the trivial representation
-        in_type = escnn_nn.FieldType(self.r2_act, [self.r2_act.trivial_repr])
+        in_type = escnn_nn.FieldType(self.r2_act, 3*[self.r2_act.trivial_repr])
 
         # we store the input type for wrapping the images into a geometric tensor during the forward pass
         self.input_type = in_type
