@@ -213,7 +213,7 @@ class SO2SteerableCNN(torch.nn.Module):
         # When taking the ELU non-linearity, we sample the feature fields on N=16 points
         activation1 = escnn_nn.FourierELU(self.r2_act, 8, irreps=self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation1.in_type
-        self.block1 = nn.SequentialModule(
+        self.block1 = escnn_nn.SequentialModule(
             escnn_nn.R2Conv(in_type, out_type, kernel_size=7, padding=1, bias=False),
             escnn_nn.IIDBatchNorm2d(out_type),
             activation1,
@@ -278,7 +278,7 @@ class SO2SteerableCNN(torch.nn.Module):
         # the old output type is the input type to the next layer
         in_type = self.block5.out_type
         # the output type of the sixth convolution layer are 64 regular feature fields
-        activation6 = escnn_nn.FourierELU(self.r2_act, 64, irreps=G.bl_irreps(3), N=16, inplace=True)
+        activation6 = escnn_nn.FourierELU(self.r2_act, 64, irreps=self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation6.in_type
         self.block6 = escnn_nn.SequentialModule(
             escnn_nn.R2Conv(in_type, out_type, kernel_size=5, padding=1, bias=False),
