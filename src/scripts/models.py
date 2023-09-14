@@ -227,7 +227,7 @@ class SO2SteerableCNN(torch.nn.Module):
         activation2 = escnn_nn.FourierELU(self.r2_act, feature_fields[1], irreps=self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation2.in_type
         self.block2 = escnn_nn.SequentialModule(
-            escnn_nn.R2Conv(in_type, out_type, kernel_size=2, padding=1, stride=1, bias=False),
+            escnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, stride=1, bias=False),
             escnn_nn.IIDBatchNorm2d(out_type),
             activation2
         )
