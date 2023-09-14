@@ -43,10 +43,10 @@ def load_model(model_path: str, model_name: str, is_equivarient: bool):
 	Load model from .pt file.
 	"""
 	model = model_dict[str(model_name)]()
-	# if torch.cuda.is_available():
-	# 	device = torch.device('cuda')
-	# else:
-	# 	device = torch.device('cpu')
+	if torch.cuda.is_available():
+		device = torch.device('cuda')
+	else:
+		device = torch.device('cpu')
 	ckpt = torch.load(model_path, map_location=device)
 
 	model.load_state_dict(ckpt)

@@ -22,7 +22,7 @@ def load_data(original_data_filname, perturbed_data_filename):
             transforms.Resize(255)
         ])
 
-	custom_idxs = np.load("../../../data/all_correct_idxs.npy", allow_pickle=True)
+	custom_idxs = np.load("/work/GDL/all_correct_idxs.npy", allow_pickle=True)
 	original_images = Galaxy10DECalsTest(original_data_filname, transform, custom_idxs=custom_idxs)
 
 	perturbed_images = perturbed_dataset.get_image()
