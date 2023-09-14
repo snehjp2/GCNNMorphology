@@ -288,7 +288,7 @@ class SO2SteerableCNN(torch.nn.Module):
         )
         
         in_type = self.block6.out_type
-        activation7 = escnn_nn.FieldType(self.r2_act, feature_fields[6], irreps = self.G.bl_irreps(3), N=16, inplace=True)
+        activation7 = escnn_nn.FourierELU(self.r2_act, feature_fields[6], irreps = self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation7.in_type
         self.block7 = escnn_nn.SequentialModule(
             escnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, stride=1, bias=False),
@@ -299,7 +299,7 @@ class SO2SteerableCNN(torch.nn.Module):
         self.pool3 = escnn_nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=2)
         
         in_type = self.block7.out_type
-        activation8 = escnn_nn.FieldType(self.r2_act, feature_fields[7], irreps = self.G.bl_irreps(3), N=16, inplace=True)
+        activation8 = escnn_nn.FourierELU(self.r2_act, feature_fields[7], irreps = self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation8.in_type
         self.block8 = escnn_nn.SequentialModule(
             escnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, stride=1, bias=False),
@@ -308,7 +308,7 @@ class SO2SteerableCNN(torch.nn.Module):
         )
         
         in_type = self.block8.out_type
-        activation9 = escnn_nn.FieldType(self.r2_act, feature_fields[8], irreps = self.G.bl_irreps(3), N=16, inplace=True)
+        activation9 = escnn_nn.FourierELU(self.r2_act, feature_fields[8], irreps = self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation9.in_type
         self.block9 = escnn_nn.SequentialModule(
             escnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, stride=1, bias=False),
@@ -319,7 +319,7 @@ class SO2SteerableCNN(torch.nn.Module):
         self.pool4 = escnn_nn.PointwiseAvgPoolAntialiased(out_type, sigma=0.66, stride=2)
         
         in_type = self.block9.out_type
-        activation10 = escnn_nn.FieldType(self.r2_act, feature_fields[9], irreps = self.G.bl_irreps(3), N=16, inplace=True)
+        activation10 = escnn_nn.FourierELU(self.r2_act, feature_fields[9], irreps = self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation10.in_type
         self.block10 = escnn_nn.SequentialModule(
             escnn_nn.R2Conv(in_type, out_type, kernel_size=3, padding=1, stride=1, bias=False),
@@ -328,7 +328,7 @@ class SO2SteerableCNN(torch.nn.Module):
         )
         
         in_type = self.block10.out_type
-        activation11 = escnn_nn.FieldType(self.r2_act, feature_fields[10], irreps = self.G.bl_irreps(3), N=16, inplace=True)
+        activation11 = escnn_nn.FourierELU(self.r2_act, feature_fields[10], irreps = self.G.bl_irreps(3), N=16, inplace=True)
         out_type = activation11.in_type
         self.block11 = escnn_nn.SequentialModule(
             escnn_nn.R2Conv(in_type, out_type, kernel_size=2, padding=1, stride=1, bias=False),
@@ -360,17 +360,8 @@ class SO2SteerableCNN(torch.nn.Module):
         # (associate it with the input type)
         x = escnn_nn.GeometricTensor(input, self.input_type)
 
-
         x = self.mask(x)
 
-        # apply each equivariant block
-
-        # Each layer has an input and an output type
-        # A layer takes a GeometricTensor in input.
-        # This tensor needs to be associated with the same representation of the layer's input type
-        #
-        # Each layer outputs a new GeometricTensor, associated with the layer's output type.
-        # As a result, consecutive layers need to have matching input/output types
         x = self.block1(x)
         x = self.block2(x)
         x = self.pool1(x)
