@@ -76,6 +76,8 @@ if __name__ == '__main__':
 	for file_name in os.listdir(args.model_dir):
 		file_path = os.path.join(args.model_dir, file_name)
 		if file_name.endswith('.pt') and os.path.isfile(file_path):
+			if file_name.startswith('D16'):
+				continue
 			print(f'Loading {file_name}...')
 			model_name = os.path.splitext(file_name)[0]
 
