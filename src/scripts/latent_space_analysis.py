@@ -122,7 +122,7 @@ if __name__ == '__main__':
 	plt.title(f'Mean Distance between Original and Perturbed Images in the Latent Space')
 	plt.xlabel('Model')
 	plt.ylabel('Mean Distance')
-	plt.savefig(os.path.join(args.model_dir, f'mean_distance.png'))
+	plt.savefig(os.path.join('/work/GDL/', f'mean_distance.png'))
 
 	##UMAP Visualization
 
