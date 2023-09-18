@@ -58,7 +58,6 @@ def get_latent_space_represenatation(model, images, label):
     
     model = model.to(device)
     images = images.to(device)
-    print('image shape', images.shape)
     latent_space_representation, output = model(images)
     outputs = torch.argmax(output, dim=-1).cpu().numpy()
     
@@ -66,6 +65,7 @@ def get_latent_space_represenatation(model, images, label):
     print('label' , label)
     print('output', outputs)
     misclassified_indices = np.where(label != output)[0]
+    print('misclassified indices', misclassified_indices)
     
     return latent_space_representation, misclassified_indices
 
@@ -180,7 +180,6 @@ if __name__ == '__main__':
 			noisy_25_misclassfied_idx = []
 			for img, label, _, _ in noisy_images_25:
 				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
-				print('misclassified idx', misclassfied_idx)
 				noisy_25_latent_space_representation.append(features.cpu().detach().numpy())
 				noisy_25_misclassfied_idx.append(misclassfied_idx)
 			
@@ -190,7 +189,6 @@ if __name__ == '__main__':
 			noisy_50_misclassfied_idx = []
 			for img, label, _, _ in noisy_images_50:
 				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
-				print('misclassified idx', misclassfied_idx)
 				noisy_50_latent_space_representation.append(features.cpu().detach().numpy())
 				noisy_50_misclassfied_idx.append(misclassfied_idx)
 			
