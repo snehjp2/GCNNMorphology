@@ -64,10 +64,7 @@ def get_latent_space_represenatation(model, images, label):
     
     label = label.cpu().detach().numpy()
     label = np.array(label)
-    print('label' , label)
-    print('output', outputs)
-    misclassified_indices = np.where(label != output)
-    print('misclassified indices', misclassified_indices)
+    misclassified_indices = np.where(label != output)[0]
     
     return latent_space_representation, misclassified_indices
 
@@ -186,7 +183,10 @@ if __name__ == '__main__':
 				noisy_25_misclassfied_idx.append(misclassfied_idx)
 			
 			noisy_25_latent_space_representation = np.concatenate(noisy_25_latent_space_representation, axis=0)
+			print(noisy_25_latent_space_representation.shape)
 			noisy_25_misclassfied_idx = np.concatenate(noisy_25_misclassfied_idx, axis=0)
+			print(noisy_25_misclassfied_idx.shape)
+			print(noisy_25_misclassfied_idx)
 
 			noisy_50_misclassfied_idx = []
 			for img, label, _, _ in noisy_images_50:
