@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader
 from scipy.spatial import distance
 import pandas as pd
 import seaborn as sns
+from torch import nn
 sns.set()
 import matplotlib.pyplot as plt
 import umap
@@ -40,16 +41,16 @@ def load_perturbed_data(original_data_filname, perturbed_data_filename):
 	return original_images, perturbed_images
 
 def load_noisy_data(original_data_filname, noisy_data_25, noisy_data_50):
-	transforms = transforms.Compose([
+	transform = transforms.Compose([
 		transforms.ToTensor(),
             transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
             transforms.Resize(255)
         ])
 
-	custom_idxs = np.load("/work/GDL/all_correct_idxs.npy", allow_pickle=True)
-	original_images = Galaxy10DECalsTest(original_data_filname, transforms, custom_idxs=custom_idxs)
-	noisy_images_25 = Galaxy10DECalsTest(noisy_data_25, transforms, custom_idxs=custom_idxs)
-	noisy_images_50 = Galaxy10DECalsTest(noisy_data_50, transforms, custom_idxs=custom_idxs)
+	custom_idxs = np.load("/n/holystore01/LABS/iaifi_lab/Users/spandya/new_icml/new_results/one_pixel/all_correct_idxs.npy", allow_pickle=True)
+	original_images = Galaxy10DECalsTest(original_data_filname, transform, custom_idxs=custom_idxs)
+	noisy_images_25 = Galaxy10DECalsTest(noisy_data_25, transform, custom_idxs=custom_idxs)
+	noisy_images_50 = Galaxy10DECalsTest(noisy_data_50, transform, custom_idxs=custom_idxs)
 
 	return original_images, noisy_images_25, noisy_images_50
 
@@ -149,12 +150,13 @@ if __name__ == '__main__':
 				is_equivarient = True
 
 			feature_model = load_model(file_path, model_name, is_equivarient)	
+                        feature_model = nn.DataParallel(feature_model)
 
 			original_images, noisy_images_25, noisy_images_50 = load_noisy_data(args.data_path, args.noisy_data_25, args.noisy_data_50)
 
 			original_images = DataLoader(original_images, batch_size=128, shuffle=False)
-			noisy_images_25 = DataLoader(noisy_images, batch_size=128, shuffle=False)
-			noisy_images_50 = DataLoader(noisy_images, batch_size=128, shuffle=False)
+			noisy_images_25 = DataLoader(noisy_images_25, batch_size=128, shuffle=False)
+			noisy_images_50 = DataLoader(noisy_images_50, batch_size=128, shuffle=False)
 
 			original_latent_space_representation = []
 			noisy_25_latent_space_representation = []
