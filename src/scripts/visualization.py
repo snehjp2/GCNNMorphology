@@ -22,6 +22,7 @@ class FeatureModel(nn.Module):
 	def __init__(self, base_model: nn.Module, is_equivarient):
 		super(FeatureModel, self).__init__()
 		self.features = torch.nn.Sequential(*list(base_model.children())[:-1])
+		self.linear_layers = torch.nn.Sequential(*list(base_model.children())[-1:])
 		self.is_equivarient = is_equivarient
 		if is_equivarient:
 			self.in_type = base_model.input_type
@@ -29,13 +30,12 @@ class FeatureModel(nn.Module):
 	def forward(self, x):
 		if self.is_equivarient:
 			x = escnn_nn.GeometricTensor(x, self.in_type)
-		x = self.features(x)
+		features = self.features(x)
 		if self.is_equivarient:
-			x = x.tensor
-		x = x.reshape(x.shape[0], -1)
-		return x
-
-
+			features = features.tensor
+		features = features.reshape(features.shape[0], -1)
+		output = self.linear_layers(features)
+		return features, torch.max(output.data, 1)[1]
 
 
 def load_model(model_path: str, model_name: str, is_equivarient: bool):
@@ -54,7 +54,6 @@ def load_model(model_path: str, model_name: str, is_equivarient: bool):
 	feature_model = FeatureModel(model, is_equivarient)
 	feature_model.eval()
 	return feature_model
-	
 
 def generate_embedding_vector(model: nn.Module, test_dataloader: DataLoader):
 	"""

@@ -54,12 +54,17 @@ def load_noisy_data(original_data_filname, noisy_data_25, noisy_data_50):
 
 	return original_images, noisy_images_25, noisy_images_50
 
-def get_latent_space_represenatation(model, images):
+def get_latent_space_represenatation(model, images, label):
 	
 	model = model.to(device)
 	images = images.to(device)
-	latent_space_representation = model(images)
-	return latent_space_representation
+	latent_space_representation, output = model(images)
+	
+	label = label.cpu().detach().numpy()
+	output = output.cpu().detach().numpy()
+	misclassified_indices = np.where(label != output)
+
+	return latent_space_representation, misclassified_indices
 
 	
 	
@@ -148,6 +153,8 @@ if __name__ == '__main__':
 			is_equivarient = False
 			if any(char.isdigit() for char in model_name):
 				is_equivarient = True
+    
+			## do inference with full model -- if output == true, pass
 
 			feature_model = load_model(file_path, model_name, is_equivarient)	
 			feature_model = nn.DataParallel(feature_model)
@@ -162,22 +169,37 @@ if __name__ == '__main__':
 			noisy_25_latent_space_representation = []
 			noisy_50_latent_space_representation = []
 			for img, label, _, _ in original_images:
-				original_latent_space_representation.append(get_latent_space_represenatation(feature_model, img))
+				features, idx = get_latent_space_represenatation(feature_model, img, label)
+				original_latent_space_representation.append(features.cpu().detach().numpy())
 
 			original_latent_space_representation = np.concatenate(original_latent_space_representation, axis=0)
 			
+			noisy_25_misclassfied_idx = []
 			for img, label, _, _ in noisy_images_25:
-				noisy_25_latent_space_representation.append(get_latent_space_represenatation(feature_model, img))
+				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
+				noisy_25_latent_space_representation.append(features.cpu().detach().numpy())
+				noisy_25_misclassfied_idx.append(misclassfied_idx.cpu().detach().numpy())
 			
 			noisy_25_latent_space_representation = np.concatenate(noisy_25_latent_space_representation, axis=0)
+			noisy_25_misclassfied_idx = np.concatenate(noisy_25_misclassfied_idx, axis=0)
 
+			noisy_50_misclassfied_idx = []
 			for img, label, _, _ in noisy_images_50:
+				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
 				noisy_50_latent_space_representation.append(get_latent_space_represenatation(feature_model, img))
+				noisy_50_misclassfied_idx.append(misclassfied_idx.cpu().detach().numpy())
 			
 			noisy_50_latent_space_representation = np.concatenate(noisy_50_latent_space_representation, axis=0)
+			noisy_50_misclassfied_idx = np.concatenate(noisy_50_misclassfied_idx, axis=0)
 
-			mean_nosiy_25[model_name] = np.mean(np.linalg.norm(original_latent_space_representation - noisy_25_latent_space_representation, axis=1))
-			mean_nosiy_50[model_name] = np.mean(np.linalg.norm(original_latent_space_representation - noisy_50_latent_space_representation, axis=1))
+			x = original_latent_space_representation[noisy_25_misclassfied_idx]
+			y = noisy_25_latent_space_representation[noisy_25_misclassfied_idx]
+
+			mean_nosiy_25[model_name] = np.mean(np.linalg.norm(x - y, axis=1))
+
+			x = original_latent_space_representation[noisy_50_misclassfied_idx]
+			y = noisy_50_latent_space_representation[noisy_50_misclassfied_idx]	
+			mean_nosiy_50[model_name] = np.mean(np.linalg.norm(x - y, axis=1))
 
 			print(f"Mean distance between original and 25% noisy images in the latent space for {model_name}: ", mean_nosiy_25[model_name])
 			print(f"Mean distance between original and 50% noisy images in the latent space for {model_name}: ", mean_nosiy_50[model_name])
@@ -201,21 +223,21 @@ if __name__ == '__main__':
 	#sort mean dict
 	#mean = dict(sorted(mean.items(), key=lambda item: item[1]))
 
-	mean_cnn = mean['CNN']
+	# mean_cnn = mean['CNN']
 
-	mean_cn = {k : v for k, v in mean.items() if 'C' in k}
-	mean_cn = dict(sorted(mean_cn.items()))
-	mean_dn = {k : v for k, v in mean.items() if 'D' in k}
-	mean_dn = dict(sorted(mean_dn.items()))
+	# mean_cn = {k : v for k, v in mean.items() if 'C' in k}
+	# mean_cn = dict(sorted(mean_cn.items()))
+	# mean_dn = {k : v for k, v in mean.items() if 'D' in k}
+	# mean_dn = dict(sorted(mean_dn.items()))
 
-	##save dict as csv
+	# ##save dict as csv
 
 
 
-	## plot and save graph
+	# ## plot and save graph
 
-	sns.lineplot(data=mean, palette='hsv', marker='o', markersize=5)
-	plt.title(f'Mean Distance between Original and Perturbed Images in the Latent Space')
-	plt.xlabel('Model')
-	plt.ylabel('Mean Distance')
-	plt.savefig(os.path.join('/n/holystore01/LABS/iaifi_lab/Users/spandya/data/', f'mean_distance.png'), bbox_inches='tight',dpi=300)
+	# sns.lineplot(data=mean, palette='hsv', marker='o', markersize=5)
+	# plt.title(f'Mean Distance between Original and Perturbed Images in the Latent Space')
+	# plt.xlabel('Model')
+	# plt.ylabel('Mean Distance')
+	# plt.savefig(os.path.join('/n/holystore01/LABS/iaifi_lab/Users/spandya/data/', f'mean_distance.png'), bbox_inches='tight',dpi=300)
