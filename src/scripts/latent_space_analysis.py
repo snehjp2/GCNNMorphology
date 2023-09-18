@@ -58,12 +58,13 @@ def get_latent_space_represenatation(model, images, label):
     
     model = model.to(device)
     images = images.to(device)
+    print('image shape', images.shape)
     latent_space_representation, output = model(images)
-    output = torch.argmax(output, dim=-1).cpu().numpy()
+    outputs = torch.argmax(outputs, dim=-1).cpu().numpy()
     
     label = label.cpu().detach().numpy()
-    print('label', label)
-    print('output', output)
+    print('label shape', label.shape)
+    print('output shape', output.shape)
     misclassified_indices = np.where(label != output)[0]
     
     return latent_space_representation, misclassified_indices
@@ -179,30 +180,23 @@ if __name__ == '__main__':
 			noisy_25_misclassfied_idx = []
 			for img, label, _, _ in noisy_images_25:
 				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
-				print('noisy 25', misclassfied_idx)
 				noisy_25_latent_space_representation.append(features.cpu().detach().numpy())
 				noisy_25_misclassfied_idx.append(misclassfied_idx)
 			
 			noisy_25_latent_space_representation = np.concatenate(noisy_25_latent_space_representation, axis=0)
 			noisy_25_misclassfied_idx = np.concatenate(noisy_25_misclassfied_idx, axis=0)
-			print('full noisy 25', noisy_25_misclassfied_idx)
 
 			noisy_50_misclassfied_idx = []
 			for img, label, _, _ in noisy_images_50:
 				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
-				print('noisy 50', misclassfied_idx)
 				noisy_50_latent_space_representation.append(features.cpu().detach().numpy())
 				noisy_50_misclassfied_idx.append(misclassfied_idx)
 			
 			noisy_50_latent_space_representation = np.concatenate(noisy_50_latent_space_representation, axis=0)
 			noisy_50_misclassfied_idx = np.concatenate(noisy_50_misclassfied_idx, axis=0)
-			print('full noisy 50', noisy_50_misclassfied_idx)
 
 			x = original_latent_space_representation[noisy_25_misclassfied_idx]
 			y = noisy_25_latent_space_representation[noisy_25_misclassfied_idx]
-   
-			print('x', x)
-			print('y', y)
 
 			mean_noisy_25[model_name] = np.mean(np.linalg.norm(x - y, axis=1))
 

@@ -23,6 +23,7 @@ class FeatureModel(nn.Module):
 		super(FeatureModel, self).__init__()
 		self.features = torch.nn.Sequential(*list(base_model.children())[:-1])
 		self.linear_layers = torch.nn.Sequential(*list(base_model.children())[-1:])
+		print(self.linear_layers)
 		self.is_equivarient = is_equivarient
 		if is_equivarient:
 			self.in_type = base_model.input_type
@@ -35,7 +36,7 @@ class FeatureModel(nn.Module):
 			features = features.tensor
 		features = features.reshape(features.shape[0], -1)
 		output = self.linear_layers(features)
-		return features, torch.max(output.data, 1)[1]
+		return features, output
 
 
 def load_model(model_path: str, model_name: str, is_equivarient: bool):
