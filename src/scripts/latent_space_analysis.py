@@ -150,7 +150,7 @@ if __name__ == '__main__':
 				is_equivarient = True
 
 			feature_model = load_model(file_path, model_name, is_equivarient)	
-                        feature_model = nn.DataParallel(feature_model)
+			feature_model = nn.DataParallel(feature_model)
 
 			original_images, noisy_images_25, noisy_images_50 = load_noisy_data(args.data_path, args.noisy_data_25, args.noisy_data_50)
 
