@@ -180,6 +180,7 @@ if __name__ == '__main__':
 			noisy_25_misclassfied_idx = []
 			for img, label, _, _ in noisy_images_25:
 				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
+				print('misclassified idx', misclassfied_idx)
 				noisy_25_latent_space_representation.append(features.cpu().detach().numpy())
 				noisy_25_misclassfied_idx.append(misclassfied_idx)
 			
@@ -189,6 +190,7 @@ if __name__ == '__main__':
 			noisy_50_misclassfied_idx = []
 			for img, label, _, _ in noisy_images_50:
 				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
+				print('misclassified idx', misclassfied_idx)
 				noisy_50_latent_space_representation.append(features.cpu().detach().numpy())
 				noisy_50_misclassfied_idx.append(misclassfied_idx)
 			
