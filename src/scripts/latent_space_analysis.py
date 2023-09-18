@@ -55,16 +55,16 @@ def load_noisy_data(original_data_filname, noisy_data_25, noisy_data_50):
 	return original_images, noisy_images_25, noisy_images_50
 
 def get_latent_space_represenatation(model, images, label):
-	
-	model = model.to(device)
-	images = images.to(device)
-	latent_space_representation, output = model(images)
-	
-	label = label.cpu().detach().numpy()
-	output = output.cpu().detach().numpy()
-	misclassified_indices = np.where(label != output)
-
-	return latent_space_representation, misclassified_indices
+    
+    model = model.to(device)
+    images = images.to(device)
+    latent_space_representation, output = model(images)
+    output = torch.argmax(output, dim=-1).cpu().numpy()
+    
+    label = label.cpu().detach().numpy()
+    misclassified_indices = np.where(label != output)[0]
+    
+    return latent_space_representation, misclassified_indices
 
 	
 	
@@ -141,8 +141,8 @@ if __name__ == '__main__':
 	np.save('/work/GDL/mean_perturbed.npy', combined_array)
 	'''
 
-	mean_nosiy_25 = {}
-	mean_nosiy_50 = {}
+	mean_noisy_25 = {}
+	mean_noisy_50 = {}
 
 	for file_name in os.listdir(args.model_dir):
 		file_path = os.path.join(args.model_dir, file_name)
@@ -177,46 +177,53 @@ if __name__ == '__main__':
 			noisy_25_misclassfied_idx = []
 			for img, label, _, _ in noisy_images_25:
 				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
+				print('noisy 25', misclassfied_idx)
 				noisy_25_latent_space_representation.append(features.cpu().detach().numpy())
-				noisy_25_misclassfied_idx.append(misclassfied_idx.cpu().detach().numpy())
+				noisy_25_misclassfied_idx.append(misclassfied_idx)
 			
 			noisy_25_latent_space_representation = np.concatenate(noisy_25_latent_space_representation, axis=0)
 			noisy_25_misclassfied_idx = np.concatenate(noisy_25_misclassfied_idx, axis=0)
+			print('full noisy 25', noisy_25_misclassfied_idx)
 
 			noisy_50_misclassfied_idx = []
 			for img, label, _, _ in noisy_images_50:
 				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
-				noisy_50_latent_space_representation.append(get_latent_space_represenatation(feature_model, img))
-				noisy_50_misclassfied_idx.append(misclassfied_idx.cpu().detach().numpy())
+				print('noisy 50', misclassfied_idx)
+				noisy_50_latent_space_representation.append(features.cpu().detach().numpy())
+				noisy_50_misclassfied_idx.append(misclassfied_idx)
 			
 			noisy_50_latent_space_representation = np.concatenate(noisy_50_latent_space_representation, axis=0)
 			noisy_50_misclassfied_idx = np.concatenate(noisy_50_misclassfied_idx, axis=0)
+			print('full noisy 50', noisy_50_misclassfied_idx)
 
 			x = original_latent_space_representation[noisy_25_misclassfied_idx]
 			y = noisy_25_latent_space_representation[noisy_25_misclassfied_idx]
+   
+			print('x', x)
+			print('y', y)
 
-			mean_nosiy_25[model_name] = np.mean(np.linalg.norm(x - y, axis=1))
+			mean_noisy_25[model_name] = np.mean(np.linalg.norm(x - y, axis=1))
 
 			x = original_latent_space_representation[noisy_50_misclassfied_idx]
 			y = noisy_50_latent_space_representation[noisy_50_misclassfied_idx]	
-			mean_nosiy_50[model_name] = np.mean(np.linalg.norm(x - y, axis=1))
+			mean_noisy_50[model_name] = np.mean(np.linalg.norm(x - y, axis=1))
 
-			print(f"Mean distance between original and 25% noisy images in the latent space for {model_name}: ", mean_nosiy_25[model_name])
-			print(f"Mean distance between original and 50% noisy images in the latent space for {model_name}: ", mean_nosiy_50[model_name])
+			print(f"Mean distance between original and 25% noisy images in the latent space for {model_name}: ", mean_noisy_25[model_name])
+			print(f"Mean distance between original and 50% noisy images in the latent space for {model_name}: ", mean_noisy_50[model_name])
 			
 
 	##save dict as np array
 	
 
-	mean_nosiy_25_key = list(mean_nosiy_25.keys())
-	mean_nosiy_25_value = list(mean_nosiy_25.values())
-	combined_array = np.vstack((mean_nosiy_25_key, mean_nosiy_25_value)).T
+	mean_noisy_25_key = list(mean_noisy_25.keys())
+	mean_noisy_25_value = list(mean_noisy_25.values())
+	combined_array = np.vstack((mean_noisy_25_key, mean_noisy_25_value)).T
 	print(combined_array)
 	np.save('/n/holystore01/LABS/iaifi_lab/Users/spandya/data/mean_noisy_25.npy', combined_array)
 
-	mean_nosiy_50_key = list(mean_nosiy_50.keys())
-	mean_nosiy_50_value = list(mean_nosiy_50.values())
-	combined_array = np.vstack((mean_nosiy_50_key, mean_nosiy_50_value)).T
+	mean_noisy_50_key = list(mean_noisy_50.keys())
+	mean_noisy_50_value = list(mean_noisy_50.values())
+	combined_array = np.vstack((mean_noisy_50_key, mean_noisy_50_value)).T
 	print(combined_array)
 	np.save('/n/holystore01/LABS/iaifi_lab/Users/spandya/data/mean_noisy_50.npy', combined_array)
 
