@@ -29,7 +29,7 @@ def load_perturbed_data(original_data_filname, perturbed_data_filename):
             transforms.Resize(255)
         ])
 
-	custom_idxs = np.load("/work/GDL/all_correct_idxs.npy", allow_pickle=True)
+	custom_idxs = np.load("/n/holystore01/LABS/iaifi_lab/Users/spandya/new_icml/new_results/one_pixel/all_correct_idxs.npy", allow_pickle=True)
 	original_images = Galaxy10DECalsTest(original_data_filname, transform, custom_idxs=custom_idxs)
 
 	perturbed_images = perturbed_dataset.get_image()
@@ -87,7 +87,8 @@ if __name__ == '__main__':
 	else:
 		device = torch.device('cpu')
 
-	
+
+	'''	
 	mean_perturbed = {}
 
 
@@ -132,6 +133,7 @@ if __name__ == '__main__':
 	combined_array = np.vstack((key_array, value_array)).T
 	print(combined_array)
 	np.save('/work/GDL/mean_perturbed.npy', combined_array)
+	'''
 
 	mean_nosiy_25 = {}
 	mean_nosiy_50 = {}
@@ -184,15 +186,15 @@ if __name__ == '__main__':
 
 	mean_nosiy_25_key = list(mean_nosiy_25.keys())
 	mean_nosiy_25_value = list(mean_nosiy_25.values())
-	combined_array = np.vstack((key_array, value_array)).T
+	combined_array = np.vstack((mean_nosiy_25_key, mean_nosiy_25_value)).T
 	print(combined_array)
-	np.save('/work/GDL/mean_nosiy_25.npy', combined_array)
+	np.save('/n/holystore01/LABS/iaifi_lab/Users/spandya/data/mean_noisy_25.npy', combined_array)
 
 	mean_nosiy_50_key = list(mean_nosiy_50.keys())
 	mean_nosiy_50_value = list(mean_nosiy_50.values())
-	combined_array = np.vstack((key_array, value_array)).T
+	combined_array = np.vstack((mean_nosiy_50_key, mean_nosiy_50_value)).T
 	print(combined_array)
-	np.save('/work/GDL/mean_nosiy_50.npy', combined_array)
+	np.save('/n/holystore01/LABS/iaifi_lab/Users/spandya/data/mean_noisy_50.npy', combined_array)
 
 	#sort mean dict
 	#mean = dict(sorted(mean.items(), key=lambda item: item[1]))
@@ -214,4 +216,4 @@ if __name__ == '__main__':
 	plt.title(f'Mean Distance between Original and Perturbed Images in the Latent Space')
 	plt.xlabel('Model')
 	plt.ylabel('Mean Distance')
-	plt.savefig(os.path.join('/work/GDL/', f'mean_distance.png'), bbox_inches='tight',dpi=300)
+	plt.savefig(os.path.join('/n/holystore01/LABS/iaifi_lab/Users/spandya/data/', f'mean_distance.png'), bbox_inches='tight',dpi=300)
