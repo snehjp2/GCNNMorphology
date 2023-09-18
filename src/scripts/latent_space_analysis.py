@@ -60,7 +60,7 @@ def get_latent_space_represenatation(model, images, label):
     images = images.to(device)
     print('image shape', images.shape)
     latent_space_representation, output = model(images)
-    outputs = torch.argmax(outputs, dim=-1).cpu().numpy()
+    outputs = torch.argmax(output, dim=-1).cpu().numpy()
     
     label = label.cpu().detach().numpy()
     print('label shape', label.shape)
