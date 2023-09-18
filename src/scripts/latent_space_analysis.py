@@ -63,8 +63,8 @@ def get_latent_space_represenatation(model, images, label):
     outputs = torch.argmax(output, dim=-1).cpu().numpy()
     
     label = label.cpu().detach().numpy()
-    print('label shape', label.shape)
-    print('output shape', output.shape)
+    print('label' , label)
+    print('output', outputs)
     misclassified_indices = np.where(label != output)[0]
     
     return latent_space_representation, misclassified_indices
