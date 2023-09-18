@@ -64,7 +64,7 @@ def get_latent_space_represenatation(model, images, label):
     
     label = label.cpu().detach().numpy()
     label = np.array(label)
-    misclassified_indices = np.where(label != output)[0]
+    misclassified_indices = np.where(label != outputs)[0]
     
     return latent_space_representation, misclassified_indices
 
