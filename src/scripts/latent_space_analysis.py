@@ -170,40 +170,55 @@ if __name__ == '__main__':
 			original_latent_space_representation = []
 			noisy_25_latent_space_representation = []
 			noisy_50_latent_space_representation = []
+   
 			for img, label, _, _ in original_images:
 				features, idx = get_latent_space_represenatation(feature_model, img, label)
 				original_latent_space_representation.append(features.cpu().detach().numpy())
 
 			original_latent_space_representation = np.concatenate(original_latent_space_representation, axis=0)
 			
-			noisy_25_misclassfied_idx = []
-			for img, label, _, _ in noisy_images_25:
-				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
-				noisy_25_latent_space_representation.append(features.cpu().detach().numpy())
-				noisy_25_misclassfied_idx.append(misclassfied_idx)
-			
-			noisy_25_latent_space_representation = np.concatenate(noisy_25_latent_space_representation, axis=0)
-			print(noisy_25_latent_space_representation.shape)
-			noisy_25_misclassfied_idx = np.concatenate(noisy_25_misclassfied_idx, axis=0)
-			print(noisy_25_misclassfied_idx.shape)
-			print(noisy_25_misclassfied_idx)
+			current_start_idx = 0
+			batch_size = 128  # Since your DataLoader uses a batch size of 128
 
-			noisy_50_misclassfied_idx = []
-			for img, label, _, _ in noisy_images_50:
-				features, misclassfied_idx = get_latent_space_represenatation(feature_model, img, label)
+			noisy_25_misclassified_idx_global = []  # List to hold the adjusted indices
+
+			# Loop through the DataLoader using enumerate
+			for batch_idx, (img, label, _, _) in enumerate(noisy_images_25):
+				features, misclassified_idx = get_latent_space_represenatation(feature_model, img, label)
+				noisy_25_latent_space_representation.append(features.cpu().detach().numpy())
+				
+				# Adjust the misclassified indices
+				misclassified_idx_global = misclassified_idx + current_start_idx
+				noisy_25_misclassified_idx_global.append(misclassified_idx_global)
+
+				# Update the current starting index for the next iteration
+				current_start_idx += batch_size
+
+			# Concatenate the adjusted indices
+			noisy_25_misclassfied_idx_global = np.concatenate(noisy_25_misclassified_idx_global, axis=0)
+			noisy_25_latent_space_representation = np.concatenate(noisy_25_latent_space_representation, axis=0)
+
+
+			noisy_50_misclassified_idx_global = []
+			for batch_idx, (img, label, _, _) in enumerate(noisy_images_50):
+				features, misclassified_idx = get_latent_space_represenatation(feature_model, img, label)
 				noisy_50_latent_space_representation.append(features.cpu().detach().numpy())
-				noisy_50_misclassfied_idx.append(misclassfied_idx)
+				
+				misclassified_idx_global = misclassified_idx + current_start_idx
+				noisy_50_misclassified_idx_global.append(misclassified_idx_global)
+    
+				current_start_idx += batch_size
 			
 			noisy_50_latent_space_representation = np.concatenate(noisy_50_latent_space_representation, axis=0)
-			noisy_50_misclassfied_idx = np.concatenate(noisy_50_misclassfied_idx, axis=0)
+			noisy_50_misclassfied_idx_global = np.concatenate(noisy_50_misclassified_idx_global, axis=0)
 
-			x = original_latent_space_representation[noisy_25_misclassfied_idx]
-			y = noisy_25_latent_space_representation[noisy_25_misclassfied_idx]
+			x = original_latent_space_representation[noisy_25_misclassfied_idx_global]
+			y = noisy_25_latent_space_representation[noisy_25_misclassfied_idx_global]
 
 			mean_noisy_25[model_name] = np.mean(np.linalg.norm(x - y, axis=1))
 
-			x = original_latent_space_representation[noisy_50_misclassfied_idx]
-			y = noisy_50_latent_space_representation[noisy_50_misclassfied_idx]	
+			x = original_latent_space_representation[noisy_50_misclassfied_idx_global]
+			y = noisy_50_latent_space_representation[noisy_50_misclassfied_idx_global]	
 			mean_noisy_50[model_name] = np.mean(np.linalg.norm(x - y, axis=1))
 
 			print(f"Mean distance between original and 25% noisy images in the latent space for {model_name}: ", mean_noisy_25[model_name])
