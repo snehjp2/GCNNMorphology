@@ -198,7 +198,7 @@ if __name__ == '__main__':
 			noisy_25_misclassfied_idx_global = np.concatenate(noisy_25_misclassified_idx_global, axis=0)
 			noisy_25_latent_space_representation = np.concatenate(noisy_25_latent_space_representation, axis=0)
 
-
+			current_start_idx = 0
 			noisy_50_misclassified_idx_global = []
 			for batch_idx, (img, label, _, _) in enumerate(noisy_images_50):
 				features, misclassified_idx = get_latent_space_represenatation(feature_model, img, label)
