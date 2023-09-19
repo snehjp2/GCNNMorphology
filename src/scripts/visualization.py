@@ -68,7 +68,7 @@ def generate_embedding_vector(model: nn.Module, test_dataloader: DataLoader):
 		print(f'Batch {i}')
 		images = images.to(device)
 		labels_vector.append(labels.numpy())
-		embedding_vector.append(model(images).detach().cpu().numpy())
+		embedding_vector.append(model(images)[0].detach().cpu().numpy())
 		i += 1
 	embedding_vector = np.concatenate(embedding_vector, axis=0)
 	labels_vector = np.concatenate(labels_vector, axis=0)
@@ -132,11 +132,14 @@ def plot_tsne(data: np.ndarray, labels: np.ndarray, save_dir: str, model_name: s
 		'y': tsne_vector[:,1],
 		'class': [classes[i] for i in labels]
 	})
+ 
+	df_np = df.to_numpy()
+	np.save(os.path.join(save_dir, f'tsne-{model_name}.npy'), df_np)
 
-	plt.figure(figsize=(10,8))
-	sns.scatterplot(data=df, x='x', y='y', hue='class', palette='hsv')
-	plt.title(f'TSNE Visualization of Galaxy10DECals Dataset using {model_name}')
-	plt.savefig(os.path.join(save_dir, f'tsne-{model_name}.png'))
+	# plt.figure(figsize=(10,8))
+	# sns.scatterplot(data=df, x='x', y='y', hue='class', palette='hsv')
+	# plt.title(f'TSNE Visualization of Galaxy10DECals Dataset using {model_name}')
+	# plt.savefig(os.path.join(save_dir, f'tsne-{model_name}.png'))
 
 
 def plot_umap(data: np.ndarray, labels: np.ndarray, save_dir:str, model_name:str):
@@ -159,12 +162,15 @@ def plot_umap(data: np.ndarray, labels: np.ndarray, save_dir:str, model_name:str
 		'class': [classes[i] for i in labels]
 	})
  
+	df_np = df.to_numpy()
+	np.save(os.path.join(save_dir, f'umap-{model_name}.npy'), df_np)
+ 
 	### save dataframe to npy file
 
-	plt.figure(figsize=(10,8))
-	sns.scatterplot(data=df, x='x', y='y', hue='class', palette='hsv') 
-	plt.title(f'UMAP Visualization of Galaxy10DECals Dataset using {model_name}')
-	plt.savefig(os.path.join(save_dir, f'umap-{model_name}.png'))
+	# plt.figure(figsize=(10,8))
+	# sns.scatterplot(data=df, x='x', y='y', hue='class', palette='hsv') 
+	# plt.title(f'UMAP Visualization of Galaxy10DECals Dataset using {model_name}')
+	# plt.savefig(os.path.join(save_dir, f'umap-{model_name}.png'))
 
 
 
@@ -202,6 +208,6 @@ if __name__ == '__main__':
 	print(f'Test Dataset Length: {len(test_dataset)}')
 	test_dataloader = DataLoader(test_dataset, batch_size = 64, shuffle=True)
 	embedding_vector, labels_vector = generate_embedding_vector(feature_model, test_dataloader)
-	plot_isomap(embedding_vector, labels_vector, args.save_dir, args.model_name)
-	# plot_tsne(embedding_vector, labels_vector, args.save_dir, args.model_name)
-	# plot_umap(embedding_vector, labels_vector, args.save_dir, args.model_name)
+	# plot_isomap(embedding_vector, labels_vector, args.save_dir, args.model_name)
+	plot_tsne(embedding_vector, labels_vector, args.save_dir, args.model_name)
+	plot_umap(embedding_vector, labels_vector, args.save_dir, args.model_name)
