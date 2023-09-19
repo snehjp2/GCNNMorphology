@@ -95,14 +95,22 @@ def plot_isomap(data: np.ndarray, labels: np.ndarray, save_dir: str, model_name:
 
 	unique_labels = np.unique(labels)
 	colors = [plt.cm.jet(i/float(len(unique_labels)-1)) for i in range(len(unique_labels))]
-	for i, label in enumerate(unique_labels):
-    # Extract the points that have this label
-		label_points = embedding_vector[labels == label] 
-		plt.scatter(label_points[:, 0], label_points[:, 1], color=colors[i], label=classes[i], s=1)
+ 
+	### save data to npy file
+ 
+	np.save(os.path.join(save_dir, f'isomap-{model_name}.npy'), embedding_vector)
+	np.save(os.path.join(save_dir, f'labels-{model_name}.npy'), labels)
 	
-	#plt.figure(figsize=(10,6))
-	plt.legend(loc='best',fontsize='xx-small')
-	plt.savefig(os.path.join(save_dir, f'isomap-{model_name}.png'))
+	print('Data Saved')
+ 
+	# for i, label in enumerate(unique_labels):
+    # # Extract the points that have this label
+	# 	label_points = embedding_vector[labels == label] 
+	# 	plt.scatter(label_points[:, 0], label_points[:, 1], color=colors[i], label=classes[i], s=1)
+	
+	# #plt.figure(figsize=(10,6))
+	# plt.legend(loc='best',fontsize='xx-small')
+	# plt.savefig(os.path.join(save_dir, f'isomap-{model_name}.png'))
 
 
 def plot_tsne(data: np.ndarray, labels: np.ndarray, save_dir: str, model_name: str):
@@ -150,6 +158,8 @@ def plot_umap(data: np.ndarray, labels: np.ndarray, save_dir:str, model_name:str
 		'y': umap_vector[:,1],
 		'class': [classes[i] for i in labels]
 	})
+ 
+	### save dataframe to npy file
 
 	plt.figure(figsize=(10,8))
 	sns.scatterplot(data=df, x='x', y='y', hue='class', palette='hsv') 
@@ -193,5 +203,5 @@ if __name__ == '__main__':
 	test_dataloader = DataLoader(test_dataset, batch_size = 64, shuffle=True)
 	embedding_vector, labels_vector = generate_embedding_vector(feature_model, test_dataloader)
 	plot_isomap(embedding_vector, labels_vector, args.save_dir, args.model_name)
-	plot_tsne(embedding_vector, labels_vector, args.save_dir, args.model_name)
-	plot_umap(embedding_vector, labels_vector, args.save_dir, args.model_name)
+	# plot_tsne(embedding_vector, labels_vector, args.save_dir, args.model_name)
+	# plot_umap(embedding_vector, labels_vector, args.save_dir, args.model_name)
