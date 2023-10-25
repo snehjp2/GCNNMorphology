@@ -1,10 +1,9 @@
 model : C8
-dataset : /Users/snehpandya/Projects/GCNNMorphology/data/Galaxy10_DECals.h5
+dataset : <PATH_TO_DATASET_.h5_FILE>
 
 parameters :
   lr : 1.0e-2
   weight_decay : 1.0e-4
-  momentum : 0.9
   test_size : 0.2
   batch_size : 128
   epochs : 100
@@ -15,4 +14,4 @@ parameters :
   milestones : [ 25, 50, 75 ]
 
 
-save_dir : /n/home04/spandya/final_models/
+save_dir : <PATH_TO_SAVE_DIR>
