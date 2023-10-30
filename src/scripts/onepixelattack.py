@@ -86,14 +86,6 @@ def evaluate(candidates, img, label, model):
             output = F.softmax(model(data), dim=1)
             preds.append(output[:,int(label)].cpu().numpy())
 
-    '''
-    with torch.no_grad():
-        for i, xs in enumerate(candidates):
-            p_img = perturb(xs, img)
-            out = base_network(p_img.unsqueeze(0))
-            preds.append(F.softmax(out.squeeze(), dim=0)[int(label)].item())
-    '''
- 
     return np.concatenate(preds)
 
 def evolve(candidates, F=0.5, strategy="clip"):
