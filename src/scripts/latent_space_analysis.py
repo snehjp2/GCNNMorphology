@@ -33,7 +33,7 @@ def load_perturbed_data(original_data_filname, perturbed_data_filename):
             transforms.Resize(255)
         ])
 
-	custom_idxs = np.load("/n/holystore01/LABS/iaifi_lab/Users/spandya/new_icml/new_results/one_pixel/all_correct_idxs.npy", allow_pickle=True)
+	custom_idxs = np.load("/path/to/all_correct_idxs.npy", allow_pickle=True)
 	original_images = Galaxy10DECalsTest(original_data_filname, transform, custom_idxs=custom_idxs)
 
 	perturbed_images = perturbed_dataset.get_image()
@@ -53,7 +53,7 @@ def load_noisy_data(original_data_filname, noisy_data_25, noisy_data_50):
             transforms.Resize(255)
         ])
 
-	custom_idxs = np.load("/n/holystore01/LABS/iaifi_lab/Users/spandya/new_icml/new_results/one_pixel/all_correct_idxs.npy", allow_pickle=True)
+	custom_idxs = np.load("/path/to/all_correct_idxs.npy", allow_pickle=True)
 	original_images = Galaxy10DECalsTest(original_data_filname, transform, custom_idxs=custom_idxs)
 	noisy_images_25 = Galaxy10DECalsTest(noisy_data_25, transform, custom_idxs=custom_idxs)
 	noisy_images_50 = Galaxy10DECalsTest(noisy_data_50, transform, custom_idxs=custom_idxs)
@@ -191,11 +191,11 @@ if __name__ == '__main__':
 	mean_noisy_25_value = list(mean_noisy_25.values())
 	combined_array = np.vstack((mean_noisy_25_key, mean_noisy_25_value)).T
 	print(combined_array)
-	np.save('/n/holystore01/LABS/iaifi_lab/Users/spandya/data/mean_noisy_25.npy', combined_array)
+	np.save('/path/to/mean_noisy_25.npy', combined_array)
 
 	mean_noisy_50_key = list(mean_noisy_50.keys())
 	mean_noisy_50_value = list(mean_noisy_50.values())
 	combined_array = np.vstack((mean_noisy_50_key, mean_noisy_50_value)).T
 	print(combined_array)
-	np.save('/n/holystore01/LABS/iaifi_lab/Users/spandya/data/mean_noisy_50.npy', combined_array)
+	np.save('path/to/mean_noisy_50.npy', combined_array)
 
