@@ -1,3 +1,5 @@
+#code adapted from https://github.com/AleksCipri/DeepAdversaries/blob/main/onepixel_attack.py
+
 import numpy as np 
 import torch
 import torch.nn.functional as F
