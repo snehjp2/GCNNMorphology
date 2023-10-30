@@ -17,7 +17,7 @@ from models import model_dict, feature_fields
 from dataset import Galaxy10DECals
 from tqdm import tqdm
 import random
-
+import copy
 
 def set_all_seeds(num):
     random.seed(num)
@@ -27,7 +27,7 @@ def set_all_seeds(num):
     if torch.cuda.is_available():
         torch.cuda.manual_seed_all(num)
 
-def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = None, epochs=100, device='cuda', save_dir='checkpoints', early_stopping_patience=10, report_interval=5):
+def train_model(model, train_dataloader, val_dataloader, optimizer, model_name, scheduler = None, epochs=100, device='cuda', save_dir='checkpoints', early_stopping_patience=10, report_interval=5):
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
 
@@ -35,15 +35,12 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
     model.to(device)
     
     print("Model Loaded to Device!")
-    best_val_acc = 0
-    no_improvement_count = 0
-    losses = []
-    steps = []
+    best_val_acc, no_improvement_count = 0, 0
+    losses, steps = [], []
     print("Training Started!")
     for epoch in range(epochs):
         model.train()
         train_loss = 0.0
-        # for i, batch in tqdm(enumerate(train_dataloader, 0), unit="batch", total=len(train_dataloader)):
         for i, batch in tqdm(enumerate(train_dataloader)):
             inputs, targets = batch
             inputs, targets = inputs.to(device), targets.to(device)
@@ -66,9 +63,7 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
 
         if (epoch + 1) % report_interval == 0:
             model.eval()
-            correct = 0
-            total = 0
-            val_loss = 0.0
+            correct, total, val_loss = 0, 0, 0.0
 
             with torch.no_grad():
                 for batch in val_dataloader:
@@ -90,7 +85,7 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
                 best_val_acc = val_acc
                 no_improvement_count = 0
                 best_val_epoch = epoch + 1
-                torch.save(model.module.state_dict(), os.path.join(save_dir, f"best_model.pt"))
+                torch.save(model.eval().module.state_dict(), os.path.join(save_dir, f"best_model.pt"))
             else:
                 no_improvement_count += 1
 
@@ -98,8 +93,10 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
                 print(f"Early stopping after {early_stopping_patience} epochs without improvement.")
                 break
 
-    torch.save(model.module.state_dict(), os.path.join(save_dir, "final_model.pt"))
-    
+    torch.save(model.eval().module.state_dict(), os.path.join(save_dir, "final_model.pt"))
+    np.save(os.path.join(save_dir, f"losses-{model_name}.npy"), np.array(losses))
+    np.save(os.path.join(save_dir, f"steps-{model_name}.npy"), np.array(steps))
+
     # Plot loss vs. training step graph
     plt.figure(figsize=(10, 5))
     plt.plot(steps, losses)
@@ -109,6 +106,7 @@ def train_model(model, train_dataloader, val_dataloader, optimizer, scheduler = 
     plt.savefig(os.path.join(save_dir, "loss_vs_training_steps.png"), bbox_inches='tight')
     
     return best_val_epoch, best_val_acc, losses[-1]
+
 
 # We don't need gradients during evaluation.
 @torch.no_grad()
@@ -131,6 +129,9 @@ def evaluate(eval_loader: DataLoader, model: nn.Module):
     
 @torch.no_grad()
 def plot_confusion_matrix(data_loader: DataLoader, save_dir: str, model: nn.Module):
+    '''
+    Plot confusion matrix for the model
+    '''
     best_model = model
     best_model_path = f'{save_dir}/best_model.pt'
     
@@ -164,6 +165,9 @@ def plot_confusion_matrix(data_loader: DataLoader, save_dir: str, model: nn.Modu
 
 @torch.no_grad()
 def plot_predictions(eval_loader: DataLoader, model: nn.Module):
+    '''
+    Plot predictions for the model
+    '''
     example = next(iter(eval_loader))
     inputs = example[0].to(device)
     outputs = model(inputs)
@@ -177,31 +181,9 @@ def plot_predictions(eval_loader: DataLoader, model: nn.Module):
         plt.axis("off")
         plt.savefig('../../plots/eval_saved.png')
         
-def subsample(original_dataset, test_size):
-    
-    original_indices = np.asarray([x for x in range(17736)])
-    augmented_indices = np.asarray([x for x in range(17736, len(original_dataset))])
-    
-    num_orig_train = int((1- test_size) * len(original_indices))
-    num_orig_val = len(original_indices) - num_orig_train
-
-    orig_train_indices = np.random.choice(original_indices, num_orig_train, replace=False)
-    ind = np.zeros(len(original_indices), dtype=bool)
-    ind[orig_train_indices] = True
-    orig_val_indices = original_indices[~ind]
-    
-    train_inices = np.concatenate((orig_train_indices, augmented_indices))
-    train_sampler = torch.utils.data.SubsetRandomSampler(train_inices)
-    val_sampler = torch.utils.data.SubsetRandomSampler(orig_val_indices)
-
-    # Create data loaders for both the training and validation sets
-    train_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=train_sampler, pin_memory=True)
-    val_dataloader = DataLoader(original_dataset, batch_size=config['parameters']['batch_size'], sampler=val_sampler, pin_memory=True)
-    
-    return train_dataloader, val_dataloader
-
 
 def main(config):
+    model_name = config['model']
     model = model_dict[config['model']]()
     params_to_optimize = [p for p in model.parameters() if p.requires_grad]
     optimizer = optim.AdamW(params_to_optimize, lr = config['parameters']['lr'], 
@@ -209,35 +191,49 @@ def main(config):
 
     scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones = config['parameters']['milestones'],gamma=config['parameters']['lr_decay'])
     
-    transform = transforms.Compose([
+    train_transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.RandomRotation(180),
-        transforms.CenterCrop(180),
-        transforms.Resize(256),
+        transforms.Resize(255),
         transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
         transforms.RandomHorizontalFlip(p=0.3),
         transforms.RandomVerticalFlip(p=0.3),
         transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
     ])
     
+    val_transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
+        transforms.Resize(255)
+    ])
+    
     print("Loading train dataset!")
     start = time.time()
-    train_dataset = Galaxy10DECals(config['dataset'], transform)
+    train_dataset = Galaxy10DECals(config['dataset'])
+    val_dataset = copy.deepcopy(train_dataset)
+
+    indices = torch.randperm(len(train_dataset))
+    val_size = int(len(train_dataset) * config['parameters']['test_size'])
+    train_dataset = torch.utils.data.Subset(train_dataset, indices[:-val_size])
+    val_dataset = torch.utils.data.Subset(val_dataset, indices[-val_size:])
+    assert len(train_dataset) + len(val_dataset) == len(indices)
+    train_dataset.dataset.transform = train_transform
+    val_dataset.dataset.transform = val_transform
     end = time.time()
     print(f"dataset loaded in {end - start} s")
-    
-
-    # train_dataloader, val_dataloader = subsample(train_dataset, 0.2)
     
     test_len = int(config['parameters']['test_size'] * len(train_dataset))
     train_len = len(train_dataset) - test_len
     train_dataset, val_dataset = torch.utils.data.random_split(train_dataset, [train_len, test_len])
+    train_dataset.dataset.transform = train_transform
+    val_dataset.dataset.transform = val_transform
+    
     train_dataloader = DataLoader(train_dataset, batch_size=config['parameters']['batch_size'], shuffle=True, pin_memory=True)
     val_dataloader = DataLoader(val_dataset, batch_size=config['parameters']['batch_size'], shuffle=True, pin_memory=True)
 
     timestr = time.strftime("%Y%m%d-%H%M%S")
     save_dir = config['save_dir'] + config['model'] + '_' + timestr
-    best_val_epoch, best_val_acc, final_loss = train_model(model, train_dataloader, val_dataloader, optimizer, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
+    best_val_epoch, best_val_acc, final_loss = train_model(model, train_dataloader, val_dataloader, optimizer, model_name, scheduler, epochs=config['parameters']['epochs'], device=device, save_dir=save_dir,early_stopping_patience=config['parameters']['early_stopping'], report_interval=config['parameters']['report_interval'])
     print('Training Done')
     
     config['best_val_acc'] = best_val_acc
@@ -267,5 +263,5 @@ if __name__ == '__main__':
 
     with open(args.config, 'r') as f:
         config = yaml.safe_load(f)
-   
+
     main(config)
