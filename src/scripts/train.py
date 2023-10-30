@@ -129,6 +129,9 @@ def evaluate(eval_loader: DataLoader, model: nn.Module):
     
 @torch.no_grad()
 def plot_confusion_matrix(data_loader: DataLoader, save_dir: str, model: nn.Module):
+    '''
+    Plot confusion matrix for the model
+    '''
     best_model = model
     best_model_path = f'{save_dir}/best_model.pt'
     
@@ -162,6 +165,9 @@ def plot_confusion_matrix(data_loader: DataLoader, save_dir: str, model: nn.Modu
 
 @torch.no_grad()
 def plot_predictions(eval_loader: DataLoader, model: nn.Module):
+    '''
+    Plot predictions for the model
+    '''
     example = next(iter(eval_loader))
     inputs = example[0].to(device)
     outputs = model(inputs)
