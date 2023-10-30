@@ -22,6 +22,9 @@ from utils import OnePixelAttack
 from dataset import Galaxy10DECalsTest
 
 def load_perturbed_data(original_data_filname, perturbed_data_filename):
+	'''
+	Load the perturbed data and it's original data from the dataset
+	'''
 	perturbed_dataset = OnePixelAttack(perturbed_data_filename)
 
 	transform = transforms.Compose([
@@ -41,6 +44,9 @@ def load_perturbed_data(original_data_filname, perturbed_data_filename):
 	return original_images, perturbed_images
 
 def load_noisy_data(original_data_filname, noisy_data_25, noisy_data_50):
+	'''
+	Load the noisy data and it's original data from the dataset
+	'''
 	transform = transforms.Compose([
 		transforms.ToTensor(),
             transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5)),
@@ -55,18 +61,21 @@ def load_noisy_data(original_data_filname, noisy_data_25, noisy_data_50):
 	return original_images, noisy_images_25, noisy_images_50
 
 def get_latent_space_represenatation(model, images, label):
-    
-    model = model.to(device)
-    images = images.to(device)
-    latent_space_representation, output = model(images)
-    outputs = torch.argmax(output, dim=-1).cpu().numpy()
-    outputs = np.array(outputs)
-    
-    label = label.cpu().detach().numpy()
-    label = np.array(label)
-    misclassified_indices = np.where(label != outputs)[0]
-    
-    return latent_space_representation, misclassified_indices
+	'''
+	Get the latent space representation for the images
+
+	'''
+	model = model.to(device)
+	images = images.to(device)
+	latent_space_representation, output = model(images)
+	outputs = torch.argmax(output, dim=-1).cpu().numpy()
+	outputs = np.array(outputs)
+
+	label = label.cpu().detach().numpy()
+	label = np.array(label)
+	misclassified_indices = np.where(label != outputs)[0]
+
+	return latent_space_representation, misclassified_indices
 
 	
 	
@@ -83,10 +92,6 @@ if __name__ == '__main__':
 						help='Location of perturbed dataset')
 	parser.add_argument('--model_dir', type=str, metavar='model_dir', required=True,
 						help='Location of model directory')
-	# parser.add_argument('--model_name', type=str, metavar='model_path', required=True,
-	# 					help='Name of model')
-	# parser.add_argument('--model_path', type=str, metavar='model_path', required=True,
-	# 					help='Location of model')
 
 	args = parser.parse_args()
 
@@ -96,52 +101,6 @@ if __name__ == '__main__':
 		device = torch.device('cpu')
 
 
-	'''	
-	mean_perturbed = {}
-
-
-	for file_name in os.listdir(args.model_dir):
-		file_path = os.path.join(args.model_dir, file_name)
-		if file_name.endswith('.pt') and os.path.isfile(file_path):
-			if file_name.startswith('D16'):
-				continue
-			print(f'Loading {file_name}...')
-			model_name = os.path.splitext(file_name)[0]
-
-			is_equivarient = False
-			if any(char.isdigit() for char in model_name):
-				is_equivarient = True
-
-			feature_model = load_model(file_path, model_name, is_equivarient)
-
-			perturbed_data = os.path.join(args.perturbed_data_dir, f'onepixel_attack_results_{model_name}.h5')
-			original_images, perturbed_images = load_perturbed_data(args.data_path, perturbed_data)
-
-			dataloader = DataLoader(original_images, batch_size=len(original_images), shuffle=False)
-			orig_images = next(iter(dataloader))[0]
-
-			original_latent_space_representation = get_latent_space_represenatation(feature_model, orig_images)
-			perturbed_latent_space_representation = get_latent_space_represenatation(feature_model, perturbed_images)
-
-
-			original_latent_space_representation = original_latent_space_representation.cpu().detach().numpy()
-			perturbed_latent_space_representation = perturbed_latent_space_representation.cpu().detach().numpy()
-
-
-			#Calculate the distance between the original and perturbed images in the latent space
-			distance = np.linalg.norm(original_latent_space_representation - perturbed_latent_space_representation, axis=1)
-
-			#mean distance
-			print(f"Mean distance between original and perturbed images in the latent space for {model_name}: ", np.mean(distance))
-			
-			mean_perturbed[model_name] = np.mean(distance)
-
-	mean_perturbed_key = list(mean_perturbed.keys())
-	mean_perturbed_value = list(mean_perturbed.values())
-	combined_array = np.vstack((key_array, value_array)).T
-	print(combined_array)
-	np.save('/work/GDL/mean_perturbed.npy', combined_array)
-	'''
 
 	mean_noisy_25 = {}
 	mean_noisy_50 = {}
@@ -240,24 +199,3 @@ if __name__ == '__main__':
 	print(combined_array)
 	np.save('/n/holystore01/LABS/iaifi_lab/Users/spandya/data/mean_noisy_50.npy', combined_array)
 
-	#sort mean dict
-	#mean = dict(sorted(mean.items(), key=lambda item: item[1]))
-
-	# mean_cnn = mean['CNN']
-
-	# mean_cn = {k : v for k, v in mean.items() if 'C' in k}
-	# mean_cn = dict(sorted(mean_cn.items()))
-	# mean_dn = {k : v for k, v in mean.items() if 'D' in k}
-	# mean_dn = dict(sorted(mean_dn.items()))
-
-	# ##save dict as csv
-
-
-
-	# ## plot and save graph
-
-	# sns.lineplot(data=mean, palette='hsv', marker='o', markersize=5)
-	# plt.title(f'Mean Distance between Original and Perturbed Images in the Latent Space')
-	# plt.xlabel('Model')
-	# plt.ylabel('Mean Distance')
-	# plt.savefig(os.path.join('/n/holystore01/LABS/iaifi_lab/Users/spandya/data/', f'mean_distance.png'), bbox_inches='tight',dpi=300)
