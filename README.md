@@ -19,4 +19,4 @@ or consult online documentation for appropriate dependencies.
 
 ## Statement on Broader Impact
 
-*The algorithms presented here can extract features from and classify images of arbitrary orientation and suboptimal image quality. The authors condemn any maladaptations of this work and emphasize the importance of using AI technologies ethically and responsibly.*
+*The techniques presented here have the potential to classify and extract features from images of arbitrary orientation and of significantly degraded quality, and as such warrant ethical concerns for maladaptations of this work. The exploitation of computer vision technologies for uses of surveillance is a poison. The authors steadfastly abhor the use of deep learning for purposes that do not seek to further scientific knowledge or provide a beneficial and equitable service to society.*
