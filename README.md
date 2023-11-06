@@ -23,6 +23,7 @@ or consult online documentation for appropriate dependencies.
 
 ## Citation
 
+```bibtex
 @misc{pandya2023e2,
       title={E(2) Equivariant Neural Networks for Robust Galaxy Morphology Classification}, 
       author={Sneh Pandya and Purvik Patel and Franc O and Jonathan Blazek},
@@ -31,3 +32,4 @@ or consult online documentation for appropriate dependencies.
       archivePrefix={arXiv},
       primaryClass={astro-ph.GA}
 }
+```
