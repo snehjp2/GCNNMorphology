@@ -20,3 +20,14 @@ or consult online documentation for appropriate dependencies.
 ## Statement on Broader Impact
 
 *The techniques presented here have the potential to classify and extract features from images of arbitrary orientation and of significantly degraded quality, and as such warrant ethical concerns for maladaptations of this work. The exploitation of computer vision technologies for uses of surveillance is a poison. The authors steadfastly abhor the use of deep learning for purposes that do not seek to further scientific knowledge or provide a beneficial and equitable service to society.*
+
+## Citation
+
+@misc{pandya2023e2,
+      title={E(2) Equivariant Neural Networks for Robust Galaxy Morphology Classification}, 
+      author={Sneh Pandya and Purvik Patel and Franc O and Jonathan Blazek},
+      year={2023},
+      eprint={2311.01500},
+      archivePrefix={arXiv},
+      primaryClass={astro-ph.GA}
+}
